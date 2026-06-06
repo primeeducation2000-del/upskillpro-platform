@@ -252,6 +252,25 @@ function HomePage() {
             <ActionLink path="/contact" label="Book Consultation" icon={CalendarCheck} primary />
             <ActionLink path="/workforce-training-request" label="Request Training Plan" icon={ClipboardList} />
           </div>
+          <div className="hero-proof" aria-label="UpSkillPro delivery proof points">
+            <span><strong>3</strong> priority sectors</span>
+            <span><strong>ESP + soft skills</strong> combined delivery</span>
+            <span><strong>Hybrid</strong> onsite and online training</span>
+          </div>
+        </div>
+      </section>
+      <section className="credibility-band" aria-label="Workforce performance outcomes">
+        <div>
+          <span>Communication confidence</span>
+          <strong>Role-specific language practice for frontline teams</strong>
+        </div>
+        <div>
+          <span>Service consistency</span>
+          <strong>Practical soft skills mapped to real customer moments</strong>
+        </div>
+        <div>
+          <span>Employer visibility</span>
+          <strong>Progress reporting and improvement tracking planned in</strong>
         </div>
       </section>
       <Section eyebrow="Who we help" title="Built for operational teams where communication affects performance.">
@@ -463,7 +482,7 @@ function TrainingRequestPage() {
         <Fieldset title="Programme Details">
           <Select label="Urgency" options={['Immediate', '1 month', '1-3 months', 'Exploring']} onChange={(value) => update('urgency', value)} required />
           <Select label="Delivery Preference" options={['Onsite', 'Online', 'Hybrid']} onChange={(value) => update('deliveryPreference', value)} required />
-          <Select label="Budget Range" options={['£5k-£10k', '£10k-£25k', '£25k-£50k']} onChange={(value) => update('budgetRange', value)} required />
+          <Select label="Budget Range" options={['GBP 5k-10k', 'GBP 10k-25k', 'GBP 25k-50k']} onChange={(value) => update('budgetRange', value)} required />
           <label className="full-field">
             <span>What is your biggest workforce challenge?</span>
             <textarea rows="4" onChange={(event) => update('biggestChallenge', event.target.value)} required />
