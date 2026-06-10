@@ -12,6 +12,12 @@ It does not show the main website header, navigation, footer, sidebar, or websit
 
 ## Google Sheet Structure
 
+Created Sheet:
+
+```text
+https://docs.google.com/spreadsheets/d/1yfCLgUy5nVq79wZr729AHuWkTgkuoHCONfLdDM5ZXTE/edit
+```
+
 Create a Google Sheet with these columns on the first tab:
 
 1. Timestamp
