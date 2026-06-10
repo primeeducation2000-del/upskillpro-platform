@@ -25,6 +25,7 @@ import {
   Users,
   X,
 } from 'lucide-react';
+import EsolInitialAssessment from './EsolInitialAssessment.jsx';
 import './styles.css';
 
 const positioning =
@@ -167,6 +168,10 @@ function App() {
   }, []);
 
   const page = useMemo(() => resolvePage(path), [path]);
+
+  if (path.replace(/\/$/, '') === '/esol-initial-assessment') {
+    return <EsolInitialAssessment />;
+  }
 
   const onNav = (event, targetPath) => {
     event.preventDefault();
