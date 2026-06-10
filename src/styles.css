@@ -828,6 +828,105 @@ footer p {
   color: var(--muted);
 }
 
+.assessment-timer {
+  position: sticky;
+  top: 12px;
+  z-index: 10;
+  display: grid;
+  grid-template-columns: 42px auto minmax(160px, 1fr) auto;
+  gap: 14px;
+  align-items: center;
+  min-height: 72px;
+  margin-bottom: 18px;
+  padding: 14px 18px;
+  border: 1px solid rgba(220, 229, 234, 0.96);
+  border-radius: 8px;
+  background: rgba(255, 255, 255, 0.94);
+  box-shadow: 0 18px 44px rgba(8, 29, 37, 0.16);
+  backdrop-filter: blur(18px);
+}
+
+.assessment-timer-icon {
+  display: grid;
+  place-items: center;
+  width: 42px;
+  height: 42px;
+  border-radius: 8px;
+  background: #edf5f3;
+  color: var(--teal);
+}
+
+.assessment-timer span {
+  display: block;
+  color: var(--muted);
+  font-size: 0.78rem;
+  font-weight: 900;
+  text-transform: uppercase;
+}
+
+.assessment-timer strong {
+  display: block;
+  color: var(--navy);
+  font-size: 1.72rem;
+  line-height: 1;
+  font-variant-numeric: tabular-nums;
+}
+
+.assessment-timer-track {
+  position: relative;
+  height: 10px;
+  overflow: hidden;
+  border-radius: 999px;
+  background: #dce8e5;
+}
+
+.assessment-timer-track span {
+  position: absolute;
+  inset: 0;
+  display: block;
+  transform-origin: left center;
+  background: linear-gradient(90deg, var(--teal), var(--green));
+  transition: transform 500ms ease, background 200ms ease;
+}
+
+.assessment-timer p {
+  margin: 0;
+  color: var(--muted);
+  font-weight: 800;
+  white-space: nowrap;
+}
+
+.assessment-timer.warning {
+  border-color: rgba(185, 139, 47, 0.42);
+}
+
+.assessment-timer.warning .assessment-timer-icon {
+  background: #fff7e8;
+  color: var(--gold);
+}
+
+.assessment-timer.warning .assessment-timer-track span {
+  background: linear-gradient(90deg, var(--gold), var(--coral));
+}
+
+.assessment-timer.expired {
+  border-color: rgba(189, 93, 70, 0.5);
+}
+
+.assessment-timer.expired .assessment-timer-icon {
+  background: #fff1ee;
+  color: var(--coral);
+}
+
+.assessment-timer.expired strong,
+.assessment-timer.expired p {
+  color: #963b28;
+}
+
+.assessment-timer.expired .assessment-timer-track span {
+  background: var(--coral);
+}
+
 .assessment-form,
 .reading-list {
   display: grid;
@@ -1072,6 +1171,19 @@ footer p {
   .assessment-admin-summary {
     grid-template-columns: 1fr;
   }
+
+  .assessment-timer {
+    grid-template-columns: 42px 1fr;
+  }
+
+  .assessment-timer-track,
+  .assessment-timer p {
+    grid-column: 1 / -1;
+  }
+
+  .assessment-timer p {
+    white-space: normal;
+  }
 }
 
 @media (max-width: 720px) {
@@ -1156,6 +1268,11 @@ footer p {
   .assessment-grid,
   .assessment-options {
     grid-template-columns: 1fr;
+  }
+
+  .assessment-timer {
+    top: 8px;
+    padding: 12px;
   }
 
   .assessment-submit {

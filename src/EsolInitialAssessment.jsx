@@ -1,6 +1,9 @@
-import React, { useMemo, useState } from 'react';
-import { CheckCircle2, ClipboardCheck, Send, ShieldCheck } from 'lucide-react';
+import React, { useEffect, useMemo, useState } from 'react';
+import { CheckCircle2, ClipboardCheck, Clock3, Send, ShieldCheck } from 'lucide-react';
 import { ESOL_ASSESSMENT_CONFIG } from './esolAssessmentConfig.js';
+
+const ASSESSMENT_DURATION_SECONDS = 75 * 60;
+const TIMER_STORAGE_KEY = 'upskillpro-esol-assessment-started-at';
 
 const readingQuestions = [
   { id: 'q1', level: 'Pre-A1/A1', type: 'Multiple choice', prompt: 'My name is Sara. I am from Spain. Where is Sara from?', options: ['Spain', 'France', 'Italy', 'Brazil'], answer: 'Spain' },
@@ -70,6 +73,12 @@ function scoreAssessment(responses) {
   return { score, cefr, recommendation: recommendations[cefr], details };
 }
 
+function formatTime(totalSeconds) {
+  const minutes = Math.floor(totalSeconds / 60);
+  const seconds = totalSeconds % 60;
+  return `${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}`;
+}
+
 export default function EsolInitialAssessment() {
   const [candidate, setCandidate] = useState({ fullName: '', email: '', phone: '', nationality: '', firstLanguage: '' });
   const [readingResponses, setReadingResponses] = useState({});
@@ -77,7 +86,35 @@ export default function EsolInitialAssessment() {
   const [status, setStatus] = useState({ type: 'idle', message: '' });
   const [submitted, setSubmitted] = useState(false);
   const [submittedAt, setSubmittedAt] = useState('');
+  const [secondsRemaining, setSecondsRemaining] = useState(ASSESSMENT_DURATION_SECONDS);
   const result = useMemo(() => scoreAssessment(readingResponses), [readingResponses]);
+  const timerState = secondsRemaining <= 0 ? 'expired' : secondsRemaining <= 5 * 60 ? 'warning' : 'active';
+
+  useEffect(() => {
+    const storedStartedAt = Number(sessionStorage.getItem(TIMER_STORAGE_KEY));
+    const startedAt = storedStartedAt || Date.now();
+    if (!storedStartedAt) {
+      sessionStorage.setItem(TIMER_STORAGE_KEY, String(startedAt));
+    }
+
+    const tick = () => {
+      const elapsedSeconds = Math.floor((Date.now() - startedAt) / 1000);
+      setSecondsRemaining(Math.max(ASSESSMENT_DURATION_SECONDS - elapsedSeconds, 0));
+    };
+
+    tick();
+    const timer = window.setInterval(tick, 1000);
+    return () => window.clearInterval(timer);
+  }, []);
+
+  useEffect(() => {
+    if (secondsRemaining === 0 && status.type !== 'submitting' && status.type !== 'success') {
+      setStatus({
+        type: 'error',
+        message: 'The recommended assessment time has ended. Please submit your current answers for review.',
+      });
+    }
+  }, [secondsRemaining, status.type]);
 
   const updateCandidate = (field, value) => setCandidate((current) => ({ ...current, [field]: value }));
   const updateReading = (id, value) => setReadingResponses((current) => ({ ...current, [id]: value }));
@@ -138,6 +175,7 @@ export default function EsolInitialAssessment() {
       }
       localStorage.setItem(duplicateKey, String(Date.now()));
       localStorage.setItem('upskillpro-last-esol-assessment', JSON.stringify(payload));
+      sessionStorage.removeItem(TIMER_STORAGE_KEY);
       setSubmittedAt(timestamp);
       setSubmitted(true);
       setStatus({ type: 'success', message: 'Assessment submitted successfully. Thank you.' });
@@ -185,6 +223,8 @@ export default function EsolInitialAssessment() {
             <small>{result.score} / {readingQuestions.length} reading score</small>
           </div>
         </div>
+
+        <AssessmentTimer secondsRemaining={secondsRemaining} timerState={timerState} />
 
         <form className="assessment-form" onSubmit={submit}>
           <AssessmentSection title="Candidate Information" intro="Please complete your details before starting the assessment.">
@@ -258,6 +298,26 @@ export default function EsolInitialAssessment() {
         </form>
       </section>
     </main>
+  );
+}
+
+function AssessmentTimer({ secondsRemaining, timerState }) {
+  const progress = Math.max(0, Math.min(1, secondsRemaining / ASSESSMENT_DURATION_SECONDS));
+
+  return (
+    <aside className={`assessment-timer ${timerState}`} aria-live="polite">
+      <div className="assessment-timer-icon">
+        <Clock3 size={22} />
+      </div>
+      <div>
+        <span>Assessment timer</span>
+        <strong>{formatTime(secondsRemaining)}</strong>
+      </div>
+      <div className="assessment-timer-track" aria-hidden="true">
+        <span style={{ transform: `scaleX(${progress})` }} />
+      </div>
+      <p>{timerState === 'expired' ? 'Time ended. Submit your current answers.' : '75 minutes recommended'}</p>
+    </aside>
   );
 }
 
