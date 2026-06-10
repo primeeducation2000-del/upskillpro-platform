@@ -87,10 +87,13 @@ export default function EsolInitialAssessment() {
   const [submitted, setSubmitted] = useState(false);
   const [submittedAt, setSubmittedAt] = useState('');
   const [secondsRemaining, setSecondsRemaining] = useState(ASSESSMENT_DURATION_SECONDS);
+  const [access, setAccess] = useState({ code: '', email: '', granted: false, checking: false, message: '' });
   const result = useMemo(() => scoreAssessment(readingResponses), [readingResponses]);
   const timerState = secondsRemaining <= 0 ? 'expired' : secondsRemaining <= 5 * 60 ? 'warning' : 'active';
 
   useEffect(() => {
+    if (!access.granted) return undefined;
+
     const storedStartedAt = Number(sessionStorage.getItem(TIMER_STORAGE_KEY));
     const startedAt = storedStartedAt || Date.now();
     if (!storedStartedAt) {
@@ -105,22 +108,74 @@ export default function EsolInitialAssessment() {
     tick();
     const timer = window.setInterval(tick, 1000);
     return () => window.clearInterval(timer);
-  }, []);
+  }, [access.granted]);
 
   useEffect(() => {
+    if (!access.granted) return;
+
     if (secondsRemaining === 0 && status.type !== 'submitting' && status.type !== 'success') {
       setStatus({
         type: 'error',
         message: 'The recommended assessment time has ended. Please submit your current answers for review.',
       });
     }
-  }, [secondsRemaining, status.type]);
+  }, [access.granted, secondsRemaining, status.type]);
 
   const updateCandidate = (field, value) => setCandidate((current) => ({ ...current, [field]: value }));
   const updateReading = (id, value) => setReadingResponses((current) => ({ ...current, [id]: value }));
   const updateWriting = (field, value) => setWriting((current) => ({ ...current, [field]: value }));
 
+  const validateAccess = async (event) => {
+    event.preventDefault();
+    if (access.checking) return;
+
+    if (!access.code.trim() || !access.email.trim()) {
+      setAccess((current) => ({ ...current, message: 'Enter your access code and email address.' }));
+      return;
+    }
+
+    setAccess((current) => ({ ...current, checking: true, message: 'Checking access code...' }));
+
+    try {
+      const response = await fetch('/api/esol-access', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          action: 'validateAccessCode',
+          accessCode: access.code,
+          email: access.email,
+        }),
+      });
+      const result = await response.json();
+      if (!response.ok || !result.ok) {
+        throw new Error(result.error || 'Access code could not be verified.');
+      }
+
+      setCandidate((current) => ({
+        ...current,
+        fullName: current.fullName || result.learnerName || '',
+        email: current.email || access.email.trim().toLowerCase(),
+      }));
+      sessionStorage.removeItem(TIMER_STORAGE_KEY);
+      setSecondsRemaining(ASSESSMENT_DURATION_SECONDS);
+      setAccess((current) => ({
+        ...current,
+        code: result.accessCode || current.code,
+        granted: true,
+        checking: false,
+        message: '',
+      }));
+    } catch (error) {
+      setAccess((current) => ({
+        ...current,
+        checking: false,
+        message: error.message || 'This access code could not be verified.',
+      }));
+    }
+  };
+
   const validate = () => {
+    if (!access.granted) return 'Please enter a valid access code before starting the assessment.';
     if (!candidate.fullName.trim() || !candidate.email.trim()) return 'Full name and email address are required.';
     if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(candidate.email.trim())) return 'Please enter a valid email address.';
     return '';
@@ -153,6 +208,7 @@ export default function EsolInitialAssessment() {
       phone: candidate.phone.trim(),
       nationality: candidate.nationality.trim(),
       firstLanguage: candidate.firstLanguage.trim(),
+      accessCode: access.code.trim(),
       readingScore: result.score,
       estimatedCefrLevel: result.cefr,
       placementRecommendation: result.recommendation,
@@ -165,13 +221,14 @@ export default function EsolInitialAssessment() {
     setStatus({ type: 'submitting', message: 'Submitting assessment...' });
 
     try {
-      if (ESOL_ASSESSMENT_CONFIG.googleAppsScriptUrl) {
-        await fetch(ESOL_ASSESSMENT_CONFIG.googleAppsScriptUrl, {
-          method: 'POST',
-          mode: 'no-cors',
-          headers: { 'Content-Type': 'text/plain;charset=utf-8' },
-          body: JSON.stringify(payload),
-        });
+      const response = await fetch('/api/esol-access', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ action: 'submitAssessment', payload }),
+      });
+      const result = await response.json();
+      if (!response.ok || !result.ok) {
+        throw new Error(result.error || 'The assessment could not be submitted.');
       }
       localStorage.setItem(duplicateKey, String(Date.now()));
       localStorage.setItem('upskillpro-last-esol-assessment', JSON.stringify(payload));
@@ -180,7 +237,7 @@ export default function EsolInitialAssessment() {
       setSubmitted(true);
       setStatus({ type: 'success', message: 'Assessment submitted successfully. Thank you.' });
     } catch (error) {
-      setStatus({ type: 'error', message: 'The assessment could not be submitted. Please try again.' });
+      setStatus({ type: 'error', message: error.message || 'The assessment could not be submitted. Please try again.' });
     }
   };
 
@@ -224,6 +281,12 @@ export default function EsolInitialAssessment() {
           </div>
         </div>
 
+        {!access.granted && (
+          <AssessmentAccessGate access={access} setAccess={setAccess} onSubmit={validateAccess} />
+        )}
+
+        {access.granted && (
+          <>
         <AssessmentTimer secondsRemaining={secondsRemaining} timerState={timerState} />
 
         <form className="assessment-form" onSubmit={submit}>
@@ -296,8 +359,46 @@ export default function EsolInitialAssessment() {
             Submit Assessment
           </button>
         </form>
+          </>
+        )}
       </section>
     </main>
+  );
+}
+
+function AssessmentAccessGate({ access, setAccess, onSubmit }) {
+  return (
+    <form className="assessment-access-card" onSubmit={onSubmit}>
+      <p className="assessment-kicker">Learner access</p>
+      <h2>Enter your assessment access code</h2>
+      <p>Your training provider will give you a unique code. Each code can only be used once.</p>
+      <div className="assessment-access-grid">
+        <label className="assessment-field">
+          <span>Access Code *</span>
+          <input
+            value={access.code}
+            onChange={(event) => setAccess((current) => ({ ...current, code: event.target.value.toUpperCase(), message: '' }))}
+            placeholder="USP-XXXX-XXXX"
+            required
+          />
+        </label>
+        <label className="assessment-field">
+          <span>Email Address *</span>
+          <input
+            type="email"
+            value={access.email}
+            onChange={(event) => setAccess((current) => ({ ...current, email: event.target.value, message: '' }))}
+            placeholder="name@example.com"
+            required
+          />
+        </label>
+      </div>
+      {access.message && <p className={`assessment-status ${access.checking ? 'submitting' : 'error'}`}>{access.message}</p>}
+      <button className="assessment-submit" type="submit" disabled={access.checking}>
+        <ShieldCheck size={18} />
+        {access.checking ? 'Checking Code...' : 'Start Assessment'}
+      </button>
+    </form>
   );
 }
 

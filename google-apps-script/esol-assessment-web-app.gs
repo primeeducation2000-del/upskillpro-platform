@@ -2,6 +2,7 @@ const CONFIG = {
   SPREADSHEET_ID: '1yfCLgUy5nVq79wZr729AHuWkTgkuoHCONfLdDM5ZXTE',
   SHEET_NAME: 'ESOL Initial Assessment Submissions',
   DASHBOARD_SHEET_NAME: 'Admin Dashboard',
+  ACCESS_CODES_SHEET_NAME: 'Access Codes',
   OPENAI_API_KEY_PROPERTY: 'OPENAI_API_KEY',
   OPENAI_MODEL: 'gpt-4.1-mini',
   OPENAI_RESPONSES_URL: 'https://api.openai.com/v1/responses',
@@ -43,6 +44,16 @@ const CONFIG = {
     'AI Marking Status',
     'Human Review Needed',
   ],
+  ACCESS_CODE_HEADERS: [
+    'Access Code',
+    'Learner Name',
+    'Email',
+    'Status',
+    'Date Created',
+    'Date Used',
+    'Submission Email',
+    'Notes',
+  ],
 };
 
 function doPost(e) {
@@ -51,9 +62,18 @@ function doPost(e) {
 
   try {
     const payload = JSON.parse((e && e.postData && e.postData.contents) || '{}');
+    if (payload.action === 'validateAccessCode') {
+      return json_(validateAccessCode_(payload.accessCode, payload.email));
+    }
+
     const spreadsheet = getSpreadsheet_();
     const sheet = getOrCreateSheet_(spreadsheet, CONFIG.SHEET_NAME, CONFIG.HEADERS);
     const dashboard = getOrCreateSheet_(spreadsheet, CONFIG.DASHBOARD_SHEET_NAME, CONFIG.DASHBOARD_HEADERS);
+    const accessValidation = validateAccessCode_(payload.accessCode, payload.email);
+    if (!accessValidation.ok) {
+      return json_(accessValidation);
+    }
+
     const writingAssessment = assessWriting_(payload);
 
     const row = [
@@ -96,6 +116,7 @@ function doPost(e) {
       row[23],
       row[22],
     ]);
+    markAccessCodeUsed_(payload.accessCode, payload.email);
 
     return json_({
       ok: true,
@@ -112,6 +133,116 @@ function doPost(e) {
 
 function doGet() {
   return json_({ ok: true, message: 'UpSkillPro ESOL assessment endpoint is active.' });
+}
+
+function createAccessCodes() {
+  const numberOfCodes = 20;
+  const spreadsheet = getSpreadsheet_();
+  const sheet = getOrCreateSheet_(spreadsheet, CONFIG.ACCESS_CODES_SHEET_NAME, CONFIG.ACCESS_CODE_HEADERS);
+  const existingCodes = getExistingAccessCodes_(sheet);
+  const rows = [];
+
+  while (rows.length < numberOfCodes) {
+    const code = generateAccessCode_();
+    if (!existingCodes[code]) {
+      existingCodes[code] = true;
+      rows.push([code, '', '', 'Unused', new Date().toISOString(), '', '', '']);
+    }
+  }
+
+  sheet.getRange(sheet.getLastRow() + 1, 1, rows.length, CONFIG.ACCESS_CODE_HEADERS.length).setValues(rows);
+}
+
+function validateAccessCode_(accessCode, email) {
+  const code = normalizeCode_(accessCode);
+  const learnerEmail = normalizeEmail_(email);
+  if (!code) {
+    return { ok: false, error: 'Access code is required.' };
+  }
+
+  const spreadsheet = getSpreadsheet_();
+  const sheet = getOrCreateSheet_(spreadsheet, CONFIG.ACCESS_CODES_SHEET_NAME, CONFIG.ACCESS_CODE_HEADERS);
+  const match = findAccessCodeRow_(sheet, code);
+  if (!match) {
+    return { ok: false, error: 'This access code was not found.' };
+  }
+
+  const values = match.values;
+  const assignedEmail = normalizeEmail_(values[2]);
+  const status = String(values[3] || '').trim().toLowerCase();
+  if (status === 'used') {
+    return { ok: false, error: 'This access code has already been used.' };
+  }
+  if (status === 'expired' || status === 'cancelled' || status === 'canceled') {
+    return { ok: false, error: 'This access code is no longer active.' };
+  }
+  if (assignedEmail && learnerEmail && assignedEmail !== learnerEmail) {
+    return { ok: false, error: 'This access code is assigned to a different email address.' };
+  }
+
+  return {
+    ok: true,
+    accessCode: code,
+    learnerName: values[1] || '',
+    email: values[2] || learnerEmail,
+    message: 'Access code accepted.',
+  };
+}
+
+function markAccessCodeUsed_(accessCode, email) {
+  const code = normalizeCode_(accessCode);
+  const spreadsheet = getSpreadsheet_();
+  const sheet = getOrCreateSheet_(spreadsheet, CONFIG.ACCESS_CODES_SHEET_NAME, CONFIG.ACCESS_CODE_HEADERS);
+  const match = findAccessCodeRow_(sheet, code);
+  if (!match) return;
+
+  sheet.getRange(match.row, 4).setValue('Used');
+  sheet.getRange(match.row, 6).setValue(new Date().toISOString());
+  sheet.getRange(match.row, 7).setValue(normalizeEmail_(email));
+}
+
+function findAccessCodeRow_(sheet, code) {
+  const lastRow = sheet.getLastRow();
+  if (lastRow < 2) return null;
+  const values = sheet.getRange(2, 1, lastRow - 1, CONFIG.ACCESS_CODE_HEADERS.length).getValues();
+  for (let index = 0; index < values.length; index += 1) {
+    if (normalizeCode_(values[index][0]) === code) {
+      return { row: index + 2, values: values[index] };
+    }
+  }
+  return null;
+}
+
+function getExistingAccessCodes_(sheet) {
+  const existingCodes = {};
+  const lastRow = sheet.getLastRow();
+  if (lastRow < 2) return existingCodes;
+  const values = sheet.getRange(2, 1, lastRow - 1, 1).getValues();
+  values.forEach((row) => {
+    const code = normalizeCode_(row[0]);
+    if (code) existingCodes[code] = true;
+  });
+  return existingCodes;
+}
+
+function generateAccessCode_() {
+  const alphabet = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789';
+  let value = 'USP-';
+  for (let group = 0; group < 2; group += 1) {
+    for (let index = 0; index < 4; index += 1) {
+      value += alphabet[Math.floor(Math.random() * alphabet.length)];
+    }
+    if (group === 0) value += '-';
+  }
+  return value;
+}
+
+function normalizeCode_(value) {
+  return String(value || '').trim().toUpperCase().replace(/\s+/g, '');
+}
+
+function normalizeEmail_(value) {
+  return String(value || '').trim().toLowerCase();
 }
 
 function assessWriting_(payload) {

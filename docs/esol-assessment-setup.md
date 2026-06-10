@@ -58,6 +58,23 @@ The Apps Script also creates an `Admin Dashboard` tab with:
 9. AI Marking Status
 10. Human Review Needed
 
+The Apps Script also creates an `Access Codes` tab with:
+
+1. Access Code
+2. Learner Name
+3. Email
+4. Status
+5. Date Created
+6. Date Used
+7. Submission Email
+8. Notes
+
+Access code statuses:
+
+- `Unused`: learner can start the assessment.
+- `Used`: code has already been submitted and cannot be reused.
+- `Expired`, `Cancelled`, or `Canceled`: code is blocked.
+
 ## Apps Script Setup
 
 1. Open the Google Sheet.
@@ -103,6 +120,27 @@ When configured, each submission writes:
 - AI marking status
 
 If the key is missing or AI marking fails, the submission is still saved and `AI Marking Status` explains what happened.
+
+## Learner Access Codes
+
+The public assessment page requires a unique learner access code before the form appears.
+
+To create access codes:
+
+1. Open the Apps Script project.
+2. Make sure the latest script code is saved and deployed.
+3. In the function dropdown, choose `createAccessCodes`.
+4. Click `Run`.
+5. The script adds 20 new unused codes to the `Access Codes` tab.
+
+You can optionally assign a code to a learner by filling:
+
+- `Learner Name`
+- `Email`
+
+If `Email` is filled, the learner must enter that same email with the code. If it is blank, any learner email can use the code once.
+
+After a successful assessment submission, the script changes the code status to `Used`, records `Date Used`, and records the submission email.
 
 ## Website Configuration
 
