@@ -18,7 +18,7 @@ Created Sheet:
 https://docs.google.com/spreadsheets/d/1yfCLgUy5nVq79wZr729AHuWkTgkuoHCONfLdDM5ZXTE/edit
 ```
 
-Create a Google Sheet with these columns on the first tab:
+The script creates an `ESOL Initial Assessment Submissions` tab with these columns:
 
 1. Timestamp
 2. Full Name
@@ -33,6 +33,17 @@ Create a Google Sheet with these columns on the first tab:
 11. Writing Task 1
 12. Writing Task 2
 13. Writing Task 3
+14. Writing Task 1 CEFR
+15. Writing Task 2 CEFR
+16. Writing Task 3 CEFR
+17. Writing Grammar Score
+18. Writing Vocabulary Score
+19. Writing Coherence Score
+20. Writing Task Achievement Score
+21. Writing Feedback
+22. Final CEFR Recommendation
+23. Human Review Needed
+24. AI Marking Status
 
 The Apps Script also creates an `Admin Dashboard` tab with:
 
@@ -40,8 +51,12 @@ The Apps Script also creates an `Admin Dashboard` tab with:
 2. Full Name
 3. Email
 4. Reading Score
-5. CEFR Estimate
-6. Recommended Course Level
+5. Reading CEFR Estimate
+6. Writing CEFR Estimate
+7. Final CEFR Recommendation
+8. Recommended Course Level
+9. AI Marking Status
+10. Human Review Needed
 
 ## Apps Script Setup
 
@@ -62,6 +77,32 @@ google-apps-script/esol-assessment-web-app.gs
    - Execute as: `Me`
    - Who has access: `Anyone`
 10. Deploy and copy the Web App URL.
+
+## AI Writing Marking Setup
+
+The script can mark writing tasks with OpenAI from inside Apps Script. The API key is not stored in the public website.
+
+1. Open the Apps Script project.
+2. Go to `Project Settings`.
+3. Under `Script properties`, add:
+
+```text
+OPENAI_API_KEY = your OpenAI API key
+```
+
+4. Save the property.
+5. Deploy a new Web App version after updating the script.
+
+When configured, each submission writes:
+
+- Writing CEFR estimate per task
+- Grammar, vocabulary, coherence, and task achievement scores from 0-5
+- Tutor-style feedback
+- Final CEFR recommendation
+- Human review flag
+- AI marking status
+
+If the key is missing or AI marking fails, the submission is still saved and `AI Marking Status` explains what happened.
 
 ## Website Configuration
 
@@ -95,4 +136,4 @@ The page uses 24 progressive reading questions.
 - 20-22: C1
 - 23-24: C2
 
-Writing tasks are saved for review and placement confirmation.
+Writing tasks are AI marked when `OPENAI_API_KEY` is configured. Human review is still recommended for borderline, unusually short, or inconsistent writing.
