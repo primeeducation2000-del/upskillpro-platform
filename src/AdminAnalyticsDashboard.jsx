@@ -126,9 +126,11 @@ export default function AdminAnalyticsDashboard() {
 
   useEffect(() => {
     if (!session.ok) return undefined;
+    if (analyticsStatus.realData) return undefined;
+
     const timer = window.setInterval(() => {
       setTick((value) => value + 1);
-      setVisitors((current) => (analyticsStatus.realData ? current : [createVisitor(current.length), ...current.slice(0, 11)]));
+      setVisitors((current) => [createVisitor(current.length), ...current.slice(0, 11)]);
     }, 5200);
     return () => window.clearInterval(timer);
   }, [analyticsStatus.realData, session.ok]);
@@ -148,7 +150,7 @@ export default function AdminAnalyticsDashboard() {
     };
 
     loadAnalytics();
-    const timer = window.setInterval(loadAnalytics, 10000);
+    const timer = window.setInterval(loadAnalytics, 30000);
     return () => window.clearInterval(timer);
   }, [session.ok]);
 

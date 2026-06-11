@@ -32,6 +32,9 @@ function getCourse(path) {
 }
 
 function sendAnalyticsEvent(eventType, startedAt) {
+  const durationSeconds = Math.round((Date.now() - startedAt.current) / 1000);
+  if (eventType === 'page_exit' && durationSeconds < 5) return;
+
   const path = window.location.pathname;
   const payload = {
     eventType,
@@ -42,7 +45,7 @@ function sendAnalyticsEvent(eventType, startedAt) {
     course: getCourse(path),
     entryPage: getEntryPage(path),
     exitPage: eventType === 'page_exit' ? path : '',
-    durationSeconds: Math.round((Date.now() - startedAt.current) / 1000),
+    durationSeconds,
     timezone: Intl.DateTimeFormat().resolvedOptions().timeZone,
   };
   const body = JSON.stringify(payload);
@@ -67,7 +70,7 @@ export default function AnalyticsTracker({ path }) {
     if (path.startsWith('/admin-analytics') || path.startsWith('/esol-initial-assessment')) return undefined;
     startedAt.current = Date.now();
     sendAnalyticsEvent('page_view', startedAt);
-    const heartbeat = window.setInterval(() => sendAnalyticsEvent('heartbeat', startedAt), 30000);
+    const heartbeat = window.setInterval(() => sendAnalyticsEvent('heartbeat', startedAt), 60000);
     const onVisibility = () => {
       if (document.visibilityState === 'hidden') sendAnalyticsEvent('page_exit', startedAt);
     };
