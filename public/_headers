@@ -3,3 +3,9 @@
 
 /api/admin-auth
   Cache-Control: no-store
+
+/api/admin-analytics-data
+  Cache-Control: no-store
+
+/api/analytics-track
+  Cache-Control: no-store

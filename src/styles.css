@@ -2542,6 +2542,22 @@ footer p {
   box-shadow: none;
 }
 
+.admin-setup-banner {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 14px 16px;
+  border: 1px solid rgba(255, 197, 92, 0.32);
+  border-radius: 16px;
+  background: rgba(255, 197, 92, 0.1);
+  color: #ffe0a3;
+  font-weight: 850;
+}
+
+.admin-setup-banner svg {
+  flex: 0 0 auto;
+}
+
 .admin-kpis {
   display: grid;
   grid-template-columns: repeat(5, minmax(0, 1fr));

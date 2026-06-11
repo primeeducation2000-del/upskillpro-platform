@@ -97,6 +97,8 @@ export default function AdminAnalyticsDashboard() {
   const [loginError, setLoginError] = useState('');
   const [activeSection, setActiveSection] = useState('Overview');
   const [visitors, setVisitors] = useState(initialVisitors);
+  const [analyticsSummary, setAnalyticsSummary] = useState(null);
+  const [analyticsStatus, setAnalyticsStatus] = useState({ setupRequired: false, realData: false });
   const [tick, setTick] = useState(0);
   const [logs, setLogs] = useState(() => {
     try {
@@ -126,8 +128,27 @@ export default function AdminAnalyticsDashboard() {
     if (!session.ok) return undefined;
     const timer = window.setInterval(() => {
       setTick((value) => value + 1);
-      setVisitors((current) => [createVisitor(current.length), ...current.slice(0, 11)]);
+      setVisitors((current) => (analyticsStatus.realData ? current : [createVisitor(current.length), ...current.slice(0, 11)]));
     }, 5200);
+    return () => window.clearInterval(timer);
+  }, [analyticsStatus.realData, session.ok]);
+
+  useEffect(() => {
+    if (!session.ok) return undefined;
+
+    const loadAnalytics = async () => {
+      const response = await fetch('/api/admin-analytics-data', { credentials: 'include' });
+      const data = await response.json();
+      if (!data.ok) return;
+      setAnalyticsStatus({ setupRequired: Boolean(data.setupRequired), realData: !data.setupRequired });
+      if (!data.setupRequired && data.summary) {
+        setAnalyticsSummary(data.summary);
+        setVisitors((data.events || []).map(eventToVisitor));
+      }
+    };
+
+    loadAnalytics();
+    const timer = window.setInterval(loadAnalytics, 10000);
     return () => window.clearInterval(timer);
   }, [session.ok]);
 
@@ -137,10 +158,10 @@ export default function AdminAnalyticsDashboard() {
     return () => window.clearTimeout(timeout);
   }, [session.ok]);
 
-  const metrics = useMemo(() => buildMetrics(visitors, tick), [visitors, tick]);
+  const metrics = useMemo(() => buildMetrics(visitors, tick, analyticsSummary), [analyticsSummary, visitors, tick]);
   const notifications = useMemo(() => buildNotifications(visitors), [visitors]);
-  const countryRows = useMemo(() => summarise(visitors, 'country'), [visitors]);
-  const cityRows = useMemo(() => summarise(visitors, 'city'), [visitors]);
+  const countryRows = useMemo(() => analyticsSummary?.countryRows?.map(toTableRow) || summarise(visitors, 'country'), [analyticsSummary, visitors]);
+  const cityRows = useMemo(() => analyticsSummary?.cityRows?.map(toTableRow) || summarise(visitors, 'city'), [analyticsSummary, visitors]);
 
   const logEvent = (message) => {
     const entry = { timestamp: new Date().toISOString(), message };
@@ -244,6 +265,13 @@ export default function AdminAnalyticsDashboard() {
           </div>
         </header>
 
+        {analyticsStatus.setupRequired && (
+          <div className="admin-setup-banner">
+            <ShieldCheck size={18} />
+            Real analytics code is deployed, but Cloudflare D1 is not bound yet. Add the `UPSKILLPRO_ANALYTICS_DB` binding and run `schema/analytics.sql` to start storing live visitor data.
+          </div>
+        )}
+
         <section className="admin-kpis">
           {metrics.map((metric) => {
             const Icon = metric.Icon;
@@ -261,7 +289,7 @@ export default function AdminAnalyticsDashboard() {
         <section className="admin-layout">
           <div className="admin-panel wide">
             <PanelTitle icon={Activity} title="Real-time visitor graph" subtitle="Updates every few seconds without page refresh" />
-            <LineChart data={metrics[0].trend} />
+            <LineChart data={analyticsSummary?.hourlyRows?.map((row) => row.value) || metrics[0].trend} />
           </div>
           <div className="admin-panel">
             <PanelTitle icon={Bell} title="Live notifications" subtitle="High-value events" />
@@ -280,11 +308,11 @@ export default function AdminAnalyticsDashboard() {
           </div>
           <div className="admin-panel">
             <PanelTitle icon={PieChart} title="Traffic sources" subtitle="Channel performance" />
-            <BarList rows={sources.map((source, index) => [source, 32 + ((index * 11 + tick * 3) % 58)])} />
+            <BarList rows={analyticsSummary?.sourceRows?.map((row) => [row.label || 'Unknown', row.value]) || sources.map((source, index) => [source, 32 + ((index * 11 + tick * 3) % 58)])} />
           </div>
           <div className="admin-panel">
             <PanelTitle icon={TrendingUp} title="Course performance" subtitle="Demand and conversion signals" />
-            <BarList rows={courses.map((course, index) => [course, 24 + ((index * 9 + tick * 5) % 64)])} />
+            <BarList rows={analyticsSummary?.courseRows?.map((row) => [row.label || 'Unknown', row.value]) || courses.map((course, index) => [course, 24 + ((index * 9 + tick * 5) % 64)])} />
           </div>
         </section>
 
@@ -337,7 +365,22 @@ function AdminLogin({ password, setPassword, mfaCode, setMfaCode, error, onSubmi
   );
 }
 
-function buildMetrics(visitors, tick) {
+function buildMetrics(visitors, tick, summary) {
+  if (summary) {
+    return [
+      { label: 'Live Visitors Right Now', value: summary.liveVisitors || 0, delta: 'real-time', Icon: Radio, trend: normaliseTrend(summary.hourlyRows) },
+      { label: 'Visitors Today', value: summary.visitorsToday || 0, delta: 'today', Icon: Eye },
+      { label: 'Visitors This Week', value: summary.visitorsThisWeek || 0, delta: '7 days', Icon: BarChart3 },
+      { label: 'Visitors This Month', value: summary.visitorsThisMonth || 0, delta: '30 days', Icon: TrendingUp },
+      { label: 'Total Visitors', value: summary.totalVisitors || 0, delta: 'all time', Icon: Globe2 },
+      { label: 'Unique Visitors', value: summary.uniqueVisitors || 0, delta: 'distinct sessions', Icon: Users },
+      { label: 'Returning Visitors', value: summary.returningVisitors || 0, delta: 'repeat sessions', Icon: Activity },
+      { label: 'Conversion Rate', value: summary.conversionRate || '0.0%', delta: 'lead events', Icon: Zap },
+      { label: 'Form Submissions', value: summary.formSubmissions || 0, delta: 'tracked leads', Icon: FileSpreadsheet },
+      { label: 'Course Enquiries', value: summary.courseEnquiries || 0, delta: 'course interest', Icon: Search },
+    ];
+  }
+
   const live = visitors.length + (tick % 4);
   return [
     { label: 'Live Visitors Right Now', value: live, delta: '+12% live', Icon: Radio, trend: makeTrend(10 + tick) },
@@ -351,6 +394,39 @@ function buildMetrics(visitors, tick) {
     { label: 'Form Submissions', value: 36 + (tick % 5), delta: 'today', Icon: FileSpreadsheet },
     { label: 'Course Enquiries', value: 58 + (tick % 7), delta: 'active demand', Icon: Search },
   ];
+}
+
+function eventToVisitor(event) {
+  const knownCity = cities.find(([country, city]) => country === event.country || city === event.city);
+  return {
+    id: event.session_id || event.id,
+    page: event.path || '/',
+    country: event.country || 'Unknown',
+    city: event.city || 'Unknown',
+    lat: knownCity?.[2] || 20,
+    lon: knownCity?.[3] || 0,
+    device: event.device || 'Unknown',
+    browser: event.browser || 'Unknown',
+    os: event.os || 'Unknown',
+    duration: event.duration_seconds || 0,
+    source: event.source || 'Direct',
+    entry: event.entry_page || '/',
+    exit: event.exit_page || 'Active',
+    pages: 1,
+    timezone: event.timezone || 'Unknown',
+    lastActivity: event.created_at ? new Date(event.created_at).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) : '',
+    course: event.course || 'General UpSkillPro',
+  };
+}
+
+function normaliseTrend(rows = []) {
+  const values = rows.map((row) => row.value);
+  return values.length ? values : makeTrend(10);
+}
+
+function toTableRow(row, _, list) {
+  const total = list.reduce((sum, item) => sum + (item.value || 0), 0) || 1;
+  return [row.label || 'Unknown', row.value || 0, `${Math.round(((row.value || 0) / total) * 100)}%`];
 }
 
 function makeTrend(seed) {
@@ -422,13 +498,14 @@ function DataTable({ title, rows }) {
 }
 
 function BarList({ rows }) {
+  const max = Math.max(...rows.map(([, value]) => value), 1);
   return (
     <div className="admin-bar-list">
       {rows.map(([label, value]) => (
         <div key={label}>
           <span>{label}</span>
           <strong>{value}%</strong>
-          <i><b style={{ width: `${value}%` }} /></i>
+          <i><b style={{ width: `${Math.max(8, Math.round((value / max) * 100))}%` }} /></i>
         </div>
       ))}
     </div>
@@ -442,10 +519,10 @@ function VisitorCard({ visitor }) {
         <strong>{visitor.id}</strong>
         <span>{visitor.city}, {visitor.country}</span>
       </div>
-      <div><MonitorSmartphone size={15} /> {visitor.device} · {visitor.browser} · {visitor.os}</div>
-      <div><Globe2 size={15} /> {visitor.source} · Entry {visitor.entry}</div>
-      <div><Clock3 size={15} /> {Math.round(visitor.duration / 60)}m session · {visitor.pages} pages</div>
-      <div><Activity size={15} /> {visitor.page} · {visitor.lastActivity}</div>
+      <div><MonitorSmartphone size={15} /> {visitor.device} - {visitor.browser} - {visitor.os}</div>
+      <div><Globe2 size={15} /> {visitor.source} - Entry {visitor.entry}</div>
+      <div><Clock3 size={15} /> {Math.round(visitor.duration / 60)}m session - {visitor.pages} pages</div>
+      <div><Activity size={15} /> {visitor.page} - {visitor.lastActivity}</div>
     </article>
   );
 }

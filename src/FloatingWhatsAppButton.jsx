@@ -23,6 +23,19 @@ function trackWhatsAppClick() {
 
   window.dispatchEvent(new CustomEvent('upskillpro:whatsapp-click', { detail: event }));
   window.dataLayer?.push(event);
+  fetch('/api/analytics-track', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({
+      eventType: 'whatsapp_click',
+      path: window.location.pathname,
+      pageUrl: window.location.href,
+      referrer: document.referrer,
+      course: 'ESOL',
+      metadata: { channel: 'whatsapp' },
+    }),
+    keepalive: true,
+  }).catch(() => {});
 }
 
 export default function FloatingWhatsAppButton() {

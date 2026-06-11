@@ -33,6 +33,7 @@ import {
 } from 'lucide-react';
 import EsolInitialAssessment from './EsolInitialAssessment.jsx';
 import FloatingWhatsAppButton from './FloatingWhatsAppButton.jsx';
+import AnalyticsTracker from './AnalyticsTracker.jsx';
 import './styles.css';
 
 const EspCoursebookWidget = React.lazy(() => import('./EspCoursebookWidget.jsx'));
@@ -260,6 +261,7 @@ function App() {
         </nav>
       </header>
       <main>{page}</main>
+      <AnalyticsTracker path={path} />
       <Footer onNav={onNav} />
       <FloatingWhatsAppButton />
       {!loadCoursebook && (
@@ -534,6 +536,24 @@ function TrainingRequestPage() {
     } catch (error) {
       console.info('Training request saved locally until the Cloudflare backend is available.', error);
     }
+
+    fetch('/api/analytics-track', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        eventType: 'training_request',
+        path: window.location.pathname,
+        pageUrl: window.location.href,
+        referrer: document.referrer,
+        course: form.industry || 'Workforce Training',
+        metadata: {
+          industry: form.industry,
+          deliveryPreference: form.deliveryPreference,
+          urgency: form.urgency,
+        },
+      }),
+      keepalive: true,
+    }).catch(() => {});
 
     setSubmitted(true);
     navigate('/confirmation');
