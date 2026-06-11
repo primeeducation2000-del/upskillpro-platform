@@ -18,6 +18,7 @@ import {
   MonitorCheck,
   Phone,
   PieChart,
+  ScanLine,
   Send,
   ShieldCheck,
   Sparkles,
@@ -256,6 +257,7 @@ function HomePage() {
           <div className="button-row">
             <ActionLink path="/contact" label="Book Consultation" icon={CalendarCheck} primary />
             <ActionLink path="/workforce-training-request" label="Request Training Plan" icon={ClipboardList} />
+            <ActionLink path="/esol-initial-assessment" label="Initial English Assessment" icon={ScanLine} />
           </div>
           <div className="hero-proof" aria-label="UpSkillPro delivery proof points">
             <span><strong>3</strong> priority sectors</span>
