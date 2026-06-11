@@ -2734,6 +2734,56 @@ footer p {
   margin-top: 12px;
 }
 
+.page-visit-table {
+  display: grid;
+  gap: 10px;
+}
+
+.page-visit-table > div {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 90px 80px;
+  gap: 12px;
+  align-items: center;
+  padding: 10px 0;
+  border-bottom: 1px solid rgba(148, 163, 255, 0.12);
+}
+
+.page-visit-table > div:first-child {
+  color: #8db8ff;
+  font-size: 0.78rem;
+  text-transform: uppercase;
+}
+
+.page-visit-table span {
+  color: #e8efff;
+  font-weight: 850;
+}
+
+.page-visit-table b {
+  color: #fff;
+}
+
+.page-visit-table em {
+  color: #36e39f;
+  font-style: normal;
+  font-weight: 900;
+}
+
+.page-visit-table i {
+  grid-column: 1 / -1;
+  height: 7px;
+  overflow: hidden;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.08);
+}
+
+.page-visit-table small {
+  display: block;
+  height: 100%;
+  border-radius: inherit;
+  background: linear-gradient(90deg, #63e6ff, #935cff);
+}
+
 .admin-data-table strong {
   color: #fff;
 }

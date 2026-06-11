@@ -67,7 +67,7 @@ export async function onRequestGet({ request, env }) {
 
   const now = Date.now();
   const iso = (msAgo) => new Date(now - msAgo).toISOString();
-  const [events, today, week, month, total, unique, returning, submissions, courseRows, sourceRows, countryRows, cityRows, hourlyRows, dailyRows] = await Promise.all([
+  const [events, today, week, month, total, unique, returning, submissions, courseRows, sourceRows, pageRows, countryRows, cityRows, hourlyRows, dailyRows] = await Promise.all([
     all(db, 'SELECT * FROM analytics_events ORDER BY created_at DESC LIMIT 80'),
     all(db, 'SELECT COUNT(*) AS count FROM analytics_events WHERE created_at >= ?', [new Date().toISOString().slice(0, 10)]),
     all(db, 'SELECT COUNT(*) AS count FROM analytics_events WHERE created_at >= ?', [iso(7 * 24 * 60 * 60 * 1000)]),
@@ -78,6 +78,7 @@ export async function onRequestGet({ request, env }) {
     all(db, "SELECT COUNT(*) AS count FROM analytics_events WHERE event_type IN ('lead_submit','training_request','whatsapp_click')"),
     all(db, 'SELECT course AS label, COUNT(*) AS value FROM analytics_events GROUP BY course ORDER BY value DESC LIMIT 8'),
     all(db, 'SELECT source AS label, COUNT(*) AS value FROM analytics_events GROUP BY source ORDER BY value DESC LIMIT 9'),
+    all(db, 'SELECT path AS label, COUNT(*) AS value FROM analytics_events GROUP BY path ORDER BY value DESC LIMIT 10'),
     all(db, 'SELECT country AS label, COUNT(*) AS value FROM analytics_events GROUP BY country ORDER BY value DESC LIMIT 8'),
     all(db, 'SELECT city AS label, COUNT(*) AS value FROM analytics_events GROUP BY city ORDER BY value DESC LIMIT 8'),
     all(db, "SELECT strftime('%H', created_at) AS label, COUNT(*) AS value FROM analytics_events WHERE created_at >= ? GROUP BY label ORDER BY label", [iso(24 * 60 * 60 * 1000)]),
@@ -104,6 +105,7 @@ export async function onRequestGet({ request, env }) {
       courseEnquiries: courseRows.reduce((sum, row) => sum + row.value, 0),
       courseRows,
       sourceRows,
+      pageRows,
       countryRows,
       cityRows,
       hourlyRows,

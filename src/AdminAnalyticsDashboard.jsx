@@ -162,6 +162,7 @@ export default function AdminAnalyticsDashboard() {
   const notifications = useMemo(() => buildNotifications(visitors), [visitors]);
   const countryRows = useMemo(() => analyticsSummary?.countryRows?.map(toTableRow) || summarise(visitors, 'country'), [analyticsSummary, visitors]);
   const cityRows = useMemo(() => analyticsSummary?.cityRows?.map(toTableRow) || summarise(visitors, 'city'), [analyticsSummary, visitors]);
+  const pageRows = useMemo(() => analyticsSummary?.pageRows?.map((row) => [formatPageLabel(row.label), row.value]) || summarisePages(visitors), [analyticsSummary, visitors]);
 
   const logEvent = (message) => {
     const entry = { timestamp: new Date().toISOString(), message };
@@ -318,6 +319,17 @@ export default function AdminAnalyticsDashboard() {
 
         <section className="admin-layout">
           <div className="admin-panel wide">
+            <PanelTitle icon={Eye} title="Pages visited" subtitle="Which UpSkillPro pages visitors are viewing most" />
+            <PageVisitTable rows={pageRows} total={pageRows.reduce((sum, [, value]) => sum + value, 0)} />
+          </div>
+          <div className="admin-panel">
+            <PanelTitle icon={Search} title="Page attention ranking" subtitle="Fast view of high-interest pages" />
+            <BarList rows={pageRows.slice(0, 8)} />
+          </div>
+        </section>
+
+        <section className="admin-layout">
+          <div className="admin-panel wide">
             <PanelTitle icon={Radio} title="Live visitor feed" subtitle="Anonymous intelligence only" />
             <div className="visitor-feed">
               {visitors.map((visitor) => <VisitorCard key={visitor.id} visitor={visitor} />)}
@@ -446,6 +458,20 @@ function summarise(rows, key) {
   return Object.entries(counts).sort((a, b) => b[1] - a[1]).slice(0, 5).map(([label, count]) => [label, count, `${Math.round((count / rows.length) * 100)}%`]);
 }
 
+function summarisePages(visitors) {
+  const counts = visitors.reduce((acc, visitor) => ({ ...acc, [visitor.page || '/']: (acc[visitor.page || '/'] || 0) + 1 }), {});
+  return Object.entries(counts).sort((a, b) => b[1] - a[1]).slice(0, 10).map(([path, count]) => [formatPageLabel(path), count]);
+}
+
+function formatPageLabel(path = '/') {
+  if (path === '/') return 'Home';
+  return path
+    .replace(/^\//, '')
+    .replaceAll('-', ' ')
+    .replaceAll('/', ' / ')
+    .replace(/\b\w/g, (char) => char.toUpperCase());
+}
+
 function PanelTitle({ icon: Icon, title, subtitle }) {
   return (
     <div className="admin-panel-title">
@@ -508,6 +534,25 @@ function BarList({ rows }) {
           <i><b style={{ width: `${Math.max(8, Math.round((value / max) * 100))}%` }} /></i>
         </div>
       ))}
+    </div>
+  );
+}
+
+function PageVisitTable({ rows, total }) {
+  return (
+    <div className="page-visit-table">
+      <div><strong>Page</strong><strong>Visits</strong><strong>Share</strong></div>
+      {rows.map(([label, value]) => {
+        const percentage = total ? Math.round((value / total) * 100) : 0;
+        return (
+          <div key={label}>
+            <span>{label}</span>
+            <b>{value}</b>
+            <em>{percentage}%</em>
+            <i><small style={{ width: `${Math.max(6, percentage)}%` }} /></i>
+          </div>
+        );
+      })}
     </div>
   );
 }
