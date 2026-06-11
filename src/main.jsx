@@ -28,6 +28,7 @@ import {
   X,
 } from 'lucide-react';
 import EsolInitialAssessment from './EsolInitialAssessment.jsx';
+import FloatingWhatsAppButton from './FloatingWhatsAppButton.jsx';
 import './styles.css';
 
 const EspCoursebookWidget = React.lazy(() => import('./EspCoursebookWidget.jsx'));
@@ -211,6 +212,7 @@ function App() {
       </header>
       <main>{page}</main>
       <Footer onNav={onNav} />
+      <FloatingWhatsAppButton />
       {!loadCoursebook && (
         <button
           className="coursebook-launcher"
