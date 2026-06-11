@@ -44,7 +44,7 @@ export default function EspCoursebookWidget({ startOpen = false, onClosed }) {
   const [bookmarks, setBookmarks] = useState([]);
   const [zoom, setZoom] = useState(1);
   const [turnDirection, setTurnDirection] = useState('next');
-  const [tocOpen, setTocOpen] = useState(true);
+  const [tocOpen, setTocOpen] = useState(() => (typeof window === 'undefined' ? true : window.innerWidth > 720));
   const [quizAnswers, setQuizAnswers] = useState({});
   const [writingResponses, setWritingResponses] = useState({});
   const [dragItems, setDragItems] = useState({});
@@ -202,7 +202,10 @@ export default function EspCoursebookWidget({ startOpen = false, onClosed }) {
                             key={page.id}
                             className={absoluteIndex === pageIndex ? 'active' : ''}
                             type="button"
-                            onClick={() => goToPage(absoluteIndex)}
+                            onClick={() => {
+                              goToPage(absoluteIndex);
+                              if (window.innerWidth <= 720) setTocOpen(false);
+                            }}
                           >
                             <span>{page.title}</span>
                             {bookmarks.includes(pageKey) && <BookmarkCheck size={15} />}

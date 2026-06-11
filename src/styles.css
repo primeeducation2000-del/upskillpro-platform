@@ -1997,21 +1997,36 @@ footer p {
   }
 
   .coursebook-topbar {
-    align-items: start;
+    align-items: center;
+    min-height: 64px;
+    padding: 10px 12px;
+  }
+
+  .coursebook-topbar > div:first-child span {
+    display: none;
   }
 
   .coursebook-topbar strong {
-    font-size: 0.9rem;
+    max-width: 156px;
+    overflow: hidden;
+    font-size: 0.86rem;
+    text-overflow: ellipsis;
+    white-space: nowrap;
   }
 
   .coursebook-actions {
-    flex-wrap: wrap;
+    flex-wrap: nowrap;
     justify-content: end;
+    gap: 5px;
   }
 
   .coursebook-actions button {
-    width: 34px;
-    height: 34px;
+    width: 32px;
+    height: 32px;
+  }
+
+  .coursebook-zoom {
+    display: none;
   }
 
   .coursebook-workspace,
@@ -2028,30 +2043,64 @@ footer p {
   .coursebook-toc.open {
     display: block;
     position: absolute;
-    inset: 72px 0 auto 0;
+    inset: 64px 0 auto 0;
     z-index: 5;
-    max-height: 58vh;
+    max-height: 62vh;
     border-right: 0;
     border-bottom: 1px solid var(--line);
     box-shadow: var(--shadow);
   }
 
   .coursebook-reader-toolbar {
-    gap: 10px;
+    grid-template-columns: auto 1fr;
+    gap: 8px;
+    padding: 10px 12px;
+  }
+
+  .coursebook-reader-toolbar strong {
+    grid-column: 1 / -1;
+    font-size: 0.78rem;
+  }
+
+  .coursebook-reader-toolbar button {
+    min-height: 36px;
+    padding: 7px 10px;
   }
 
   .coursebook-page {
     width: calc(100% - 20px);
-    padding: 22px;
+    padding: 18px;
+  }
+
+  .coursebook-page-meta {
+    margin-bottom: 10px;
+  }
+
+  .coursebook-page-meta span {
+    font-size: 0.68rem;
+  }
+
+  .coursebook-page-head {
+    align-items: center;
+    margin-bottom: 16px;
   }
 
   .coursebook-page-head h2 {
-    font-size: 1.65rem;
+    font-size: 1.45rem;
+    line-height: 1.12;
+  }
+
+  .coursebook-lesson p,
+  .coursebook-video p,
+  .coursebook-drag p,
+  .coursebook-writing p {
+    font-size: 0.98rem;
   }
 
   .coursebook-nav {
     display: grid;
     grid-template-columns: 1fr 1fr;
+    padding: 10px 12px;
   }
 
   .coursebook-nav span {
