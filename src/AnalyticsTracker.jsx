@@ -67,7 +67,7 @@ export default function AnalyticsTracker({ path }) {
   const startedAt = useRef(Date.now());
 
   useEffect(() => {
-    if (path.startsWith('/admin-analytics') || path.startsWith('/esol-initial-assessment')) return undefined;
+    if (path.startsWith('/admin-analytics')) return undefined;
     startedAt.current = Date.now();
     sendAnalyticsEvent('page_view', startedAt);
     const heartbeat = window.setInterval(() => sendAnalyticsEvent('heartbeat', startedAt), 60000);
