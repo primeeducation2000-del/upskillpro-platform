@@ -4,6 +4,7 @@ import {
   ArrowRight,
   BarChart3,
   BookOpenCheck,
+  BookOpen,
   BriefcaseBusiness,
   Building2,
   CalendarCheck,
@@ -28,6 +29,8 @@ import {
 } from 'lucide-react';
 import EsolInitialAssessment from './EsolInitialAssessment.jsx';
 import './styles.css';
+
+const EspCoursebookWidget = React.lazy(() => import('./EspCoursebookWidget.jsx'));
 
 const positioning =
   'UpSkillPro delivers ESP English and Soft Skills training to improve workforce performance, communication, and customer service across hospitality, healthcare, and business sectors.';
@@ -161,6 +164,8 @@ function navigate(path) {
 function App() {
   const [path, setPath] = useState(window.location.pathname);
   const [menuOpen, setMenuOpen] = useState(false);
+  const [loadCoursebook, setLoadCoursebook] = useState(false);
+  const [coursebookOpened, setCoursebookOpened] = useState(() => localStorage.getItem('upskillpro-coursebook-opened') === 'true');
 
   useEffect(() => {
     const onPop = () => setPath(window.location.pathname);
@@ -206,6 +211,27 @@ function App() {
       </header>
       <main>{page}</main>
       <Footer onNav={onNav} />
+      {!loadCoursebook && (
+        <button
+          className="coursebook-launcher"
+          type="button"
+          onClick={() => {
+            localStorage.setItem('upskillpro-coursebook-opened', 'true');
+            setCoursebookOpened(true);
+            setLoadCoursebook(true);
+          }}
+          aria-label="Open ESP coursebook"
+        >
+          <span className="coursebook-launcher-pulse" aria-hidden="true" />
+          <BookOpen size={26} />
+          <small>{coursebookOpened ? 'Resume' : 'ESP Book'}</small>
+        </button>
+      )}
+      {loadCoursebook && (
+        <React.Suspense fallback={null}>
+          <EspCoursebookWidget startOpen onClosed={() => setLoadCoursebook(false)} />
+        </React.Suspense>
+      )}
     </>
   );
 }
