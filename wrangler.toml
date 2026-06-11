@@ -1,0 +1,8 @@
+name = "upskillpro-platform"
+compatibility_date = "2026-06-11"
+pages_build_output_dir = "dist"
+
+[[d1_databases]]
+binding = "UPSKILLPRO_ANALYTICS_DB"
+database_name = "upskillpro-analytics"
+database_id = "56d9824b-c30c-4ae3-b618-df18f2e53617"
