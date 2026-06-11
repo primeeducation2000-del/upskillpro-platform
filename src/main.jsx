@@ -36,6 +36,7 @@ import FloatingWhatsAppButton from './FloatingWhatsAppButton.jsx';
 import './styles.css';
 
 const EspCoursebookWidget = React.lazy(() => import('./EspCoursebookWidget.jsx'));
+const AdminAnalyticsDashboard = React.lazy(() => import('./AdminAnalyticsDashboard.jsx'));
 
 const positioning =
   'UpSkillPro delivers ESP English and Soft Skills training to improve workforce performance, communication, and customer service across hospitality, healthcare, and business sectors.';
@@ -218,6 +219,14 @@ function App() {
 
   if (path.replace(/\/$/, '') === '/esol-initial-assessment') {
     return <EsolInitialAssessment />;
+  }
+
+  if (path.replace(/\/$/, '') === '/admin-analytics') {
+    return (
+      <React.Suspense fallback={<div className="admin-loading">Loading secure analytics...</div>}>
+        <AdminAnalyticsDashboard />
+      </React.Suspense>
+    );
   }
 
   const onNav = (event, targetPath) => {

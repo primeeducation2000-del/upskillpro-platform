@@ -1,0 +1,5 @@
+/admin-analytics
+  X-Robots-Tag: noindex, nofollow, noarchive
+
+/api/admin-auth
+  Cache-Control: no-store
