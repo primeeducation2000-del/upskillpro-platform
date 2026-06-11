@@ -2,7 +2,9 @@ import React, { useEffect, useMemo, useState } from 'react';
 import { createRoot } from 'react-dom/client';
 import {
   ArrowRight,
+  Activity,
   BarChart3,
+  BrainCircuit,
   BookOpenCheck,
   BookOpen,
   BriefcaseBusiness,
@@ -11,6 +13,7 @@ import {
   CheckCircle2,
   ClipboardList,
   FileText,
+  Gauge,
   Handshake,
   HeartPulse,
   Hotel,
@@ -23,6 +26,7 @@ import {
   Send,
   ShieldCheck,
   Sparkles,
+  Star,
   Target,
   Users,
   X,
@@ -154,6 +158,42 @@ const portalStats = [
   ['Department performance', '4.2/5', PieChart],
   ['Training completion', '64%', MonitorCheck],
   ['Reports ready', '12', FileText],
+];
+
+const intelligenceMetrics = [
+  {
+    title: 'Hospitality',
+    Icon: Hotel,
+    tone: 'gold',
+    score: 86,
+    metrics: [
+      ['Guest satisfaction', '72%', '89%', '+17%', [18, 32, 35, 48, 45, 58, 64, 65]],
+      ['Positive reviews', '3.8', '4.6', '+21%', [24, 26, 38, 45, 43, 55, 62, 66]],
+      ['Staff retention', '65%', '81%', '+16%', [22, 30, 38, 37, 46, 51, 55, 62]],
+    ],
+  },
+  {
+    title: 'Healthcare',
+    Icon: HeartPulse,
+    tone: 'teal',
+    score: 90,
+    metrics: [
+      ['Patient understanding', '58%', '87%', '+29%', [20, 30, 42, 38, 54, 52, 63, 72]],
+      ['Appointment compliance', '61%', '84%', '+23%', [21, 28, 40, 36, 46, 58, 62, 68]],
+      ['Communication confidence', '45%', '82%', '+37%', [18, 30, 28, 42, 38, 54, 49, 60]],
+    ],
+  },
+  {
+    title: 'Recruitment & Workforce',
+    Icon: BriefcaseBusiness,
+    tone: 'violet',
+    score: 88,
+    metrics: [
+      ['Interview success', '40%', '78%', '+38%', [19, 27, 24, 36, 33, 45, 50, 61]],
+      ['Workplace communication', '52%', '86%', '+34%', [18, 28, 26, 41, 39, 50, 58, 67]],
+      ['Staff productivity', '63%', '88%', '+25%', [20, 24, 34, 31, 43, 42, 53, 61]],
+    ],
+  },
 ];
 
 function navigate(path) {
@@ -315,6 +355,7 @@ function HomePage() {
           ))}
         </div>
       </Section>
+      <IntelligenceDashboard />
       <Section eyebrow="What we solve" title="Practical training for the barriers that slow teams down.">
         <div className="challenge-grid">
           {challenges.map((item) => (
@@ -705,6 +746,110 @@ function PortalPreview() {
         ))}
       </div>
     </section>
+  );
+}
+
+function IntelligenceDashboard() {
+  return (
+    <section className="intelligence-section" aria-label="Live intelligence dashboard for UpSkillPro training impact">
+      <div className="intelligence-shell">
+        <div className="intelligence-topline">
+          <div>
+            <p className="eyebrow">Live Intelligence Dashboard</p>
+            <h2>Language, communication, and soft skills translated into workforce performance.</h2>
+          </div>
+          <div className="live-indicator">
+            <span />
+            Real-time impact overview
+          </div>
+        </div>
+        <div className="intelligence-grid">
+          <aside className="engine-card">
+            <BrainCircuit size={34} />
+            <strong>UpSkillPro</strong>
+            <span>Intelligence Engine</span>
+            <div>
+              <small>System status</small>
+              <b><i /> Active</b>
+            </div>
+            <div>
+              <small>Data stream</small>
+              <b>Live</b>
+            </div>
+            <div>
+              <small>Analysis mode</small>
+              <b>Performance impact</b>
+            </div>
+            <div className="confidence-meter">
+              <span>Confidence level</span>
+              <strong>98%</strong>
+            </div>
+          </aside>
+          {intelligenceMetrics.map((sector) => (
+            <ImpactPanel key={sector.title} sector={sector} />
+          ))}
+          <aside className="executive-card">
+            <div className="impact-ring" style={{ '--impact-angle': '320deg' }}>
+              <span>High</span>
+            </div>
+            <h3>Executive Summary</h3>
+            <p>Training impact index shows stronger communication, engagement, and service readiness across key performance indicators.</p>
+            <ul>
+              <li><ShieldCheck size={16} /> Engagement level <strong>Strong</strong></li>
+              <li><Gauge size={16} /> Organisational readiness <strong>Improving</strong></li>
+              <li><Activity size={16} /> Communication health <strong>Excellent</strong></li>
+            </ul>
+          </aside>
+        </div>
+        <div className="intelligence-footer">
+          <span><Users size={18} /> Communication, ESOL, customer service, and workforce training drive measurable business outcomes.</span>
+          <small>Illustrative outcomes from training programmes</small>
+        </div>
+      </div>
+    </section>
+  );
+}
+
+function ImpactPanel({ sector }) {
+  const Icon = sector.Icon;
+
+  return (
+    <article className={`impact-panel ${sector.tone}`}>
+      <div className="impact-panel-head">
+        <Icon size={28} />
+        <h3>{sector.title}</h3>
+      </div>
+      <div className="impact-list">
+        {sector.metrics.map(([label, start, end, lift, points]) => (
+          <div className="impact-row" key={label}>
+            <Star size={20} />
+            <div>
+              <span>{label}</span>
+              <strong>{start} <em>-></em> {end}</strong>
+            </div>
+            <b>{lift}</b>
+            <Sparkline points={points} />
+          </div>
+        ))}
+      </div>
+      <div className="impact-score">
+        <span>Overall impact score</span>
+        <div className="score-ring" style={{ '--score-angle': `${sector.score * 3.6}deg` }}>
+          <strong>{sector.score}</strong>
+          <small>/100</small>
+        </div>
+      </div>
+    </article>
+  );
+}
+
+function Sparkline({ points }) {
+  const path = points.map((point, index) => `${index === 0 ? 'M' : 'L'} ${index * 10} ${72 - point}`).join(' ');
+  return (
+    <svg className="sparkline" viewBox="0 0 70 62" aria-hidden="true" focusable="false">
+      <path d={path} />
+      {points.map((point, index) => <circle key={`${point}-${index}`} cx={index * 10} cy={72 - point} r={index === points.length - 1 ? 3.2 : 2.2} />)}
+    </svg>
   );
 }
 
