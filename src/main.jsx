@@ -257,7 +257,7 @@ function HomePage() {
           <div className="button-row">
             <ActionLink path="/contact" label="Book Consultation" icon={CalendarCheck} primary />
             <ActionLink path="/workforce-training-request" label="Request Training Plan" icon={ClipboardList} />
-            <ActionLink path="/esol-initial-assessment" label="Initial English Assessment" icon={ScanLine} />
+            <ActionLink path="/esol-initial-assessment" label="Initial English Assessment" icon={ScanLine} variant="accent" />
           </div>
           <div className="hero-proof" aria-label="UpSkillPro delivery proof points">
             <span><strong>3</strong> priority sectors</span>
@@ -680,9 +680,9 @@ function PortalPreview() {
   );
 }
 
-function ActionLink({ path, label, icon: Icon, primary = false }) {
+function ActionLink({ path, label, icon: Icon, primary = false, variant = '' }) {
   return (
-    <a className={primary ? 'primary-button' : 'secondary-button'} href={path} onClick={(event) => { event.preventDefault(); navigate(path); }}>
+    <a className={primary ? 'primary-button' : variant === 'accent' ? 'accent-button' : 'secondary-button'} href={path} onClick={(event) => { event.preventDefault(); navigate(path); }}>
       <Icon size={18} />
       {label}
     </a>
