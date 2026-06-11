@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, useState } from 'react';
+import React, { useEffect, useMemo, useRef, useState } from 'react';
 import { createRoot } from 'react-dom/client';
 import {
   ArrowRight,
@@ -750,17 +750,54 @@ function PortalPreview() {
 }
 
 function IntelligenceDashboard() {
+  const sectionRef = useRef(null);
+  const [isLive, setIsLive] = useState(false);
+  const [refreshedAt, setRefreshedAt] = useState(() => new Date());
+
+  useEffect(() => {
+    const section = sectionRef.current;
+    if (!section) return undefined;
+
+    const reveal = () => setIsLive(true);
+    if (!('IntersectionObserver' in window)) {
+      reveal();
+      return undefined;
+    }
+
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        if (entry.isIntersecting) {
+          reveal();
+          observer.disconnect();
+        }
+      },
+      { threshold: 0.28 }
+    );
+
+    observer.observe(section);
+    return () => observer.disconnect();
+  }, []);
+
+  useEffect(() => {
+    if (!isLive) return undefined;
+    const timer = window.setInterval(() => setRefreshedAt(new Date()), 45000);
+    return () => window.clearInterval(timer);
+  }, [isLive]);
+
   return (
-    <section className="intelligence-section" aria-label="Live intelligence dashboard for UpSkillPro training impact">
-      <div className="intelligence-shell">
+    <section ref={sectionRef} className="intelligence-section" aria-label="Live intelligence dashboard for UpSkillPro training impact">
+      <div className={`intelligence-shell ${isLive ? 'is-live' : ''}`}>
         <div className="intelligence-topline">
           <div>
             <p className="eyebrow">Live Intelligence Dashboard</p>
             <h2>Language, communication, and soft skills translated into workforce performance.</h2>
           </div>
-          <div className="live-indicator">
-            <span />
-            Real-time impact overview
+          <div className="live-status-wrap">
+            <div className="live-indicator">
+              <span />
+              Real-time impact overview
+            </div>
+            <small>Data refreshed {formatRefreshTime(refreshedAt)}</small>
           </div>
         </div>
         <div className="intelligence-grid">
@@ -782,14 +819,14 @@ function IntelligenceDashboard() {
             </div>
             <div className="confidence-meter">
               <span>Confidence level</span>
-              <strong>98%</strong>
+              <strong><AnimatedValue from="0%" to="98%" active={isLive} /></strong>
             </div>
           </aside>
           {intelligenceMetrics.map((sector) => (
-            <ImpactPanel key={sector.title} sector={sector} />
+            <ImpactPanel key={sector.title} sector={sector} active={isLive} />
           ))}
           <aside className="executive-card">
-            <div className="impact-ring" style={{ '--impact-angle': '320deg' }}>
+            <div className="impact-ring" style={{ '--impact-angle': isLive ? '320deg' : '0deg' }}>
               <span>High</span>
             </div>
             <h3>Executive Summary</h3>
@@ -810,7 +847,7 @@ function IntelligenceDashboard() {
   );
 }
 
-function ImpactPanel({ sector }) {
+function ImpactPanel({ sector, active }) {
   const Icon = sector.Icon;
 
   return (
@@ -825,7 +862,7 @@ function ImpactPanel({ sector }) {
             <Star size={20} />
             <div>
               <span>{label}</span>
-              <strong>{start} <em>-></em> {end}</strong>
+              <strong>{start} <em>-></em> <AnimatedValue from={start} to={end} active={active} /></strong>
             </div>
             <b>{lift}</b>
             <Sparkline points={points} />
@@ -834,8 +871,8 @@ function ImpactPanel({ sector }) {
       </div>
       <div className="impact-score">
         <span>Overall impact score</span>
-        <div className="score-ring" style={{ '--score-angle': `${sector.score * 3.6}deg` }}>
-          <strong>{sector.score}</strong>
+        <div className="score-ring" style={{ '--score-angle': active ? `${sector.score * 3.6}deg` : '0deg' }}>
+          <strong><AnimatedValue from="0" to={`${sector.score}`} active={active} /></strong>
           <small>/100</small>
         </div>
       </div>
@@ -847,10 +884,56 @@ function Sparkline({ points }) {
   const path = points.map((point, index) => `${index === 0 ? 'M' : 'L'} ${index * 10} ${72 - point}`).join(' ');
   return (
     <svg className="sparkline" viewBox="0 0 70 62" aria-hidden="true" focusable="false">
-      <path d={path} />
+      <path d={path} pathLength="1" />
       {points.map((point, index) => <circle key={`${point}-${index}`} cx={index * 10} cy={72 - point} r={index === points.length - 1 ? 3.2 : 2.2} />)}
     </svg>
   );
+}
+
+function AnimatedValue({ from, to, active }) {
+  const [value, setValue] = useState(() => parseMetricValue(from));
+  const target = parseMetricValue(to);
+  const decimals = to.includes('.') ? 1 : 0;
+  const suffix = to.includes('%') ? '%' : '';
+
+  useEffect(() => {
+    const start = parseMetricValue(from);
+    const end = parseMetricValue(to);
+    const prefersReducedMotion = window.matchMedia?.('(prefers-reduced-motion: reduce)').matches;
+    let frame;
+
+    if (!active || prefersReducedMotion) {
+      setValue(active ? end : start);
+      return undefined;
+    }
+
+    const startedAt = performance.now();
+    const duration = 1100;
+
+    const tick = (now) => {
+      const progress = Math.min((now - startedAt) / duration, 1);
+      const eased = 1 - Math.pow(1 - progress, 3);
+      setValue(start + (end - start) * eased);
+      if (progress < 1) frame = requestAnimationFrame(tick);
+    };
+
+    frame = requestAnimationFrame(tick);
+    return () => cancelAnimationFrame(frame);
+  }, [active, from, to]);
+
+  return `${value.toFixed(decimals)}${suffix}`;
+}
+
+function parseMetricValue(value) {
+  const parsed = Number.parseFloat(String(value).replace(/[^\d.]/g, ''));
+  return Number.isFinite(parsed) ? parsed : 0;
+}
+
+function formatRefreshTime(date) {
+  const seconds = Math.max(0, Math.round((Date.now() - date.getTime()) / 1000));
+  if (seconds < 5) return 'just now';
+  if (seconds < 60) return `${seconds}s ago`;
+  return '1m ago';
 }
 
 function ActionLink({ path, label, icon: Icon, primary = false, variant = '' }) {
