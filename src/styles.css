@@ -3055,6 +3055,21 @@ footer p {
   background: rgba(11, 122, 117, 0.22);
 }
 
+.lms-sidebar nav button.locked,
+.lms-unit-tabs button.locked,
+.lms-step-nav button.locked {
+  border-color: rgba(255, 255, 255, 0.08);
+  background: rgba(255, 255, 255, 0.028);
+  color: rgba(219, 230, 255, 0.45);
+  cursor: not-allowed;
+  opacity: 0.58;
+}
+
+.lms-sidebar nav button.locked em,
+.lms-unit-tabs button.locked small {
+  color: rgba(219, 230, 255, 0.42);
+}
+
 .lms-logout {
   background: rgba(255, 255, 255, 0.07);
   box-shadow: none;
@@ -3265,6 +3280,146 @@ footer p {
 
 .lms-lessons strong {
   color: #fff;
+}
+
+.lms-step-shell {
+  display: grid;
+  grid-template-columns: minmax(210px, 0.28fr) minmax(0, 1fr);
+  gap: 16px;
+  align-items: start;
+}
+
+.lms-step-nav {
+  position: sticky;
+  top: 18px;
+  display: grid;
+  gap: 10px;
+}
+
+.lms-step-nav button {
+  display: grid;
+  grid-template-columns: 34px minmax(0, 1fr);
+  gap: 8px 10px;
+  align-items: center;
+  padding: 12px;
+  border: 1px solid rgba(115, 238, 225, 0.12);
+  border-radius: 14px;
+  background: rgba(255, 255, 255, 0.045);
+  color: #dbe6ff;
+  font: inherit;
+  text-align: left;
+  cursor: pointer;
+}
+
+.lms-step-nav button > span {
+  display: grid;
+  place-items: center;
+  width: 34px;
+  height: 34px;
+  grid-row: 1 / span 2;
+  border-radius: 999px;
+  background: rgba(99, 230, 255, 0.1);
+  color: #63e6ff;
+  font-weight: 950;
+}
+
+.lms-step-nav strong,
+.lms-step-nav small {
+  display: block;
+}
+
+.lms-step-nav small {
+  color: #9eb0c4;
+  font-weight: 850;
+}
+
+.lms-step-nav button.active {
+  border-color: rgba(115, 238, 225, 0.36);
+  background: linear-gradient(135deg, rgba(11, 122, 117, 0.34), rgba(99, 230, 255, 0.08));
+}
+
+.lms-step-nav button.complete > span {
+  background: rgba(54, 227, 159, 0.15);
+  color: #36e39f;
+}
+
+.lms-step-nav button.complete small {
+  color: #36e39f;
+}
+
+.lms-step-card {
+  display: grid;
+  gap: 18px;
+  min-height: 440px;
+  padding: clamp(20px, 3vw, 30px);
+  border: 1px solid rgba(115, 238, 225, 0.14);
+  border-radius: 20px;
+  background:
+    radial-gradient(circle at top right, rgba(54, 227, 159, 0.09), transparent 36%),
+    linear-gradient(180deg, rgba(255, 255, 255, 0.08), rgba(255, 255, 255, 0.035)),
+    rgba(7, 24, 34, 0.74);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.08), 0 20px 50px rgba(0, 0, 0, 0.18);
+  backdrop-filter: blur(18px);
+}
+
+.lms-step-card.complete {
+  border-color: rgba(54, 227, 159, 0.34);
+}
+
+.lms-step-card-head {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.lms-step-card-head svg {
+  color: #63e6ff;
+}
+
+.lms-step-card-head p {
+  margin-bottom: 3px;
+  color: #8ff0d3;
+  font-size: 0.82rem;
+  font-weight: 950;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.lms-step-card-head h3 {
+  color: #fff;
+  font-size: clamp(1.5rem, 2.4vw, 2.2rem);
+}
+
+.lms-step-card > p,
+.lms-language-box li,
+.lms-practice-box p {
+  color: #b9c8dd;
+}
+
+.lms-language-box,
+.lms-practice-box {
+  display: grid;
+  gap: 10px;
+  padding: 16px;
+  border: 1px solid rgba(255, 255, 255, 0.09);
+  border-radius: 16px;
+  background: rgba(255, 255, 255, 0.045);
+}
+
+.lms-language-box strong,
+.lms-practice-box strong {
+  color: #fff;
+}
+
+.lms-language-box ul {
+  display: grid;
+  gap: 8px;
+  margin: 0;
+  padding-left: 20px;
+}
+
+.lms-step-card button {
+  width: fit-content;
 }
 
 .lms-assessment-grid {
@@ -3509,8 +3664,26 @@ footer p {
 
   .lms-kpis,
   .lms-lessons,
-  .lms-assessment-grid {
+  .lms-assessment-grid,
+  .lms-step-shell {
     grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .lms-step-shell {
+    grid-template-columns: 1fr;
+  }
+
+  .lms-step-nav {
+    position: static;
+    grid-template-columns: repeat(5, minmax(0, 1fr));
+  }
+
+  .lms-step-nav button {
+    grid-template-columns: 1fr;
+  }
+
+  .lms-step-nav button > span {
+    grid-row: auto;
   }
 
   .lms-level-head {
@@ -3772,8 +3945,14 @@ footer p {
   .lms-kpis,
   .lms-unit-tabs,
   .lms-lessons,
-  .lms-assessment-grid {
+  .lms-assessment-grid,
+  .lms-step-shell,
+  .lms-step-nav {
     grid-template-columns: 1fr;
+  }
+
+  .lms-step-card {
+    min-height: auto;
   }
 
   .lms-hero {

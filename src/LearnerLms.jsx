@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import {
   Award,
   BookOpenCheck,
@@ -42,6 +42,7 @@ export default function LearnerLms() {
   const [progress, setProgress] = useState(readProgress);
   const [selectedLevelId, setSelectedLevelId] = useState(espCourse.levels[0].id);
   const [selectedUnitId, setSelectedUnitId] = useState(espCourse.levels[0].units[0].id);
+  const [activeStepId, setActiveStepId] = useState(espCourse.levels[0].units[0].lessons[0].id);
 
   useEffect(() => {
     document.title = 'UpSkillPro LMS';
@@ -60,6 +61,14 @@ export default function LearnerLms() {
   const selectedUnit = selectedLevel.units.find((unit) => unit.id === selectedUnitId) || selectedLevel.units[0];
   const courseProgress = getCourseProgress(progress);
   const unitProgress = getUnitProgress(selectedUnit, progress);
+  const unitSteps = getUnitSteps(selectedUnit);
+  const activeStep = unitSteps.find((step) => step.id === activeStepId) || getFirstAvailableStep(selectedUnit, progress);
+
+  useEffect(() => {
+    if (!isStepAvailable(selectedUnit, activeStepId, progress)) {
+      setActiveStepId(getFirstAvailableStep(selectedUnit, progress).id);
+    }
+  }, [activeStepId, progress, selectedUnit]);
 
   const login = (event) => {
     event.preventDefault();
@@ -96,23 +105,27 @@ export default function LearnerLms() {
           </div>
         </div>
         <nav>
-          {espCourse.levels.map((level) => {
+          {espCourse.levels.map((level, levelIndex) => {
             const levelProgress = getLevelProgress(level, progress);
+            const unlocked = isLevelUnlocked(levelIndex, progress);
             return (
               <button
                 key={level.id}
                 type="button"
-                className={level.id === selectedLevel.id ? 'active' : ''}
+                disabled={!unlocked}
+                className={`${level.id === selectedLevel.id ? 'active' : ''} ${unlocked ? '' : 'locked'}`}
                 onClick={() => {
+                  if (!unlocked) return;
                   setSelectedLevelId(level.id);
                   setSelectedUnitId(level.units[0].id);
+                  setActiveStepId(getFirstAvailableStep(level.units[0], progress).id);
                 }}
               >
                 <span>
                   <strong>{level.level}</strong>
-                  <small>{level.cefr}</small>
+                  <small>{unlocked ? level.cefr : `Locked until previous level is complete`}</small>
                 </span>
-                <em>{levelProgress}%</em>
+                <em>{unlocked ? `${levelProgress}%` : 'Locked'}</em>
               </button>
             );
           })}
@@ -150,12 +163,25 @@ export default function LearnerLms() {
             <ProgressBar value={getLevelProgress(selectedLevel, progress)} />
           </div>
           <div className="lms-unit-tabs">
-            {selectedLevel.units.map((unit) => (
-              <button key={unit.id} className={unit.id === selectedUnit.id ? 'active' : ''} type="button" onClick={() => setSelectedUnitId(unit.id)}>
+            {selectedLevel.units.map((unit, unitIndex) => {
+              const unlocked = isUnitUnlocked(selectedLevel, unitIndex, progress);
+              return (
+              <button
+                key={unit.id}
+                disabled={!unlocked}
+                className={`${unit.id === selectedUnit.id ? 'active' : ''} ${unlocked ? '' : 'locked'}`}
+                type="button"
+                onClick={() => {
+                  if (!unlocked) return;
+                  setSelectedUnitId(unit.id);
+                  setActiveStepId(getFirstAvailableStep(unit, progress).id);
+                }}
+              >
                 {unit.title}
-                <small>{getUnitProgress(unit, progress)}%</small>
+                <small>{unlocked ? `${getUnitProgress(unit, progress)}%` : 'Locked'}</small>
               </button>
-            ))}
+              );
+            })}
           </div>
         </section>
 
@@ -167,48 +193,107 @@ export default function LearnerLms() {
             <ProgressBar value={unitProgress} />
           </div>
 
-          <div className="lms-lessons">
-            {selectedUnit.lessons.map((lesson, index) => (
-              <article className={progress.lessons[lesson.id] ? 'complete' : ''} key={lesson.id}>
-                <div>
-                  <PlayCircle size={22} />
-                  <span>Lesson {index + 1}</span>
-                </div>
-                <h3>{lesson.title}</h3>
-                <p>{lesson.objective}</p>
-                <ul>{lesson.language.map((phrase) => <li key={phrase}>{phrase}</li>)}</ul>
-                <strong>Practice task</strong>
-                <p>{lesson.task}</p>
-                <button type="button" onClick={() => updateProgress((current) => ({ ...current, lessons: { ...current.lessons, [lesson.id]: true } }))}>
-                  <CheckCircle2 size={17} />
-                  {progress.lessons[lesson.id] ? 'Completed' : 'Mark Lesson Complete'}
-                </button>
-              </article>
-            ))}
-          </div>
-
-          <div className="lms-assessment-grid">
-            <QuizCard
-              type="Formative Assessment"
-              icon={ClipboardCheck}
-              assessment={selectedUnit.formative}
-              saved={progress.formative[selectedUnit.formative.id]}
-              onSave={(result) => updateProgress((current) => ({ ...current, formative: { ...current.formative, [selectedUnit.formative.id]: result } }))}
-            />
-            <QuizCard
-              type="Final Summative Assessment"
-              icon={GraduationCap}
-              assessment={selectedUnit.summative}
-              saved={progress.summative[selectedUnit.summative.id]}
-              writingValue={progress.writing[selectedUnit.summative.id] || ''}
-              onWriting={(value) => updateProgress((current) => ({ ...current, writing: { ...current.writing, [selectedUnit.summative.id]: value } }))}
-              onSave={(result) => updateProgress((current) => ({ ...current, summative: { ...current.summative, [selectedUnit.summative.id]: result } }))}
-              summative
+          <div className="lms-step-shell">
+            <StepNavigator unit={selectedUnit} activeStepId={activeStep.id} progress={progress} onSelect={setActiveStepId} />
+            <StepContent
+              step={activeStep}
+              unit={selectedUnit}
+              progress={progress}
+              updateProgress={updateProgress}
+              onNext={() => setActiveStepId(getNextAvailableStep(selectedUnit, activeStep.id, progress).id)}
             />
           </div>
         </section>
       </section>
     </main>
+  );
+}
+
+function StepNavigator({ unit, activeStepId, progress, onSelect }) {
+  return (
+    <div className="lms-step-nav">
+      {getUnitSteps(unit).map((step, index) => {
+        const available = isStepAvailable(unit, step.id, progress);
+        const complete = isStepComplete(step, progress);
+        return (
+          <button
+            key={step.id}
+            type="button"
+            disabled={!available}
+            className={`${step.id === activeStepId ? 'active' : ''} ${complete ? 'complete' : ''} ${available ? '' : 'locked'}`}
+            onClick={() => available && onSelect(step.id)}
+          >
+            <span>{index + 1}</span>
+            <strong>{step.label}</strong>
+            <small>{complete ? 'Complete' : available ? 'Available' : 'Locked'}</small>
+          </button>
+        );
+      })}
+    </div>
+  );
+}
+
+function StepContent({ step, unit, progress, updateProgress, onNext }) {
+  if (step.kind === 'lesson') {
+    const lesson = step.lesson;
+    const complete = Boolean(progress.lessons[lesson.id]);
+
+    return (
+      <article className={`lms-step-card ${complete ? 'complete' : ''}`}>
+        <div className="lms-step-card-head">
+          <PlayCircle size={24} />
+          <div>
+            <p>Knowledge Lesson</p>
+            <h3>{lesson.title}</h3>
+          </div>
+        </div>
+        <p>{lesson.objective}</p>
+        <div className="lms-language-box">
+          <strong>Useful language</strong>
+          <ul>{lesson.language.map((phrase) => <li key={phrase}>{phrase}</li>)}</ul>
+        </div>
+        <div className="lms-practice-box">
+          <strong>Practice task</strong>
+          <p>{lesson.task}</p>
+        </div>
+        <button
+          type="button"
+          onClick={() => {
+            updateProgress((current) => ({ ...current, lessons: { ...current.lessons, [lesson.id]: true } }));
+            window.setTimeout(onNext, 120);
+          }}
+        >
+          <CheckCircle2 size={17} />
+          {complete ? 'Lesson Complete - Continue' : 'Mark Lesson Complete'}
+        </button>
+      </article>
+    );
+  }
+
+  if (step.kind === 'formative') {
+    return (
+      <QuizCard
+        type="Formative Assessment"
+        icon={ClipboardCheck}
+        assessment={unit.formative}
+        saved={progress.formative[unit.formative.id]}
+        onSave={(result) => updateProgress((current) => ({ ...current, formative: { ...current.formative, [unit.formative.id]: result } }))}
+        onPassed={onNext}
+      />
+    );
+  }
+
+  return (
+    <QuizCard
+      type="Final Summative Assessment"
+      icon={GraduationCap}
+      assessment={unit.summative}
+      saved={progress.summative[unit.summative.id]}
+      writingValue={progress.writing[unit.summative.id] || ''}
+      onWriting={(value) => updateProgress((current) => ({ ...current, writing: { ...current.writing, [unit.summative.id]: value } }))}
+      onSave={(result) => updateProgress((current) => ({ ...current, summative: { ...current.summative, [unit.summative.id]: result } }))}
+      summative
+    />
   );
 }
 
@@ -251,7 +336,7 @@ function ProgressBar({ value }) {
   );
 }
 
-function QuizCard({ type, icon: Icon, assessment, saved, onSave, summative = false, writingValue = '', onWriting }) {
+function QuizCard({ type, icon: Icon, assessment, saved, onSave, onPassed, summative = false, writingValue = '', onWriting }) {
   const [answers, setAnswers] = useState({});
   const score = saved?.score ?? null;
   const passed = score !== null && score >= (summative ? 70 : 60);
@@ -260,6 +345,7 @@ function QuizCard({ type, icon: Icon, assessment, saved, onSave, summative = fal
     const correct = assessment.questions.reduce((total, question, index) => total + (answers[index] === question.answer ? 1 : 0), 0);
     const nextScore = Math.round((correct / assessment.questions.length) * 100);
     onSave({ score: nextScore, correct, total: assessment.questions.length, submittedAt: new Date().toISOString() });
+    if (nextScore >= (summative ? 70 : 60)) window.setTimeout(() => onPassed?.(), 160);
   };
 
   return (
@@ -301,6 +387,48 @@ function QuizCard({ type, icon: Icon, assessment, saved, onSave, summative = fal
 
 function countUnits() {
   return espCourse.levels.reduce((total, level) => total + level.units.length, 0);
+}
+
+function getUnitSteps(unit) {
+  return [
+    ...unit.lessons.map((lesson, index) => ({ id: lesson.id, kind: 'lesson', lesson, label: `Lesson ${index + 1}` })),
+    { id: unit.formative.id, kind: 'formative', label: 'Formative Check' },
+    { id: unit.summative.id, kind: 'summative', label: 'Final Assessment' },
+  ];
+}
+
+function getFirstAvailableStep(unit, progress) {
+  const steps = getUnitSteps(unit);
+  return steps.find((step) => isStepAvailable(unit, step.id, progress) && !isStepComplete(step, progress)) || steps[steps.length - 1];
+}
+
+function getNextAvailableStep(unit, currentStepId, progress, assumedCompleteStepId = currentStepId) {
+  const steps = getUnitSteps(unit);
+  const currentIndex = steps.findIndex((step) => step.id === currentStepId);
+  return steps.slice(currentIndex + 1).find((step) => isStepAvailable(unit, step.id, progress, assumedCompleteStepId)) || steps[currentIndex] || steps[0];
+}
+
+function isStepAvailable(unit, stepId, progress, assumedCompleteStepId = '') {
+  const steps = getUnitSteps(unit);
+  const stepIndex = steps.findIndex((step) => step.id === stepId);
+  if (stepIndex <= 0) return true;
+  return steps.slice(0, stepIndex).every((step) => step.id === assumedCompleteStepId || isStepComplete(step, progress));
+}
+
+function isStepComplete(step, progress) {
+  if (step.kind === 'lesson') return Boolean(progress.lessons[step.id]);
+  if (step.kind === 'formative') return progress.formative[step.id]?.score >= 60;
+  return progress.summative[step.id]?.score >= 70;
+}
+
+function isLevelUnlocked(levelIndex, progress) {
+  if (levelIndex === 0) return true;
+  return getLevelProgress(espCourse.levels[levelIndex - 1], progress) === 100;
+}
+
+function isUnitUnlocked(level, unitIndex, progress) {
+  if (unitIndex === 0) return true;
+  return getUnitProgress(level.units[unitIndex - 1], progress) === 100;
 }
 
 function getCourseProgress(progress) {
