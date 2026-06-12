@@ -17,18 +17,13 @@ import { espCourse } from './espLmsCourse.js';
 
 const LMS_SESSION_KEY = 'upskillpro-lms-session';
 const LMS_PROGRESS_KEY = 'upskillpro-esp-progress';
-const LMS_PASSWORD = 'ESP2026';
+const EMPTY_PROGRESS = { lessons: {}, formative: {}, summative: {}, writing: {} };
 
 function readProgress() {
   try {
-    return JSON.parse(localStorage.getItem(LMS_PROGRESS_KEY)) || {
-      lessons: {},
-      formative: {},
-      summative: {},
-      writing: {},
-    };
+    return { ...EMPTY_PROGRESS, ...(JSON.parse(localStorage.getItem(LMS_PROGRESS_KEY)) || {}) };
   } catch {
-    return { lessons: {}, formative: {}, summative: {}, writing: {} };
+    return EMPTY_PROGRESS;
   }
 }
 
@@ -37,8 +32,16 @@ function saveProgress(progress) {
 }
 
 export default function LearnerLms() {
-  const [isAuthed, setIsAuthed] = useState(() => localStorage.getItem(LMS_SESSION_KEY) === 'active');
+  const [isAuthed, setIsAuthed] = useState(() => Boolean(localStorage.getItem(LMS_SESSION_KEY)));
+  const [learner, setLearner] = useState(() => {
+    try {
+      return JSON.parse(localStorage.getItem(LMS_SESSION_KEY)) || null;
+    } catch {
+      return null;
+    }
+  });
   const [loginError, setLoginError] = useState('');
+  const [loadingSession, setLoadingSession] = useState(true);
   const [progress, setProgress] = useState(readProgress);
   const [selectedLevelId, setSelectedLevelId] = useState(espCourse.levels[0].id);
   const [selectedUnitId, setSelectedUnitId] = useState(espCourse.levels[0].units[0].id);
@@ -57,6 +60,35 @@ export default function LearnerLms() {
 
   useEffect(() => saveProgress(progress), [progress]);
 
+  useEffect(() => {
+    let cancelled = false;
+    fetch('/api/lms-learner-auth', { credentials: 'include' })
+      .then((response) => response.json())
+      .then(async (data) => {
+        if (cancelled) return;
+        if (data.ok && data.learner) {
+          setLearner(data.learner);
+          localStorage.setItem(LMS_SESSION_KEY, JSON.stringify(data.learner));
+          setIsAuthed(true);
+          const progressResponse = await fetch('/api/lms-progress', { credentials: 'include' }).then((response) => response.json()).catch(() => null);
+          if (!cancelled && progressResponse?.progress) setProgress({ ...EMPTY_PROGRESS, ...progressResponse.progress });
+        } else {
+          localStorage.removeItem(LMS_SESSION_KEY);
+          setIsAuthed(false);
+          setLearner(null);
+        }
+      })
+      .catch(() => {
+        if (!cancelled) setIsAuthed(Boolean(localStorage.getItem(LMS_SESSION_KEY)));
+      })
+      .finally(() => {
+        if (!cancelled) setLoadingSession(false);
+      });
+    return () => {
+      cancelled = true;
+    };
+  }, []);
+
   const selectedLevel = espCourse.levels.find((level) => level.id === selectedLevelId) || espCourse.levels[0];
   const selectedUnit = selectedLevel.units.find((unit) => unit.id === selectedUnitId) || selectedLevel.units[0];
   const courseProgress = getCourseProgress(progress);
@@ -70,28 +102,60 @@ export default function LearnerLms() {
     }
   }, [activeStepId, progress, selectedUnit]);
 
-  const login = (event) => {
+  const login = async (event) => {
     event.preventDefault();
-    const password = new FormData(event.currentTarget).get('password');
-    if (password !== LMS_PASSWORD) {
-      setLoginError('Invalid learner access code.');
+    setLoginError('');
+    const form = new FormData(event.currentTarget);
+    const response = await fetch('/api/lms-learner-auth', {
+      method: 'POST',
+      credentials: 'include',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        username: form.get('username'),
+        accessCode: form.get('accessCode'),
+      }),
+    }).then((item) => item.json()).catch(() => ({ ok: false, error: 'Login service is not available.' }));
+
+    if (!response.ok) {
+      setLoginError(response.error || 'Invalid username or access code.');
       return;
     }
-    localStorage.setItem(LMS_SESSION_KEY, 'active');
+    setLearner(response.learner);
+    localStorage.setItem(LMS_SESSION_KEY, JSON.stringify(response.learner));
     setIsAuthed(true);
+    const progressResponse = await fetch('/api/lms-progress', { credentials: 'include' }).then((item) => item.json()).catch(() => null);
+    if (progressResponse?.progress) setProgress({ ...EMPTY_PROGRESS, ...progressResponse.progress });
   };
 
-  const logout = () => {
+  const logout = async () => {
+    await fetch('/api/lms-learner-auth', {
+      method: 'POST',
+      credentials: 'include',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ action: 'logout' }),
+    }).catch(() => null);
     localStorage.removeItem(LMS_SESSION_KEY);
     setIsAuthed(false);
+    setLearner(null);
   };
 
-  const updateProgress = (updater) => setProgress((current) => {
+  const persistProgress = (nextProgress, attempt = null) => {
+    fetch('/api/lms-progress', {
+      method: 'POST',
+      credentials: 'include',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ progress: nextProgress, attempt }),
+    }).catch(() => null);
+  };
+
+  const updateProgress = (updater, attempt = null) => setProgress((current) => {
     const next = updater(current);
     saveProgress(next);
+    persistProgress(next, attempt);
     return next;
   });
 
+  if (loadingSession) return <div className="admin-loading">Loading learner portal...</div>;
   if (!isAuthed) return <LearnerLogin onSubmit={login} error={loginError} />;
 
   return (
@@ -138,7 +202,7 @@ export default function LearnerLms() {
           <div>
             <p>Private learner portal</p>
             <h1>{espCourse.title}</h1>
-            <span>{espCourse.subtitle}</span>
+            <span>Welcome, {learner?.fullName || learner?.username || 'learner'}. {espCourse.subtitle}</span>
           </div>
           <div className="lms-progress-orb" style={{ '--course-progress': `${courseProgress * 3.6}deg` }}>
             <strong>{courseProgress}%</strong>
@@ -198,6 +262,7 @@ export default function LearnerLms() {
             <StepContent
               step={activeStep}
               unit={selectedUnit}
+              level={selectedLevel}
               progress={progress}
               updateProgress={updateProgress}
               onNext={() => setActiveStepId(getNextAvailableStep(selectedUnit, activeStep.id, progress).id)}
@@ -233,7 +298,7 @@ function StepNavigator({ unit, activeStepId, progress, onSelect }) {
   );
 }
 
-function StepContent({ step, unit, progress, updateProgress, onNext }) {
+function StepContent({ step, unit, level, progress, updateProgress, onNext }) {
   if (step.kind === 'lesson') {
     const lesson = step.lesson;
     const complete = Boolean(progress.lessons[lesson.id]);
@@ -275,9 +340,11 @@ function StepContent({ step, unit, progress, updateProgress, onNext }) {
       <QuizCard
         type="Formative Assessment"
         icon={ClipboardCheck}
+        level={level}
+        unit={unit}
         assessment={unit.formative}
         saved={progress.formative[unit.formative.id]}
-        onSave={(result) => updateProgress((current) => ({ ...current, formative: { ...current.formative, [unit.formative.id]: result } }))}
+        onSave={(result, attempt) => updateProgress((current) => ({ ...current, formative: { ...current.formative, [unit.formative.id]: result } }), attempt)}
         onPassed={onNext}
       />
     );
@@ -287,11 +354,13 @@ function StepContent({ step, unit, progress, updateProgress, onNext }) {
     <QuizCard
       type="Final Summative Assessment"
       icon={GraduationCap}
+      level={level}
+      unit={unit}
       assessment={unit.summative}
       saved={progress.summative[unit.summative.id]}
       writingValue={progress.writing[unit.summative.id] || ''}
       onWriting={(value) => updateProgress((current) => ({ ...current, writing: { ...current.writing, [unit.summative.id]: value } }))}
-      onSave={(result) => updateProgress((current) => ({ ...current, summative: { ...current.summative, [unit.summative.id]: result } }))}
+      onSave={(result, attempt) => updateProgress((current) => ({ ...current, summative: { ...current.summative, [unit.summative.id]: result } }), attempt)}
       summative
     />
   );
@@ -306,12 +375,16 @@ function LearnerLogin({ onSubmit, error }) {
         <h1>UpSkillPro LMS</h1>
         <span>Access the ESP English pathway from Beginner to Advanced.</span>
         <label>
-          <span>Learner access code</span>
-          <input name="password" type="password" required autoComplete="current-password" />
+          <span>Username</span>
+          <input name="username" required autoComplete="username" placeholder="learner001" />
+        </label>
+        <label>
+          <span>Access code</span>
+          <input name="accessCode" type="password" required autoComplete="current-password" placeholder="Learner001!" />
         </label>
         {error && <div className="lms-login-error">{error}</div>}
         <button type="submit">Enter LMS <ChevronRight size={18} /></button>
-        <small>Initial access code: ESP2026</small>
+        <small>Use the unique username and access code issued by your assessor.</small>
       </form>
     </main>
   );
@@ -336,7 +409,7 @@ function ProgressBar({ value }) {
   );
 }
 
-function QuizCard({ type, icon: Icon, assessment, saved, onSave, onPassed, summative = false, writingValue = '', onWriting }) {
+function QuizCard({ type, icon: Icon, level, unit, assessment, saved, onSave, onPassed, summative = false, writingValue = '', onWriting }) {
   const [answers, setAnswers] = useState({});
   const score = saved?.score ?? null;
   const passed = score !== null && score >= (summative ? 70 : 60);
@@ -344,7 +417,26 @@ function QuizCard({ type, icon: Icon, assessment, saved, onSave, onPassed, summa
   const submit = () => {
     const correct = assessment.questions.reduce((total, question, index) => total + (answers[index] === question.answer ? 1 : 0), 0);
     const nextScore = Math.round((correct / assessment.questions.length) * 100);
-    onSave({ score: nextScore, correct, total: assessment.questions.length, submittedAt: new Date().toISOString() });
+    const answerDetails = assessment.questions.map((question, index) => ({
+      question: question.prompt,
+      selectedIndex: answers[index] ?? null,
+      selectedAnswer: answers[index] === undefined ? '' : question.options[answers[index]],
+      correctIndex: question.answer,
+      correctAnswer: question.options[question.answer],
+      isCorrect: answers[index] === question.answer,
+    }));
+    const result = { score: nextScore, correct, total: assessment.questions.length, submittedAt: new Date().toISOString(), answers: answerDetails };
+    onSave(result, {
+      assessmentId: assessment.id,
+      assessmentType: summative ? 'summative' : 'formative',
+      levelId: level.id,
+      unitId: unit.id,
+      score: nextScore,
+      correct,
+      total: assessment.questions.length,
+      answers: answerDetails,
+      writingResponse: summative ? writingValue : '',
+    });
     if (nextScore >= (summative ? 70 : 60)) window.setTimeout(() => onPassed?.(), 160);
   };
 

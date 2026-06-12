@@ -39,6 +39,7 @@ import './styles.css';
 const EspCoursebookWidget = React.lazy(() => import('./EspCoursebookWidget.jsx'));
 const AdminAnalyticsDashboard = React.lazy(() => import('./AdminAnalyticsDashboard.jsx'));
 const LearnerLms = React.lazy(() => import('./LearnerLms.jsx'));
+const AssessorDashboard = React.lazy(() => import('./AssessorDashboard.jsx'));
 
 const positioning =
   'UpSkillPro delivers ESP English and Soft Skills training to improve workforce performance, communication, and customer service across hospitality, healthcare, and business sectors.';
@@ -235,6 +236,14 @@ function App() {
     return (
       <React.Suspense fallback={<div className="admin-loading">Loading LMS...</div>}>
         <LearnerLms />
+      </React.Suspense>
+    );
+  }
+
+  if (path.startsWith('/assessor-login') || path.startsWith('/assessor')) {
+    return (
+      <React.Suspense fallback={<div className="admin-loading">Loading assessor portal...</div>}>
+        <AssessorDashboard />
       </React.Suspense>
     );
   }

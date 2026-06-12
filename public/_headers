@@ -15,3 +15,21 @@
 
 /learner/*
   X-Robots-Tag: noindex, nofollow, noarchive
+
+/assessor-login
+  X-Robots-Tag: noindex, nofollow, noarchive
+
+/assessor/*
+  X-Robots-Tag: noindex, nofollow, noarchive
+
+/api/lms-learner-auth
+  Cache-Control: no-store
+
+/api/lms-progress
+  Cache-Control: no-store
+
+/api/assessor-auth
+  Cache-Control: no-store
+
+/api/assessor-lms-data
+  Cache-Control: no-store
