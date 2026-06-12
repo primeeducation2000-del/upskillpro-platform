@@ -202,7 +202,7 @@ export default function LearnerLms() {
           <div>
             <p>Private learner portal</p>
             <h1>{espCourse.title}</h1>
-            <span>Welcome, {learner?.fullName || learner?.username || 'learner'}. {espCourse.subtitle}</span>
+            <span>Welcome, {learner?.username || learner?.fullName || 'learner'}. {espCourse.subtitle}</span>
           </div>
           <div className="lms-progress-orb" style={{ '--course-progress': `${courseProgress * 3.6}deg` }}>
             <strong>{courseProgress}%</strong>
