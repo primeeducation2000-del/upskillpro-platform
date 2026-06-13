@@ -70,6 +70,10 @@ function parseJson(value, fallback) {
 }
 
 function resetProgress(progress, reset) {
+  if (reset.clearAll) {
+    return { lessons: {}, formative: {}, summative: {}, writing: {}, vocabulary: {} };
+  }
+
   const next = {
     lessons: { ...(progress.lessons || {}) },
     formative: { ...(progress.formative || {}) },

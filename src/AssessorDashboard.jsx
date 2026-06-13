@@ -812,7 +812,7 @@ function buildResetOptions() {
   });
 
   return [
-    { id: 'all', label: 'Entire pathway', reset: { lessonIds: allLessons, formativeIds: allFormative, summativeIds: allSummative, vocabularyIds: allVocabulary } },
+    { id: 'all', label: 'Entire pathway', reset: { clearAll: true, lessonIds: allLessons, formativeIds: allFormative, summativeIds: allSummative, vocabularyIds: allVocabulary } },
     ...options,
   ];
 }
