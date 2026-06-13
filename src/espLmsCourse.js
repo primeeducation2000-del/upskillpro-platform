@@ -22,50 +22,7 @@ export const espCourse = {
       level: 'Intermediate',
       cefr: 'B1',
       goal: 'Handle routine workplace situations, explain processes, and communicate with more confidence.',
-      units: [
-        {
-          id: 'b1-u1',
-          title: 'Handling Problems and Complaints',
-          outcome: 'Learners can respond to complaints calmly and explain next steps.',
-          lessons: [
-            lesson('b1-u1-l1', 'Acknowledging concerns', 'Use language that shows listening and respect.', ['I am sorry to hear that.', 'I understand your concern.', 'Thank you for telling us.'], 'Write three acknowledgement phrases.'),
-            lesson('b1-u1-l2', 'Clarifying the issue', 'Ask questions to understand the problem.', ['When did this happen?', 'Can you explain what you noticed?', 'Which room was this in?'], 'Write three clarifying questions.'),
-            lesson('b1-u1-l3', 'Offering solutions', 'Explain what you can do now and what will happen next.', ['I can arrange that for you.', 'I will speak to my manager.', 'We can offer another appointment.'], 'Write a short solution to a customer problem.'),
-          ],
-          formative: quiz('b1-u1-f', [
-            q('Which phrase acknowledges a concern?', ['That is not my problem.', 'I understand your concern.', 'Wait outside.'], 1),
-            q('Which question clarifies?', ['When did this happen?', 'Are you happy?', 'Is blue your colour?'], 0),
-            q('Which is solution language?', ['I can arrange that for you.', 'No.', 'Maybe nothing.'], 0),
-          ]),
-          summative: summative('b1-u1-s', [
-            q('Best response to a complaint:', ['Calm down.', 'I am sorry to hear that. Let me check what happened.', 'Go away.'], 1),
-            q('Which is professional?', ['I will follow this up today.', 'Not my job.', 'You are wrong.'], 0),
-            q('Which is a clarifying question?', ['Can you tell me when it happened?', 'Do you like coffee?', 'Is it raining?'], 0),
-            q('Which phrase gives a next step?', ['I will update you in 20 minutes.', 'Yesterday was busy.', 'I like my job.'], 0),
-          ], 'Write 100-130 words responding to a customer or patient complaint. Include acknowledgement, clarification, solution, and follow-up.'),
-        },
-        {
-          id: 'b1-u2',
-          title: 'Explaining Workplace Processes',
-          outcome: 'Learners can explain a routine process step by step.',
-          lessons: [
-            lesson('b1-u2-l1', 'Sequencing language', 'Use sequence markers to organise information.', ['First', 'Next', 'After that', 'Finally'], 'Write a four-step process using sequence words.'),
-            lesson('b1-u2-l2', 'Giving reasons', 'Explain why actions are required.', ['This is required for safety.', 'We need this information to confirm your booking.', 'This helps us avoid delays.'], 'Write two reasons for a workplace rule.'),
-            lesson('b1-u2-l3', 'Confirming completion', 'Report that a task or process is complete.', ['The form has been submitted.', 'The room has been checked.', 'The patient has arrived.'], 'Write three completion updates.'),
-          ],
-          formative: quiz('b1-u2-f', [
-            q('Which is a sequence word?', ['Finally', 'Maybe', 'Blue'], 0),
-            q('Which gives a reason?', ['This helps us avoid delays.', 'I went home.', 'It is on the table.'], 0),
-            q('Which reports completion?', ['The report has been sent.', 'Send report now?', 'Report nice.'], 0),
-          ]),
-          summative: summative('b1-u2-s', [
-            q('Choose the best sequence:', ['First, next, finally', 'Blue, table, manager', 'Maybe, always, late'], 0),
-            q('Which sentence explains why?', ['This is required for safety.', 'Safety is a word.', 'I like safety.'], 0),
-            q('Which is a completion update?', ['The booking has been confirmed.', 'Please confirm?', 'Booking maybe.'], 0),
-            q('Which sentence is clearest?', ['After that, send the confirmation email.', 'Email after that send confirmation.', 'Confirmation after email that.'], 0),
-          ], 'Write 100-130 words explaining an important workplace process step by step.'),
-        },
-      ],
+      units: intermediateUnits(),
     },
     {
       id: 'upper-intermediate',
@@ -239,7 +196,7 @@ const vocabularyUnits = {
 };
 
 espCourse.levels.forEach((level) => {
-  if (!['beginner', 'elementary'].includes(level.id)) level.units.push(vocabularyUnits[level.id]);
+  if (!['beginner', 'elementary', 'intermediate'].includes(level.id)) level.units.push(vocabularyUnits[level.id]);
 });
 
 function beginnerUnits() {
@@ -442,6 +399,196 @@ function beginnerUnits() {
       q('Choose the polite closing.', ['Have a good day.', 'Finished now.', 'Go.'], 0),
     ], 'Write 70-90 words about yourself at work. Include your role, routine, one customer phrase, one request, and one problem report.')),
   ];
+}
+
+function intermediateUnits() {
+  return [
+    intermediateUnit('b1-u1', 'Handling Problems and Complaints', 'Learners can respond to complaints calmly and explain next steps.', [
+      lesson('b1-u1-l1', 'Acknowledging concerns', 'Use language that shows listening and respect.', ['I am sorry to hear that.', 'I understand your concern.', 'Thank you for telling us.'], 'Write three acknowledgement phrases.'),
+      lesson('b1-u1-l2', 'Clarifying the issue', 'Ask questions to understand the problem.', ['When did this happen?', 'Can you explain what you noticed?', 'Which room was this in?'], 'Write three clarifying questions.'),
+      lesson('b1-u1-l3', 'Offering solutions', 'Explain what you can do now and what will happen next.', ['I can arrange that for you.', 'I will speak to my manager.', 'We can offer another appointment.'], 'Write a short solution to a customer problem.'),
+    ], vocabularyActivity('b1-u1-vocab', 'Complaint Handling Vocabulary', ['concern', 'complaint', 'clarify', 'solution', 'arrange', 'follow-up', 'apologise', 'investigate', 'resolve', 'update'], {
+      story: [text('When a customer makes a '), gap('complaint', ['complaint', 'arrange', 'update']), text(', I listen carefully and '), gap('clarify', ['resolve', 'clarify', 'follow-up']), text(' the details. Then I offer a practical '), gap('solution', ['solution', 'concern', 'investigate']), text('.')],
+      match: [match('concern', 'A worry or problem someone has.'), match('investigate', 'To look into what happened.'), match('follow-up', 'An action or message after the first contact.')],
+      writingWords: ['complaint', 'clarify', 'solution', 'update'],
+    }), quiz('b1-u1-f', [
+      q('Which phrase acknowledges a concern?', ['That is not my problem.', 'I understand your concern.', 'Wait outside.'], 1),
+      q('Which question clarifies?', ['When did this happen?', 'Are you happy?', 'Is blue your colour?'], 0),
+      q('Which is solution language?', ['I can arrange that for you.', 'No.', 'Maybe nothing.'], 0),
+    ]), summative('b1-u1-s', [
+      q('Best response to a complaint:', ['Calm down.', 'I am sorry to hear that. Let me check what happened.', 'Go away.'], 1),
+      q('Which is professional?', ['I will follow this up today.', 'Not my job.', 'You are wrong.'], 0),
+      q('Which is a clarifying question?', ['Can you tell me when it happened?', 'Do you like coffee?', 'Is it raining?'], 0),
+      q('Which phrase gives a next step?', ['I will update you in 20 minutes.', 'Yesterday was busy.', 'I like my job.'], 0),
+    ], 'Write 100-130 words responding to a customer or patient complaint. Include acknowledgement, clarification, solution, and follow-up.')),
+    intermediateUnit('b1-u2', 'Explaining Workplace Processes', 'Learners can explain a routine process step by step.', [
+      lesson('b1-u2-l1', 'Sequencing language', 'Use sequence markers to organise information.', ['First', 'Next', 'After that', 'Finally'], 'Write a four-step process using sequence words.'),
+      lesson('b1-u2-l2', 'Giving reasons', 'Explain why actions are required.', ['This is required for safety.', 'We need this information to confirm your booking.', 'This helps us avoid delays.'], 'Write two reasons for a workplace rule.'),
+      lesson('b1-u2-l3', 'Confirming completion', 'Report that a task or process is complete.', ['The form has been submitted.', 'The room has been checked.', 'The patient has arrived.'], 'Write three completion updates.'),
+    ], vocabularyActivity('b1-u2-vocab', 'Process Vocabulary', ['process', 'step', 'required', 'confirm', 'submit', 'complete', 'delay', 'avoid', 'procedure', 'record'], {
+      story: [text('This '), gap('process', ['process', 'delay', 'record']), text(' has four steps. First, we check the details. Next, we '), gap('confirm', ['submit', 'confirm', 'avoid']), text(' the booking. Finally, we update the '), gap('record', ['record', 'required', 'complete']), text('.')],
+      match: [match('procedure', 'The official way to do a task.'), match('avoid', 'To stop something from happening.'), match('submit', 'To send or hand in a form.')],
+      writingWords: ['process', 'required', 'complete', 'delay'],
+    }), quiz('b1-u2-f', [
+      q('Which is a sequence word?', ['Finally', 'Maybe', 'Blue'], 0),
+      q('Which gives a reason?', ['This helps us avoid delays.', 'I went home.', 'It is on the table.'], 0),
+      q('Which reports completion?', ['The report has been sent.', 'Send report now?', 'Report nice.'], 0),
+    ]), summative('b1-u2-s', [
+      q('Choose the best sequence:', ['First, next, finally', 'Blue, table, manager', 'Maybe, always, late'], 0),
+      q('Which sentence explains why?', ['This is required for safety.', 'Safety is a word.', 'I like safety.'], 0),
+      q('Which is a completion update?', ['The booking has been confirmed.', 'Please confirm?', 'Booking maybe.'], 0),
+      q('Which sentence is clearest?', ['After that, send the confirmation email.', 'Email after that send confirmation.', 'Confirmation after email that.'], 0),
+    ], 'Write 100-130 words explaining an important workplace process step by step.')),
+    intermediateUnit('b1-u3', 'Incident Reports and Workplace Notes', 'Learners can describe what happened, when it happened, and what action was taken.', [
+      lesson('b1-u3-l1', 'Describing events clearly', 'Use clear language to report an event.', ['The incident happened at 2 pm.', 'A customer slipped near the entrance.', 'No one was injured.'], 'Write three event-report sentences.'),
+      lesson('b1-u3-l2', 'Time, sequence, and action', 'Connect events with time and action language.', ['After that, I called the supervisor.', 'Then we cleaned the area.', 'Finally, we completed the report.'], 'Write a short sequence of actions.'),
+      lesson('b1-u3-l3', 'Neutral reporting tone', 'Write facts without blame.', ['According to the record...', 'The available information shows...', 'The issue was reported by staff.'], 'Rewrite an emotional report in a neutral tone.'),
+    ], vocabularyActivity('b1-u3-vocab', 'Incident Vocabulary', ['incident', 'injured', 'slipped', 'entrance', 'supervisor', 'reported', 'record', 'available', 'neutral', 'action'], {
+      story: [text('The '), gap('incident', ['incident', 'available', 'neutral']), text(' happened near the entrance. A customer '), gap('slipped', ['reported', 'slipped', 'record']), text(', but no one was '), gap('injured', ['action', 'injured', 'supervisor']), text('.')],
+      match: [match('neutral', 'Fair and based on facts.'), match('record', 'Written information kept for reference.'), match('action', 'Something done to respond.')],
+      writingWords: ['incident', 'reported', 'record', 'action'],
+    }), quiz('b1-u3-f', [
+      q('Which sentence reports an event?', ['The incident happened at 2 pm.', 'I like the entrance.', 'The entrance is blue.'], 0),
+      q('Which phrase is neutral?', ['The available information shows...', 'He was careless.', 'They are always bad.'], 0),
+      q('Which shows sequence?', ['After that, I called the supervisor.', 'Supervisor call.', 'I like calling.'], 0),
+    ]), summative('b1-u3-s', [
+      q('Choose the factual report.', ['A customer slipped near the entrance.', 'The customer was silly.', 'Bad thing happened.'], 0),
+      q('Which phrase avoids blame?', ['According to the record...', 'It was his fault.', 'They caused it.'], 0),
+      q('Which is an action taken?', ['We completed the report.', 'The report is white.', 'Reports are useful.'], 0),
+      q('Which sentence is clearest?', ['No one was injured.', 'No injured was one.', 'Injured no one maybe.'], 0),
+    ], 'Write 100-130 words describing a workplace incident, the sequence of actions, and the follow-up.')),
+    intermediateUnit('b1-u4', 'Customer Follow-up and Updates', 'Learners can update customers, explain progress, and manage expectations.', [
+      lesson('b1-u4-l1', 'Giving progress updates', 'Tell someone what has happened so far.', ['We have checked your request.', 'The team is reviewing the details.', 'Your case is still in progress.'], 'Write three progress updates.'),
+      lesson('b1-u4-l2', 'Managing expectations', 'Explain realistic times and next steps.', ['We expect to reply by Friday.', 'This may take up to 48 hours.', 'I will contact you when I have an update.'], 'Write two expectation-setting sentences.'),
+      lesson('b1-u4-l3', 'Closing the loop', 'Confirm when a problem has been completed or resolved.', ['This has now been resolved.', 'Thank you for your patience.', 'Please let us know if you need further support.'], 'Write a closing message.'),
+    ], vocabularyActivity('b1-u4-vocab', 'Follow-up Vocabulary', ['progress', 'reviewing', 'expect', 'reply', 'resolved', 'patience', 'further', 'support', 'case', 'contact'], {
+      story: [text('Your '), gap('case', ['case', 'reply', 'further']), text(' is in progress. The team is '), gap('reviewing', ['resolved', 'reviewing', 'patience']), text(' the details, and we expect to '), gap('reply', ['support', 'reply', 'contact']), text(' by Friday.')],
+      match: [match('resolved', 'Fixed or completed.'), match('patience', 'Calm waiting.'), match('further', 'More or additional.')],
+      writingWords: ['progress', 'expect', 'resolved', 'support'],
+    }), quiz('b1-u4-f', [
+      q('Which is a progress update?', ['The team is reviewing the details.', 'The team is friendly.', 'Details are blue.'], 0),
+      q('Which manages expectations?', ['This may take up to 48 hours.', 'Wait.', 'Maybe later.'], 0),
+      q('Which closes the loop?', ['This has now been resolved.', 'I am still checking.', 'The issue is open.'], 0),
+    ]), summative('b1-u4-s', [
+      q('Choose the best update.', ['We have checked your request.', 'Request checked we have.', 'Checked request maybe.'], 0),
+      q('Which phrase gives a timeframe?', ['We expect to reply by Friday.', 'Friday is busy.', 'Reply is nice.'], 0),
+      q('Which phrase offers further support?', ['Please let us know if you need further support.', 'No more contact.', 'Finished.'], 0),
+      q('Which word means fixed?', ['resolved', 'reviewing', 'case'], 0),
+    ], 'Write 100-130 words updating a customer about a problem, including progress, expected timing, and closing support.')),
+    intermediateUnit('b1-u5', 'Team Briefings and Handover Notes', 'Learners can share priorities, risks, and next actions during team handovers.', [
+      lesson('b1-u5-l1', 'Briefing a team', 'Summarise key information for colleagues.', ['The priority today is...', 'Please pay attention to...', 'The main risk is...'], 'Write a short team briefing.'),
+      lesson('b1-u5-l2', 'Handover language', 'Explain what has been done and what is still needed.', ['I have completed the stock check.', 'The guest is still waiting.', 'Please follow up with maintenance.'], 'Write a handover note.'),
+      lesson('b1-u5-l3', 'Highlighting risks and priorities', 'Make important information easy to notice.', ['This is urgent because...', 'Please check this before 3 pm.', 'The most important task is...'], 'Write three priority sentences.'),
+    ], vocabularyActivity('b1-u5-vocab', 'Briefing Vocabulary', ['briefing', 'handover', 'priority', 'risk', 'urgent', 'completed', 'maintenance', 'attention', 'follow-up', 'task'], {
+      story: [text('During the '), gap('handover', ['handover', 'risk', 'task']), text(', I explained the main '), gap('priority', ['priority', 'maintenance', 'attention']), text('. One issue is urgent, so please '), gap('follow-up', ['follow-up', 'completed', 'briefing']), text(' before 3 pm.')],
+      match: [match('briefing', 'A short update to a team.'), match('risk', 'Something that could cause a problem.'), match('maintenance', 'People who repair things.')],
+      writingWords: ['priority', 'urgent', 'handover', 'task'],
+    }), quiz('b1-u5-f', [
+      q('Which sentence gives a priority?', ['The priority today is checking rooms.', 'Rooms are upstairs.', 'I like rooms.'], 0),
+      q('Which is handover language?', ['Please follow up with maintenance.', 'Maintenance is a department.', 'I went home.'], 0),
+      q('Urgent means...', ['needs quick action', 'not important', 'already complete'], 0),
+    ]), summative('b1-u5-s', [
+      q('Choose the briefing sentence.', ['The main risk is a delay in cleaning.', 'Cleaning is nice.', 'Risk main cleaning delay.'], 0),
+      q('Which shows something is completed?', ['I have completed the stock check.', 'Complete stock I.', 'Stock check maybe.'], 0),
+      q('Which asks for action by a time?', ['Please check this before 3 pm.', '3 pm is Friday.', 'Check maybe later.'], 0),
+      q('Which word means a short team update?', ['briefing', 'case', 'copy'], 0),
+    ], 'Write 100-130 words for a team handover including completed work, priorities, risks, and next actions.')),
+    intermediateUnit('b1-u6', 'Professional Emails and Written Requests', 'Learners can write clear workplace emails with purpose, detail, and polite action requests.', [
+      lesson('b1-u6-l1', 'Email purpose and subject lines', 'Write clear subjects and opening sentences.', ['Subject: Booking update', 'I am writing to confirm...', 'I am contacting you about...'], 'Write three email subject lines.'),
+      lesson('b1-u6-l2', 'Giving detail without being too long', 'Include enough information for action.', ['The reference number is...', 'The request was received on Monday.', 'The attached form includes the details.'], 'Write a short detail paragraph.'),
+      lesson('b1-u6-l3', 'Polite action requests', 'Ask clearly for the next action.', ['Could you please review this by Friday?', 'Please let me know if you need more information.', 'I would appreciate your response.'], 'Write two polite email requests.'),
+    ], vocabularyActivity('b1-u6-vocab', 'Email Vocabulary', ['subject', 'confirm', 'reference', 'attached', 'review', 'response', 'received', 'appreciate', 'details', 'request'], {
+      story: [text('The email '), gap('subject', ['subject', 'attached', 'review']), text(' is Booking update. I am writing to '), gap('confirm', ['confirm', 'response', 'request']), text(' the details. Please '), gap('review', ['received', 'review', 'appreciate']), text(' the attached form.')],
+      match: [match('reference', 'A number or code used to identify something.'), match('appreciate', 'To value or be grateful for something.'), match('response', 'A reply.')],
+      writingWords: ['subject', 'confirm', 'request', 'response'],
+    }), quiz('b1-u6-f', [
+      q('Which is a clear email opening?', ['I am writing to confirm...', 'Confirm writing I...', 'Hello thing.'], 0),
+      q('Which asks politely for action?', ['Could you please review this by Friday?', 'Review now.', 'You review.'], 0),
+      q('Attached means...', ['included with the email', 'late', 'spoken'], 0),
+    ]), summative('b1-u6-s', [
+      q('Choose the best subject line.', ['Subject: Booking update', 'Hi', 'Important maybe'], 0),
+      q('Which includes useful detail?', ['The reference number is USP104.', 'The number is nice.', 'Number maybe.'], 0),
+      q('Which closing is professional?', ['Please let me know if you need more information.', 'Okay bye.', 'Done.'], 0),
+      q('Which word means reply?', ['response', 'attached', 'subject'], 0),
+    ], 'Write a 100-130 word workplace email confirming details and requesting an action.')),
+    intermediateUnit('b1-u7', 'Interview and Recruitment Communication', 'Learners can describe experience, strengths, availability, and workplace expectations.', [
+      lesson('b1-u7-l1', 'Talking about experience', 'Explain previous jobs and responsibilities.', ['I have experience in customer service.', 'My main responsibility was...', 'I worked with a small team.'], 'Write three sentences about your experience.'),
+      lesson('b1-u7-l2', 'Explaining strengths and examples', 'Give simple evidence for a strength.', ['One of my strengths is...', 'For example, I helped...', 'This shows that I can...'], 'Write one strength with an example.'),
+      lesson('b1-u7-l3', 'Availability and expectations', 'Discuss shifts, training, and workplace rules.', ['I am available on weekends.', 'I can attend training next week.', 'I understand the uniform policy.'], 'Write three availability sentences.'),
+    ], vocabularyActivity('b1-u7-vocab', 'Recruitment Vocabulary', ['experience', 'responsibility', 'strength', 'example', 'available', 'training', 'policy', 'interview', 'reliable', 'teamwork'], {
+      story: [text('In the interview, I explained my '), gap('experience', ['experience', 'policy', 'available']), text('. One of my strengths is '), gap('teamwork', ['reliable', 'teamwork', 'training']), text('. I am also '), gap('available', ['example', 'available', 'responsibility']), text(' on weekends.')],
+      match: [match('responsibility', 'A duty or task you must do.'), match('reliable', 'Someone who can be trusted to do what they say.'), match('policy', 'A workplace rule or guideline.')],
+      writingWords: ['experience', 'strength', 'training', 'reliable'],
+    }), quiz('b1-u7-f', [
+      q('Which describes experience?', ['I have experience in customer service.', 'I am upstairs.', 'I have a form.'], 0),
+      q('Which introduces an example?', ['For example, I helped...', 'Maybe helped.', 'Help example.'], 0),
+      q('Available means...', ['free to work or attend', 'not correct', 'already resolved'], 0),
+    ]), summative('b1-u7-s', [
+      q('Choose the best strength sentence.', ['One of my strengths is teamwork.', 'Teamwork strength one.', 'I teamwork.'], 0),
+      q('Which sentence discusses availability?', ['I am available on weekends.', 'I like weekends.', 'Weekend is Saturday.'], 0),
+      q('Which word means workplace rule?', ['policy', 'example', 'interview'], 0),
+      q('Which sentence is professional?', ['I understand the uniform policy.', 'Uniform yes.', 'I know clothes.'], 0),
+    ], 'Write 100-130 words for an interview answer about your experience, strengths, availability, and training needs.')),
+    intermediateUnit('b1-u8', 'Workplace Meetings and Action Points', 'Learners can take part in routine meetings and record agreed actions.', [
+      lesson('b1-u8-l1', 'Giving a short update in a meeting', 'Share progress and issues briefly.', ['Since the last meeting...', 'We have completed...', 'One issue is...'], 'Write a short meeting update.'),
+      lesson('b1-u8-l2', 'Asking and answering meeting questions', 'Ask for clarification and respond with detail.', ['Could you explain that point?', 'What is the deadline?', 'The reason is...'], 'Write three meeting questions.'),
+      lesson('b1-u8-l3', 'Recording action points', 'Write clear actions, owners, and deadlines.', ['Action: update the checklist.', 'Owner: front desk team.', 'Deadline: Friday.'], 'Write three action points.'),
+    ], vocabularyActivity('b1-u8-vocab', 'Meeting Vocabulary', ['meeting', 'progress', 'issue', 'deadline', 'action', 'owner', 'agenda', 'clarify', 'decision', 'checklist'], {
+      story: [text('In the '), gap('meeting', ['meeting', 'owner', 'agenda']), text(', we discussed one important '), gap('issue', ['deadline', 'issue', 'clarify']), text('. The action is to update the '), gap('checklist', ['decision', 'checklist', 'progress']), text(' by Friday.')],
+      match: [match('agenda', 'A list of topics for a meeting.'), match('deadline', 'The date or time something must be finished.'), match('decision', 'A choice made after discussion.')],
+      writingWords: ['progress', 'deadline', 'action', 'decision'],
+    }), quiz('b1-u8-f', [
+      q('Which phrase gives a meeting update?', ['Since the last meeting...', 'The meeting room is big.', 'Meeting maybe.'], 0),
+      q('Which asks for clarification?', ['Could you explain that point?', 'What is your name?', 'Where is the lift?'], 0),
+      q('An action point should include...', ['task, owner, and deadline', 'only a colour', 'no details'], 0),
+    ]), summative('b1-u8-s', [
+      q('Choose the action point.', ['Action: update the checklist.', 'Checklist is useful.', 'Update maybe.'], 0),
+      q('Which word means final date?', ['deadline', 'agenda', 'owner'], 0),
+      q('Which phrase asks about timing?', ['What is the deadline?', 'What is the colour?', 'Where is the table?'], 0),
+      q('Which sentence gives a reason?', ['The reason is staff availability.', 'Reason staff is.', 'Staff reason maybe.'], 0),
+    ], 'Write 100-130 words summarising a routine meeting, including progress, one issue, and three action points.')),
+    intermediateUnit('b1-u9', 'Explaining Change and New Procedures', 'Learners can explain changes, reasons, and support for colleagues or customers.', [
+      lesson('b1-u9-l1', 'Announcing a change', 'Use clear language to explain what is changing.', ['From Monday, the process will change.', 'We are introducing a new checklist.', 'The old form will no longer be used.'], 'Write three change announcement sentences.'),
+      lesson('b1-u9-l2', 'Explaining reasons for change', 'Connect changes to benefits and reasons.', ['This will reduce delays.', 'The change is needed for safety.', 'It will help us keep better records.'], 'Write three reasons for change.'),
+      lesson('b1-u9-l3', 'Supporting people through change', 'Offer guidance and reassurance.', ['Training will be provided.', 'Please ask if you need help.', 'We will review the process after two weeks.'], 'Write a support message.'),
+    ], vocabularyActivity('b1-u9-vocab', 'Change Vocabulary', ['change', 'introduce', 'checklist', 'reduce', 'benefit', 'guidance', 'provided', 'review', 'records', 'reassurance'], {
+      story: [text('From Monday, we will '), gap('introduce', ['introduce', 'records', 'benefit']), text(' a new checklist. This change will '), gap('reduce', ['provided', 'reduce', 'review']), text(' delays. Training will be '), gap('provided', ['guidance', 'provided', 'change']), text(' for all staff.')],
+      match: [match('guidance', 'Advice or help on what to do.'), match('benefit', 'A positive result.'), match('reassurance', 'Words that help people feel less worried.')],
+      writingWords: ['change', 'benefit', 'guidance', 'review'],
+    }), quiz('b1-u9-f', [
+      q('Which announces a change?', ['From Monday, the process will change.', 'Monday is busy.', 'Process Monday change maybe.'], 0),
+      q('Which gives a reason?', ['This will reduce delays.', 'This is a checklist.', 'This is Monday.'], 0),
+      q('Which offers support?', ['Please ask if you need help.', 'Do not ask.', 'No support.'], 0),
+    ]), summative('b1-u9-s', [
+      q('Choose the best change sentence.', ['We are introducing a new checklist.', 'Checklist new introduce we.', 'New checklist maybe.'], 0),
+      q('Which phrase explains benefit?', ['It will help us keep better records.', 'Records are files.', 'I like records.'], 0),
+      q('Which word means advice?', ['guidance', 'deadline', 'incident'], 0),
+      q('Which reassures staff?', ['Training will be provided.', 'Good luck.', 'Learn alone.'], 0),
+    ], 'Write 100-130 words explaining a workplace change, the reason for it, and how staff will be supported.')),
+    intermediateUnit('b1-u10', 'Intermediate Review and Workplace Confidence', 'Learners combine B1 skills in a final workplace communication scenario.', [
+      lesson('b1-u10-l1', 'Reviewing customer and team language', 'Review complaints, updates, handovers, meetings, and change language.', ['I understand your concern.', 'The priority today is...', 'From Monday, the process will change.'], 'Write ten useful B1 workplace phrases.'),
+      lesson('b1-u10-l2', 'Organising a longer response', 'Use paragraphs for situation, action, and follow-up.', ['Situation', 'Action taken', 'Next step', 'Follow-up'], 'Plan a four-paragraph workplace response.'),
+      lesson('b1-u10-l3', 'Checking tone and clarity', 'Improve accuracy, politeness, and organisation.', ['Is the tone professional?', 'Is the action clear?', 'Is the next step included?'], 'Edit a short response for clarity.'),
+    ], vocabularyActivity('b1-u10-vocab', 'B1 Review Vocabulary', ['concern', 'process', 'incident', 'follow-up', 'handover', 'priority', 'response', 'deadline', 'procedure', 'confidence'], {
+      story: [text('A confident B1 learner can explain a '), gap('concern', ['concern', 'deadline', 'handover']), text(', describe a workplace '), gap('incident', ['confidence', 'incident', 'procedure']), text(', and give a clear '), gap('follow-up', ['follow-up', 'response', 'process']), text('.')],
+      match: [match('procedure', 'The official way to complete a task.'), match('priority', 'The most important task.'), match('confidence', 'Feeling able to communicate well.')],
+      writingWords: ['process', 'priority', 'response', 'deadline'],
+    }), quiz('b1-u10-f', [
+      q('Which phrase acknowledges concern?', ['I understand your concern.', 'Concern okay.', 'No concern.'], 0),
+      q('Which phrase gives a priority?', ['The priority today is...', 'Today is nice.', 'Priority maybe.'], 0),
+      q('Which phrase gives a next step?', ['I will follow up by Friday.', 'Friday is a day.', 'I like Friday.'], 0),
+    ]), summative('b1-u10-s', [
+      q('Choose the best complaint response.', ['I am sorry to hear that. Let me check what happened.', 'Calm down.', 'Not my job.'], 0),
+      q('Choose the best process sentence.', ['First, check the record; next, confirm the booking.', 'Record booking first confirm maybe.', 'Booking record.'], 0),
+      q('Choose the best handover phrase.', ['Please follow up with maintenance before 3 pm.', 'Maintenance maybe.', 'Go maintenance.'], 0),
+      q('Choose the best change explanation.', ['This change will reduce delays.', 'Change good.', 'New thing Monday.'], 0),
+      q('Choose the clearest closing.', ['Please let me know if you need further support.', 'Bye.', 'Finished now.'], 0),
+    ], 'Write 120-150 words responding to a workplace problem. Include the situation, action taken, reason, next step, and follow-up.')),
+  ];
+}
+
+function intermediateUnit(id, title, outcome, lessons, vocabulary, formative, summativeAssessment) {
+  return { id, title, outcome, lessons, vocabulary, formative, summative: summativeAssessment };
 }
 
 function elementaryUnits() {
