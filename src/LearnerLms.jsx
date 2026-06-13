@@ -472,7 +472,7 @@ function QuizCard({ type, icon: Icon, level, unit, assessment, saved, onSave, on
           <fieldset key={question.prompt}>
             <legend>{index + 1}. {question.prompt}</legend>
             {question.options.map((option, optionIndex) => (
-              <label key={option}>
+              <label className={submitted && answers[index] === optionIndex ? 'selected-answer' : ''} key={option}>
                 <input
                   type="radio"
                   name={`${assessment.id}-${index}`}

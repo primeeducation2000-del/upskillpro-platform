@@ -3478,12 +3478,30 @@ footer p {
   grid-template-columns: 20px 1fr;
   align-items: start;
   margin-top: 8px;
+  padding: 8px;
+  border: 1px solid transparent;
+  border-radius: 10px;
   color: #dbe6ff;
+}
+
+.lms-question-list label.selected-answer {
+  border-color: rgba(54, 227, 159, 0.42);
+  background: rgba(54, 227, 159, 0.12);
+  color: #fff;
 }
 
 .lms-question-list input {
   min-height: auto;
   margin-top: 3px;
+  accent-color: #36e39f;
+}
+
+.lms-question-list input:disabled {
+  opacity: 1;
+}
+
+.lms-question-list input:disabled + span {
+  opacity: 1;
 }
 
 .lms-writing-task {
