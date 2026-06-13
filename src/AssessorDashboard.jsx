@@ -349,7 +349,9 @@ function WritingMarkingForm({ attempt, status, onSave }) {
   };
 
   const generateFeedback = () => {
-    setFeedback(buildAutomaticWritingFeedback(attempt, grade, criteria));
+    const estimatedGrade = grade || estimateWritingGrade(attempt, criteria);
+    setGrade(estimatedGrade);
+    setFeedback(buildAutomaticWritingFeedback(attempt, estimatedGrade, criteria));
   };
 
   return (
@@ -460,7 +462,7 @@ const criterionScale = [
 function buildAutomaticWritingFeedback(attempt, grade, criteria) {
   const writing = String(attempt.writing_response || '').trim();
   const words = writing ? writing.split(/\s+/).filter(Boolean).length : 0;
-  const selectedGrade = grade || 'the selected level';
+  const selectedGrade = grade || estimateWritingGrade(attempt, criteria);
   const strengths = [];
   const improvements = [];
 
@@ -492,6 +494,32 @@ function buildAutomaticWritingFeedback(attempt, grade, criteria) {
     '',
     'Recommended next step: Review the feedback, correct key errors, and complete the next writing task with clearer organisation, more precise vocabulary, and examples linked to the workplace context.',
   ].join('\n');
+}
+
+function estimateWritingGrade(attempt, criteria) {
+  const levelGrades = {
+    beginner: 'A1',
+    elementary: 'A2',
+    intermediate: 'B1',
+    'upper-intermediate': 'B2',
+    advanced: 'C1',
+  };
+  const gradeOrder = ['Pre-A1', 'A1', 'A2', 'B1', 'B2', 'C1', 'C2'];
+  const baseGrade = levelGrades[attempt.level_id] || 'A1';
+  const ratings = Object.values(criteria).map((value) => Number(value)).filter(Boolean);
+  const average = ratings.length ? ratings.reduce((sum, value) => sum + value, 0) / ratings.length : 3;
+  let offset = 0;
+
+  if (average < 1.8) offset = -2;
+  else if (average < 2.6) offset = -1;
+  else if (average >= 4.7) offset = 1;
+
+  const words = String(attempt.writing_response || '').trim().split(/\s+/).filter(Boolean).length;
+  if (words > 220 && attempt.level_id === 'advanced' && average >= 4.6) offset = 1;
+  if (words < 35 && offset > -1) offset = -1;
+
+  const index = Math.max(0, Math.min(gradeOrder.length - 1, gradeOrder.indexOf(baseGrade) + offset));
+  return gradeOrder[index];
 }
 
 const resetOptions = buildResetOptions();
