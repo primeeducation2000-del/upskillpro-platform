@@ -3831,6 +3831,97 @@ footer p {
   color: #dbe6ff;
 }
 
+.writing-marking-form {
+  display: grid;
+  gap: 14px;
+  margin-top: 12px;
+  padding: 16px;
+  border: 1px solid rgba(154, 108, 255, 0.22);
+  border-radius: 16px;
+  background: rgba(154, 108, 255, 0.07);
+}
+
+.writing-marking-head {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  align-items: start;
+}
+
+.writing-marking-head strong,
+.writing-marking-form label > span {
+  display: block;
+  color: #fff;
+  font-weight: 950;
+}
+
+.writing-marking-head span,
+.writing-marking-head em,
+.writing-marking-form small {
+  color: #b8c6e3;
+  font-style: normal;
+}
+
+.writing-criteria-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 12px;
+}
+
+.writing-criteria-grid label,
+.writing-marking-fields label,
+.writing-feedback {
+  display: grid;
+  gap: 7px;
+}
+
+.writing-criteria-grid label {
+  padding: 12px;
+  border: 1px solid rgba(255, 255, 255, 0.09);
+  border-radius: 14px;
+  background: rgba(255, 255, 255, 0.045);
+}
+
+.writing-marking-fields {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 12px;
+}
+
+.writing-marking-form select,
+.writing-marking-form input,
+.writing-marking-form textarea {
+  min-width: 0;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: 12px;
+  background: #202a45;
+  color: #fff;
+}
+
+.writing-marking-form select,
+.writing-marking-form input {
+  min-height: 44px;
+}
+
+.writing-marking-form textarea {
+  min-height: 130px;
+}
+
+.writing-marking-form option {
+  background: #202a45;
+  color: #fff;
+}
+
+.writing-marking-form button {
+  width: fit-content;
+}
+
+.assessor-mark-status {
+  margin: 0;
+  color: #36e39f;
+  font-weight: 950;
+}
+
 .assessor-course-map {
   grid-template-columns: repeat(2, minmax(0, 1fr));
 }
@@ -3982,7 +4073,9 @@ footer p {
 
   .assessor-kpis,
   .assessor-grid,
-  .assessor-course-map {
+  .assessor-course-map,
+  .writing-criteria-grid,
+  .writing-marking-fields {
     grid-template-columns: 1fr;
   }
 
@@ -4288,8 +4381,14 @@ footer p {
 
   .assessor-kpis,
   .assessor-grid,
-  .assessor-course-map {
+  .assessor-course-map,
+  .writing-criteria-grid,
+  .writing-marking-fields {
     grid-template-columns: 1fr;
+  }
+
+  .writing-marking-head {
+    display: grid;
   }
 
   .lms-sidebar,

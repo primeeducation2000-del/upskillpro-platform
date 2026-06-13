@@ -57,6 +57,11 @@ CREATE TABLE IF NOT EXISTS lms_quiz_attempts (
   total INTEGER NOT NULL,
   answers_json TEXT NOT NULL,
   writing_response TEXT,
+  writing_grade TEXT,
+  writing_feedback TEXT,
+  writing_criteria_json TEXT,
+  marked_by TEXT,
+  marked_at TEXT,
   created_at TEXT NOT NULL,
   FOREIGN KEY (learner_id) REFERENCES lms_learners(id)
 );

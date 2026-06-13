@@ -101,6 +101,31 @@ export async function onRequest({ request, env }) {
   if (request.method === 'POST') {
     const body = await request.json().catch(() => ({}));
 
+    if (body.action === 'markWriting') {
+      const attemptId = String(body.attemptId || '');
+      if (!attemptId) return json({ ok: false, error: 'Attempt is required.' }, { status: 400 });
+
+      const grade = String(body.grade || '').trim();
+      const feedback = String(body.feedback || '').trim();
+      const markedBy = String(body.markedBy || 'Assessor').trim();
+      const criteria = body.criteria && typeof body.criteria === 'object' ? body.criteria : {};
+
+      await db.prepare(`
+        UPDATE lms_quiz_attempts
+        SET writing_grade = ?, writing_feedback = ?, writing_criteria_json = ?, marked_by = ?, marked_at = ?
+        WHERE id = ?
+      `).bind(
+        grade,
+        feedback,
+        JSON.stringify(criteria),
+        markedBy || 'Assessor',
+        new Date().toISOString(),
+        attemptId
+      ).run();
+
+      return json({ ok: true });
+    }
+
     if (body.action === 'resetProgress') {
       const learnerId = String(body.learnerId || '');
       if (!learnerId) return json({ ok: false, error: 'Learner is required.' }, { status: 400 });
@@ -179,6 +204,7 @@ export async function onRequest({ request, env }) {
     attempts: attempts.map((attempt) => ({
       ...attempt,
       answers: parseJson(attempt.answers_json, []),
+      writingCriteria: parseJson(attempt.writing_criteria_json, {}),
     })),
   });
 }

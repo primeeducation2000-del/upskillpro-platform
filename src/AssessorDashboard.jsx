@@ -11,6 +11,7 @@ export default function AssessorDashboard() {
   const [data, setData] = useState({ learners: [], attempts: [] });
   const [newLearner, setNewLearner] = useState(null);
   const [resetSelections, setResetSelections] = useState({});
+  const [markingStatus, setMarkingStatus] = useState({});
 
   useEffect(() => {
     document.title = 'UpSkillPro Assessor LMS';
@@ -103,6 +104,27 @@ export default function AssessorDashboard() {
       await loadData();
     } else {
       setError(result.error || 'Could not reset learner progress.');
+    }
+  };
+
+  const saveWritingMark = async (attemptId, mark) => {
+    setMarkingStatus((current) => ({ ...current, [attemptId]: 'Saving...' }));
+    const result = await fetch('/api/assessor-lms-data', {
+      method: 'POST',
+      credentials: 'include',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        action: 'markWriting',
+        attemptId,
+        ...mark,
+      }),
+    }).then((response) => response.json()).catch(() => ({ ok: false, error: 'Could not save writing mark.' }));
+
+    if (result.ok) {
+      setMarkingStatus((current) => ({ ...current, [attemptId]: 'Saved' }));
+      await loadData();
+    } else {
+      setMarkingStatus((current) => ({ ...current, [attemptId]: result.error || 'Could not save' }));
     }
   };
 
@@ -234,10 +256,13 @@ export default function AssessorDashboard() {
                       ))}
                     </div>
                     {attempt.writing_response && (
-                      <blockquote>
-                        <strong>Writing response</strong>
-                        {attempt.writing_response}
-                      </blockquote>
+                      <>
+                        <blockquote>
+                          <strong>Writing response</strong>
+                          {attempt.writing_response}
+                        </blockquote>
+                        <WritingMarkingForm attempt={attempt} status={markingStatus[attempt.id]} onSave={saveWritingMark} />
+                      </>
                     )}
                   </div>
                 ))}
@@ -306,6 +331,71 @@ function ProgressMeter({ value }) {
   return <div className="assessor-progress"><span style={{ width: `${value}%` }} /><strong>{value}%</strong></div>;
 }
 
+function WritingMarkingForm({ attempt, status, onSave }) {
+  const [grade, setGrade] = useState(attempt.writing_grade || '');
+  const [feedback, setFeedback] = useState(attempt.writing_feedback || '');
+  const [markedBy, setMarkedBy] = useState(attempt.marked_by || 'Assessor');
+  const [criteria, setCriteria] = useState(() => ({
+    task: attempt.writingCriteria?.task || '',
+    range: attempt.writingCriteria?.range || '',
+    accuracy: attempt.writingCriteria?.accuracy || '',
+    organisation: attempt.writingCriteria?.organisation || '',
+    appropriacy: attempt.writingCriteria?.appropriacy || '',
+  }));
+
+  const submit = (event) => {
+    event.preventDefault();
+    onSave(attempt.id, { grade, feedback, markedBy, criteria });
+  };
+
+  return (
+    <form className="writing-marking-form" onSubmit={submit}>
+      <div className="writing-marking-head">
+        <div>
+          <strong>Assessor marking criteria</strong>
+          <span>Use the criteria below to judge the writing evidence and award a CEFR grade.</span>
+        </div>
+        {attempt.marked_at && <em>Marked {new Date(attempt.marked_at).toLocaleString()}</em>}
+      </div>
+
+      <div className="writing-criteria-grid">
+        {writingCriteria.map((criterion) => (
+          <label key={criterion.id}>
+            <span>{criterion.label}</span>
+            <small>{criterion.description}</small>
+            <select value={criteria[criterion.id]} onChange={(event) => setCriteria((current) => ({ ...current, [criterion.id]: event.target.value }))}>
+              <option value="">Select rating</option>
+              {criterionScale.map((rating) => <option key={rating.value} value={rating.value}>{rating.label}</option>)}
+            </select>
+          </label>
+        ))}
+      </div>
+
+      <div className="writing-marking-fields">
+        <label>
+          <span>Overall writing grade</span>
+          <select value={grade} onChange={(event) => setGrade(event.target.value)} required>
+            <option value="">Select CEFR grade</option>
+            {['Pre-A1', 'A1', 'A2', 'B1', 'B2', 'C1', 'C2'].map((item) => <option key={item} value={item}>{item}</option>)}
+          </select>
+        </label>
+        <label>
+          <span>Marked by</span>
+          <input value={markedBy} onChange={(event) => setMarkedBy(event.target.value)} />
+        </label>
+      </div>
+
+      <label className="writing-feedback">
+        <span>Assessor feedback</span>
+        <textarea value={feedback} onChange={(event) => setFeedback(event.target.value)} rows="5" placeholder="Write strengths, development points, and next steps..." />
+      </label>
+
+      <button type="submit">Save Writing Mark</button>
+      {status && <p className="assessor-mark-status">{status}</p>}
+    </form>
+  );
+}
+
 function getCourseProgress(progress) {
   const allUnits = espCourse.levels.flatMap((level) => level.units);
   const total = allUnits.reduce((sum, unit) => sum + unit.lessons.length + 2, 0);
@@ -323,6 +413,42 @@ function countSubmittedAssessments(progress) {
   const summative = Object.values(progress.summative || {}).filter((item) => item.score !== undefined).length;
   return formative + summative;
 }
+
+const writingCriteria = [
+  {
+    id: 'task',
+    label: 'Task achievement',
+    description: 'Addresses the prompt, covers required points, and gives enough relevant detail.',
+  },
+  {
+    id: 'range',
+    label: 'Vocabulary and grammar range',
+    description: 'Uses language appropriate to the CEFR level, including workplace or ESP vocabulary where relevant.',
+  },
+  {
+    id: 'accuracy',
+    label: 'Accuracy and control',
+    description: 'Controls sentence structure, spelling, punctuation, and grammar without blocking meaning.',
+  },
+  {
+    id: 'organisation',
+    label: 'Organisation and coherence',
+    description: 'Uses paragraphs, linking words, sequencing, and clear development of ideas.',
+  },
+  {
+    id: 'appropriacy',
+    label: 'Tone and appropriacy',
+    description: 'Uses register, politeness, and professional tone suitable for the task and audience.',
+  },
+];
+
+const criterionScale = [
+  { value: '1', label: '1 - Below level' },
+  { value: '2', label: '2 - Emerging' },
+  { value: '3', label: '3 - Meets level' },
+  { value: '4', label: '4 - Secure' },
+  { value: '5', label: '5 - Strong' },
+];
 
 const resetOptions = buildResetOptions();
 
