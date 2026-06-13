@@ -69,6 +69,28 @@ function parseJson(value, fallback) {
   }
 }
 
+function resetProgress(progress, reset) {
+  const next = {
+    lessons: { ...(progress.lessons || {}) },
+    formative: { ...(progress.formative || {}) },
+    summative: { ...(progress.summative || {}) },
+    writing: { ...(progress.writing || {}) },
+  };
+
+  (reset.lessonIds || []).forEach((id) => {
+    delete next.lessons[id];
+  });
+  (reset.formativeIds || []).forEach((id) => {
+    delete next.formative[id];
+  });
+  (reset.summativeIds || []).forEach((id) => {
+    delete next.summative[id];
+    delete next.writing[id];
+  });
+
+  return next;
+}
+
 export async function onRequest({ request, env }) {
   const session = await verifySession(parseCookies(request.headers.get('Cookie') || '')[SESSION_COOKIE], env);
   if (!session) return json({ ok: false, error: 'Unauthorised assessor session.' }, { status: 401 });
@@ -78,6 +100,23 @@ export async function onRequest({ request, env }) {
 
   if (request.method === 'POST') {
     const body = await request.json().catch(() => ({}));
+
+    if (body.action === 'resetProgress') {
+      const learnerId = String(body.learnerId || '');
+      if (!learnerId) return json({ ok: false, error: 'Learner is required.' }, { status: 400 });
+
+      const row = await db.prepare('SELECT progress_json FROM lms_progress WHERE learner_id = ?').bind(learnerId).first();
+      const currentProgress = parseJson(row?.progress_json, { lessons: {}, formative: {}, summative: {}, writing: {} });
+      const nextProgress = resetProgress(currentProgress, body.reset || {});
+      await db.prepare(`
+        INSERT INTO lms_progress (learner_id, progress_json, updated_at)
+        VALUES (?, ?, ?)
+        ON CONFLICT(learner_id) DO UPDATE SET progress_json = excluded.progress_json, updated_at = excluded.updated_at
+      `).bind(learnerId, JSON.stringify(nextProgress), new Date().toISOString()).run();
+
+      return json({ ok: true, progress: nextProgress });
+    }
+
     if (body.action !== 'createLearner') return json({ ok: false, error: 'Unknown action.' }, { status: 400 });
 
     const fullName = String(body.fullName || '').trim();

@@ -3675,7 +3675,7 @@ footer p {
 
 .assessor-row {
   display: grid;
-  grid-template-columns: minmax(220px, 1fr) minmax(160px, 0.45fr) auto auto;
+  grid-template-columns: minmax(220px, 1fr) minmax(160px, 0.38fr) auto auto minmax(220px, 0.45fr);
   gap: 12px;
   align-items: center;
   padding: 14px;
@@ -3687,6 +3687,27 @@ footer p {
 .assessor-row strong,
 .assessor-row span {
   display: block;
+}
+
+.assessor-reset-controls {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: 8px;
+}
+
+.assessor-reset-controls select {
+  min-width: 0;
+  min-height: 42px;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: 12px;
+  background: rgba(255, 255, 255, 0.07);
+  color: #fff;
+  font-weight: 850;
+}
+
+.assessor-reset-controls button {
+  min-height: 42px;
+  padding: 10px 12px;
 }
 
 .assessor-progress {

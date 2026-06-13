@@ -10,6 +10,7 @@ export default function AssessorDashboard() {
   const [error, setError] = useState('');
   const [data, setData] = useState({ learners: [], attempts: [] });
   const [newLearner, setNewLearner] = useState(null);
+  const [resetSelections, setResetSelections] = useState({});
 
   useEffect(() => {
     document.title = 'UpSkillPro Assessor LMS';
@@ -78,6 +79,30 @@ export default function AssessorDashboard() {
       await loadData();
     } else {
       setError(result.error || 'Could not create learner.');
+    }
+  };
+
+  const resetLearnerProgress = async (learnerId) => {
+    const optionId = resetSelections[learnerId] || resetOptions[0].id;
+    const option = resetOptions.find((item) => item.id === optionId) || resetOptions[0];
+    const confirmed = window.confirm(`Reset ${option.label}? Previous submitted attempts will remain visible for assessor feedback.`);
+    if (!confirmed) return;
+
+    const result = await fetch('/api/assessor-lms-data', {
+      method: 'POST',
+      credentials: 'include',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        action: 'resetProgress',
+        learnerId,
+        reset: option.reset,
+      }),
+    }).then((response) => response.json()).catch(() => ({ ok: false, error: 'Could not reset learner progress.' }));
+
+    if (result.ok) {
+      await loadData();
+    } else {
+      setError(result.error || 'Could not reset learner progress.');
     }
   };
 
@@ -153,7 +178,16 @@ export default function AssessorDashboard() {
                   </div>
                   <ProgressMeter value={getCourseProgress(progress)} />
                   <span>{Object.values(progress.lessons || {}).filter(Boolean).length} lessons</span>
-                  <span>{countPassedAssessments(progress)} passed</span>
+                  <span>{countSubmittedAssessments(progress)} submitted</span>
+                  <div className="assessor-reset-controls">
+                    <select
+                      value={resetSelections[learner.id] || resetOptions[0].id}
+                      onChange={(event) => setResetSelections((current) => ({ ...current, [learner.id]: event.target.value }))}
+                    >
+                      {resetOptions.map((option) => <option key={option.id} value={option.id}>{option.label}</option>)}
+                    </select>
+                    <button type="button" onClick={() => resetLearnerProgress(learner.id)}>Reset</button>
+                  </div>
                 </div>
               );
             })}
@@ -263,17 +297,66 @@ function getCourseProgress(progress) {
   const total = allUnits.reduce((sum, unit) => sum + unit.lessons.length + 2, 0);
   const complete = allUnits.reduce((sum, unit) => {
     const lessons = unit.lessons.filter((lesson) => progress.lessons?.[lesson.id]).length;
-    const formative = progress.formative?.[unit.formative.id]?.score >= 60 ? 1 : 0;
-    const summative = progress.summative?.[unit.summative.id]?.score >= 70 ? 1 : 0;
+    const formative = progress.formative?.[unit.formative.id]?.score !== undefined ? 1 : 0;
+    const summative = progress.summative?.[unit.summative.id]?.score !== undefined ? 1 : 0;
     return sum + lessons + formative + summative;
   }, 0);
   return Math.round((complete / total) * 100);
 }
 
-function countPassedAssessments(progress) {
-  const formative = Object.values(progress.formative || {}).filter((item) => item.score >= 60).length;
-  const summative = Object.values(progress.summative || {}).filter((item) => item.score >= 70).length;
+function countSubmittedAssessments(progress) {
+  const formative = Object.values(progress.formative || {}).filter((item) => item.score !== undefined).length;
+  const summative = Object.values(progress.summative || {}).filter((item) => item.score !== undefined).length;
   return formative + summative;
+}
+
+const resetOptions = buildResetOptions();
+
+function buildResetOptions() {
+  const allLessons = [];
+  const allFormative = [];
+  const allSummative = [];
+  const options = [];
+
+  espCourse.levels.forEach((level) => {
+    const levelLessons = [];
+    const levelFormative = [];
+    const levelSummative = [];
+
+    level.units.forEach((unit) => {
+      const unitLessons = unit.lessons.map((lesson) => lesson.id);
+      const unitFormative = [unit.formative.id];
+      const unitSummative = [unit.summative.id];
+      levelLessons.push(...unitLessons);
+      levelFormative.push(...unitFormative);
+      levelSummative.push(...unitSummative);
+      allLessons.push(...unitLessons);
+      allFormative.push(...unitFormative);
+      allSummative.push(...unitSummative);
+
+      options.push({
+        id: `unit:${unit.id}`,
+        label: `Unit - ${level.level}: ${unit.title}`,
+        reset: { lessonIds: unitLessons, formativeIds: unitFormative, summativeIds: unitSummative },
+      });
+      unit.lessons.forEach((lesson) => {
+        options.push({ id: `lesson:${lesson.id}`, label: `Lesson - ${lesson.title}`, reset: { lessonIds: [lesson.id] } });
+      });
+      options.push({ id: `formative:${unit.formative.id}`, label: `Formative - ${unit.title}`, reset: { formativeIds: unitFormative } });
+      options.push({ id: `summative:${unit.summative.id}`, label: `Final - ${unit.title}`, reset: { summativeIds: unitSummative } });
+    });
+
+    options.push({
+      id: `level:${level.id}`,
+      label: `Level - ${level.level}`,
+      reset: { lessonIds: levelLessons, formativeIds: levelFormative, summativeIds: levelSummative },
+    });
+  });
+
+  return [
+    { id: 'all', label: 'Entire pathway', reset: { lessonIds: allLessons, formativeIds: allFormative, summativeIds: allSummative } },
+    ...options,
+  ];
 }
 
 function labelFor(levelId) {

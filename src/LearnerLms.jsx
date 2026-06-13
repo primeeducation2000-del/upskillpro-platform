@@ -19,16 +19,20 @@ const LMS_SESSION_KEY = 'upskillpro-lms-session';
 const LMS_PROGRESS_KEY = 'upskillpro-esp-progress';
 const EMPTY_PROGRESS = { lessons: {}, formative: {}, summative: {}, writing: {} };
 
-function readProgress() {
+function progressStorageKey(learner) {
+  return learner?.username ? `${LMS_PROGRESS_KEY}-${learner.username}` : LMS_PROGRESS_KEY;
+}
+
+function readProgress(learner = null) {
   try {
-    return { ...EMPTY_PROGRESS, ...(JSON.parse(localStorage.getItem(LMS_PROGRESS_KEY)) || {}) };
+    return { ...EMPTY_PROGRESS, ...(JSON.parse(localStorage.getItem(progressStorageKey(learner))) || {}) };
   } catch {
     return EMPTY_PROGRESS;
   }
 }
 
-function saveProgress(progress) {
-  localStorage.setItem(LMS_PROGRESS_KEY, JSON.stringify(progress));
+function saveProgress(progress, learner = null) {
+  localStorage.setItem(progressStorageKey(learner), JSON.stringify(progress));
 }
 
 export default function LearnerLms() {
@@ -58,7 +62,9 @@ export default function LearnerLms() {
     robots.setAttribute('content', 'noindex,nofollow,noarchive');
   }, []);
 
-  useEffect(() => saveProgress(progress), [progress]);
+  useEffect(() => {
+    if (learner) saveProgress(progress, learner);
+  }, [learner, progress]);
 
   useEffect(() => {
     let cancelled = false;
@@ -71,7 +77,7 @@ export default function LearnerLms() {
           localStorage.setItem(LMS_SESSION_KEY, JSON.stringify(data.learner));
           setIsAuthed(true);
           const progressResponse = await fetch('/api/lms-progress', { credentials: 'include' }).then((response) => response.json()).catch(() => null);
-          if (!cancelled && progressResponse?.progress) setProgress({ ...EMPTY_PROGRESS, ...progressResponse.progress });
+          if (!cancelled) setProgress({ ...EMPTY_PROGRESS, ...(progressResponse?.progress || readProgress(data.learner)) });
         } else {
           localStorage.removeItem(LMS_SESSION_KEY);
           setIsAuthed(false);
@@ -124,7 +130,7 @@ export default function LearnerLms() {
     localStorage.setItem(LMS_SESSION_KEY, JSON.stringify(response.learner));
     setIsAuthed(true);
     const progressResponse = await fetch('/api/lms-progress', { credentials: 'include' }).then((item) => item.json()).catch(() => null);
-    if (progressResponse?.progress) setProgress({ ...EMPTY_PROGRESS, ...progressResponse.progress });
+    setProgress({ ...EMPTY_PROGRESS, ...(progressResponse?.progress || readProgress(response.learner)) });
   };
 
   const logout = async () => {
@@ -137,6 +143,7 @@ export default function LearnerLms() {
     localStorage.removeItem(LMS_SESSION_KEY);
     setIsAuthed(false);
     setLearner(null);
+    setProgress(EMPTY_PROGRESS);
   };
 
   const persistProgress = (nextProgress, attempt = null) => {
@@ -150,7 +157,7 @@ export default function LearnerLms() {
 
   const updateProgress = (updater, attempt = null) => setProgress((current) => {
     const next = updater(current);
-    saveProgress(next);
+    saveProgress(next, learner);
     persistProgress(next, attempt);
     return next;
   });
@@ -214,7 +221,7 @@ export default function LearnerLms() {
           <LmsKpi icon={LayoutDashboard} label="Levels" value={espCourse.levels.length} />
           <LmsKpi icon={BookOpenCheck} label="Units" value={countUnits()} />
           <LmsKpi icon={CheckCircle2} label="Lessons Complete" value={Object.values(progress.lessons).filter(Boolean).length} />
-          <LmsKpi icon={Award} label="Assessments Passed" value={countPassedAssessments(progress)} />
+          <LmsKpi icon={Award} label="Assessments Submitted" value={countSubmittedAssessments(progress)} />
         </section>
 
         <section className="lms-level-panel">
@@ -412,9 +419,19 @@ function ProgressBar({ value }) {
 function QuizCard({ type, icon: Icon, level, unit, assessment, saved, onSave, onPassed, summative = false, writingValue = '', onWriting }) {
   const [answers, setAnswers] = useState({});
   const score = saved?.score ?? null;
-  const passed = score !== null && score >= (summative ? 70 : 60);
+  const submitted = score !== null;
+  const passed = submitted && score >= (summative ? 70 : 60);
+
+  useEffect(() => {
+    if (!saved?.answers) {
+      setAnswers({});
+      return;
+    }
+    setAnswers(Object.fromEntries(saved.answers.map((answer, index) => [index, answer.selectedIndex]).filter(([, value]) => value !== null && value !== undefined)));
+  }, [assessment.id, saved]);
 
   const submit = () => {
+    if (submitted) return;
     const correct = assessment.questions.reduce((total, question, index) => total + (answers[index] === question.answer ? 1 : 0), 0);
     const nextScore = Math.round((correct / assessment.questions.length) * 100);
     const answerDetails = assessment.questions.map((question, index) => ({
@@ -437,7 +454,7 @@ function QuizCard({ type, icon: Icon, level, unit, assessment, saved, onSave, on
       answers: answerDetails,
       writingResponse: summative ? writingValue : '',
     });
-    if (nextScore >= (summative ? 70 : 60)) window.setTimeout(() => onPassed?.(), 160);
+    window.setTimeout(() => onPassed?.(), 160);
   };
 
   return (
@@ -456,7 +473,13 @@ function QuizCard({ type, icon: Icon, level, unit, assessment, saved, onSave, on
             <legend>{index + 1}. {question.prompt}</legend>
             {question.options.map((option, optionIndex) => (
               <label key={option}>
-                <input type="radio" name={`${assessment.id}-${index}`} checked={answers[index] === optionIndex} onChange={() => setAnswers((current) => ({ ...current, [index]: optionIndex }))} />
+                <input
+                  type="radio"
+                  name={`${assessment.id}-${index}`}
+                  checked={answers[index] === optionIndex}
+                  disabled={submitted}
+                  onChange={() => setAnswers((current) => ({ ...current, [index]: optionIndex }))}
+                />
                 <span>{option}</span>
               </label>
             ))}
@@ -467,12 +490,12 @@ function QuizCard({ type, icon: Icon, level, unit, assessment, saved, onSave, on
         <label className="lms-writing-task">
           <span><PenLine size={16} /> Writing task</span>
           <p>{assessment.writingPrompt}</p>
-          <textarea value={writingValue} onChange={(event) => onWriting(event.target.value)} rows="7" placeholder="Write your answer here..." />
+          <textarea value={writingValue} disabled={submitted} onChange={(event) => onWriting(event.target.value)} rows="7" placeholder="Write your answer here..." />
           <small>{writingValue.trim().split(/\s+/).filter(Boolean).length} words saved</small>
         </label>
       )}
-      <button type="button" onClick={submit}>Submit {summative ? 'Summative' : 'Formative'} Assessment</button>
-      {score !== null && <p className={passed ? 'lms-pass-note' : 'lms-review-note'}>{passed ? 'Passed. Progress has been saved.' : 'Review recommended. You can retake this assessment.'}</p>}
+      <button type="button" disabled={submitted} onClick={submit}>{submitted ? 'Assessment Submitted' : `Submit ${summative ? 'Summative' : 'Formative'} Assessment`}</button>
+      {submitted && <p className={passed ? 'lms-pass-note' : 'lms-review-note'}>{passed ? 'Submitted and passed. The evidence has been saved.' : 'Submitted for assessor feedback. The evidence has been saved.'}</p>}
     </article>
   );
 }
@@ -509,8 +532,8 @@ function isStepAvailable(unit, stepId, progress, assumedCompleteStepId = '') {
 
 function isStepComplete(step, progress) {
   if (step.kind === 'lesson') return Boolean(progress.lessons[step.id]);
-  if (step.kind === 'formative') return progress.formative[step.id]?.score >= 60;
-  return progress.summative[step.id]?.score >= 70;
+  if (step.kind === 'formative') return progress.formative[step.id]?.score !== undefined;
+  return progress.summative[step.id]?.score !== undefined;
 }
 
 function isLevelUnlocked(levelIndex, progress) {
@@ -546,13 +569,13 @@ function getUnitTotalItems(unit) {
 
 function getUnitCompleteItems(unit, progress) {
   const lessons = unit.lessons.filter((lesson) => progress.lessons[lesson.id]).length;
-  const formative = progress.formative[unit.formative.id]?.score >= 60 ? 1 : 0;
-  const summative = progress.summative[unit.summative.id]?.score >= 70 ? 1 : 0;
+  const formative = progress.formative[unit.formative.id]?.score !== undefined ? 1 : 0;
+  const summative = progress.summative[unit.summative.id]?.score !== undefined ? 1 : 0;
   return lessons + formative + summative;
 }
 
-function countPassedAssessments(progress) {
-  const formative = Object.values(progress.formative).filter((item) => item.score >= 60).length;
-  const summative = Object.values(progress.summative).filter((item) => item.score >= 70).length;
+function countSubmittedAssessments(progress) {
+  const formative = Object.values(progress.formative).filter((item) => item.score !== undefined).length;
+  const summative = Object.values(progress.summative).filter((item) => item.score !== undefined).length;
   return formative + summative;
 }
