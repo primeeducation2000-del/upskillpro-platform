@@ -3912,8 +3912,22 @@ footer p {
   color: #fff;
 }
 
+.writing-marking-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  align-items: center;
+}
+
+.writing-marking-actions button,
 .writing-marking-form button {
   width: fit-content;
+}
+
+.writing-marking-actions button[type="button"] {
+  border: 1px solid rgba(255, 197, 92, 0.28);
+  background: linear-gradient(135deg, rgba(255, 197, 92, 0.2), rgba(154, 108, 255, 0.16));
+  color: #ffe0a3;
 }
 
 .assessor-mark-status {

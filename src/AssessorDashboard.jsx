@@ -348,6 +348,10 @@ function WritingMarkingForm({ attempt, status, onSave }) {
     onSave(attempt.id, { grade, feedback, markedBy, criteria });
   };
 
+  const generateFeedback = () => {
+    setFeedback(buildAutomaticWritingFeedback(attempt, grade, criteria));
+  };
+
   return (
     <form className="writing-marking-form" onSubmit={submit}>
       <div className="writing-marking-head">
@@ -390,7 +394,10 @@ function WritingMarkingForm({ attempt, status, onSave }) {
         <textarea value={feedback} onChange={(event) => setFeedback(event.target.value)} rows="5" placeholder="Write strengths, development points, and next steps..." />
       </label>
 
-      <button type="submit">Save Writing Mark</button>
+      <div className="writing-marking-actions">
+        <button type="button" onClick={generateFeedback}>Generate Automatic Feedback</button>
+        <button type="submit">Save Writing Mark</button>
+      </div>
       {status && <p className="assessor-mark-status">{status}</p>}
     </form>
   );
@@ -449,6 +456,43 @@ const criterionScale = [
   { value: '4', label: '4 - Secure' },
   { value: '5', label: '5 - Strong' },
 ];
+
+function buildAutomaticWritingFeedback(attempt, grade, criteria) {
+  const writing = String(attempt.writing_response || '').trim();
+  const words = writing ? writing.split(/\s+/).filter(Boolean).length : 0;
+  const selectedGrade = grade || 'the selected level';
+  const strengths = [];
+  const improvements = [];
+
+  Object.entries(criteria).forEach(([criterionId, value]) => {
+    const criterion = writingCriteria.find((item) => item.id === criterionId);
+    if (!criterion || !value) return;
+    const rating = Number(value);
+    if (rating >= 4) strengths.push(`${criterion.label}: secure evidence for ${selectedGrade}.`);
+    if (rating <= 2) improvements.push(`${criterion.label}: needs further development before this can be considered secure at ${selectedGrade}.`);
+  });
+
+  if (words < 50) improvements.push('The response is short, so the learner should add more detail, examples, and complete sentence development.');
+  if (words >= 50 && words <= 160) strengths.push('The response provides a workable amount of evidence for assessor review.');
+  if (words > 160) strengths.push('The learner has produced an extended response, giving more evidence of organisation and language control.');
+
+  const hasConnectors = /\b(first|next|because|however|therefore|also|finally|although|for example)\b/i.test(writing);
+  if (hasConnectors) strengths.push('There is some useful linking language to connect ideas.');
+  else improvements.push('The learner should use more linking words such as because, however, for example, next, and finally.');
+
+  const sentenceCount = writing.split(/[.!?]+/).map((item) => item.trim()).filter(Boolean).length;
+  if (sentenceCount <= 2 && words > 40) improvements.push('The writing would be clearer if it was divided into more complete sentences or short paragraphs.');
+
+  return [
+    `Automatic Feedback: The writing has been reviewed against the UpskillPro ESP writing criteria. Overall provisional grade: ${selectedGrade}. Word count: ${words}.`,
+    '',
+    `Strengths: ${strengths.length ? strengths.join(' ') : 'The learner has attempted the task and provided evidence that can be developed through assessor feedback.'}`,
+    '',
+    `Development points: ${improvements.length ? improvements.join(' ') : 'To improve further, the learner should continue developing accuracy, range, and professional clarity.'}`,
+    '',
+    'Recommended next step: Review the feedback, correct key errors, and complete the next writing task with clearer organisation, more precise vocabulary, and examples linked to the workplace context.',
+  ].join('\n');
+}
 
 const resetOptions = buildResetOptions();
 
