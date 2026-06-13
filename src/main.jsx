@@ -44,11 +44,11 @@ const AssessorDashboard = React.lazy(() => import('./AssessorDashboard.jsx'));
 class RouteErrorBoundary extends React.Component {
   constructor(props) {
     super(props);
-    this.state = { hasError: false };
+    this.state = { hasError: false, message: '' };
   }
 
-  static getDerivedStateFromError() {
-    return { hasError: true };
+  static getDerivedStateFromError(error) {
+    return { hasError: true, message: error?.message || String(error || 'Unknown route error') };
   }
 
   render() {
@@ -57,6 +57,7 @@ class RouteErrorBoundary extends React.Component {
         <main className="admin-loading">
           <strong>Route failed to load.</strong>
           <span>Please refresh the page. If it continues, clear the browser cache and reopen this link.</span>
+          <small>{this.state.message}</small>
         </main>
       );
     }
