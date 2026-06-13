@@ -3922,6 +3922,29 @@ footer p {
   color: #dbe6ff;
 }
 
+.assessor-vocabulary-evidence {
+  border-color: rgba(54, 227, 159, 0.18);
+  background: rgba(54, 227, 159, 0.055);
+}
+
+.assessor-vocab-section {
+  display: grid;
+  gap: 8px;
+  margin-top: 12px;
+}
+
+.assessor-vocab-section > strong {
+  color: #8ff0d3;
+}
+
+.assessor-vocabulary-evidence blockquote span {
+  display: block;
+}
+
+.assessor-vocabulary-evidence blockquote b {
+  color: #fff;
+}
+
 .writing-marking-form {
   display: grid;
   gap: 14px;

@@ -226,15 +226,20 @@ export default function AssessorDashboard() {
         <div className="assessor-attempts">
           {data.learners.map((learner) => {
             const learnerAttempts = data.attempts.filter((attempt) => attempt.learner_id === learner.id);
+            const vocabularyEvidence = getVocabularyEvidence(learner.progress || EMPTY_PROGRESS);
             return (
               <article key={learner.id} className="assessor-learner-attempts">
                 <div className="assessor-attempt-head">
                   <div>
                     <strong>{learner.full_name}</strong>
-                    <span>{learner.username} | {learnerAttempts.length} submitted assessment{learnerAttempts.length === 1 ? '' : 's'}</span>
+                    <span>
+                      {learner.username} | {learnerAttempts.length} submitted assessment{learnerAttempts.length === 1 ? '' : 's'} |
+                      {' '}{vocabularyEvidence.length} vocabulary response{vocabularyEvidence.length === 1 ? '' : 's'}
+                    </span>
                   </div>
                 </div>
-                {!learnerAttempts.length && <p className="assessor-muted">No submissions yet for this learner.</p>}
+                {!learnerAttempts.length && !vocabularyEvidence.length && <p className="assessor-muted">No submissions yet for this learner.</p>}
+                {vocabularyEvidence.map((evidence) => <VocabularyEvidenceCard key={evidence.id} evidence={evidence} />)}
                 {learnerAttempts.map((attempt) => (
                   <div key={attempt.id} className="assessor-attempt">
                     <div className="assessor-attempt-head">
@@ -342,6 +347,57 @@ function ProgressMeter({ value }) {
   return <div className="assessor-progress"><span style={{ width: `${value}%` }} /><strong>{value}%</strong></div>;
 }
 
+function VocabularyEvidenceCard({ evidence }) {
+  return (
+    <div className="assessor-attempt assessor-vocabulary-evidence">
+      <div className="assessor-attempt-head">
+        <div>
+          <strong>{evidence.level} | Vocabulary</strong>
+          <span>{evidence.title} | {new Date(evidence.submittedAt).toLocaleString()}</span>
+        </div>
+        <b>{evidence.score}%</b>
+      </div>
+
+      <div className="assessor-vocab-section">
+        <strong>Gap-fill story answers</strong>
+        <div className="assessor-answer-list">
+          {evidence.story.map((item, index) => (
+            <div className={item.isCorrect ? 'correct' : 'incorrect'} key={`story-${evidence.id}-${index}`}>
+              {item.isCorrect ? <CheckCircle2 size={16} /> : <XCircle size={16} />}
+              <span>
+                <strong>Gap {index + 1}</strong>
+                Learner: {item.selectedAnswer || 'No answer'} | Correct: {item.correctAnswer}
+              </span>
+            </div>
+          ))}
+        </div>
+      </div>
+
+      <div className="assessor-vocab-section">
+        <strong>Matching answers</strong>
+        <div className="assessor-answer-list">
+          {evidence.matching.map((item, index) => (
+            <div className={item.isCorrect ? 'correct' : 'incorrect'} key={`match-${evidence.id}-${index}`}>
+              {item.isCorrect ? <CheckCircle2 size={16} /> : <XCircle size={16} />}
+              <span>
+                <strong>{item.definition}</strong>
+                Learner: {item.selectedAnswer || 'No answer'} | Correct: {item.correctAnswer}
+              </span>
+            </div>
+          ))}
+        </div>
+      </div>
+
+      <blockquote>
+        <strong>Sentence writing responses</strong>
+        {evidence.sentences.map((item) => (
+          <span key={item.word}><b>{item.word}:</b> {item.sentence || 'No sentence submitted'}</span>
+        ))}
+      </blockquote>
+    </div>
+  );
+}
+
 function WritingMarkingForm({ attempt, status, onSave }) {
   const [grade, setGrade] = useState(attempt.writing_grade || '');
   const [feedback, setFeedback] = useState(attempt.writing_feedback || '');
@@ -438,6 +494,40 @@ function countSubmittedAssessments(progress) {
   const formative = Object.values(progress.formative || {}).filter((item) => item.score !== undefined).length;
   const summative = Object.values(progress.summative || {}).filter((item) => item.score !== undefined).length;
   return formative + summative;
+}
+
+function getVocabularyEvidence(progress) {
+  return espCourse.levels.flatMap((level) => level.units
+    .filter((unit) => unit.vocabulary)
+    .map((unit) => {
+      const activity = unit.vocabulary;
+      const saved = progress.vocabulary?.[activity.id];
+      if (!saved?.submittedAt) return null;
+      const gaps = activity.story.filter((item) => item.type === 'gap');
+      return {
+        id: activity.id,
+        level: level.level,
+        title: activity.title,
+        score: saved.score ?? 0,
+        submittedAt: saved.submittedAt,
+        story: gaps.map((gapItem, index) => ({
+          selectedAnswer: saved.storyAnswers?.[index] || '',
+          correctAnswer: gapItem.answer,
+          isCorrect: saved.storyAnswers?.[index] === gapItem.answer,
+        })),
+        matching: activity.match.map((item, index) => ({
+          definition: item.definition,
+          selectedAnswer: saved.matchingAnswers?.[index] || '',
+          correctAnswer: item.word,
+          isCorrect: saved.matchingAnswers?.[index] === item.word,
+        })),
+        sentences: activity.writingWords.map((word) => ({
+          word,
+          sentence: saved.sentences?.[word] || '',
+        })),
+      };
+    })
+    .filter(Boolean));
 }
 
 const writingCriteria = [
