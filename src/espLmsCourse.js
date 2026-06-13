@@ -15,50 +15,7 @@ export const espCourse = {
       level: 'Elementary',
       cefr: 'A2',
       goal: 'Develop practical customer, colleague, and basic written communication.',
-      units: [
-        {
-          id: 'a2-u1',
-          title: 'Customer and Guest Communication',
-          outcome: 'Learners can greet customers, offer help, and give simple information.',
-          lessons: [
-            lesson('a2-u1-l1', 'Welcoming customers professionally', 'Use polite opening phrases and helpful tone.', ['Good afternoon, how can I help?', 'Welcome to the clinic.', 'Please take a seat.'], 'Write a short welcome script for your workplace.'),
-            lesson('a2-u1-l2', 'Giving simple information', 'Explain times, places, prices, and next steps.', ['Breakfast is from 7 am.', 'The office is on the second floor.', 'Your appointment is at 10:30.'], 'Write three useful information sentences.'),
-            lesson('a2-u1-l3', 'Checking understanding', 'Confirm that customers and colleagues understand.', ['Is that clear?', 'Would you like me to explain again?', 'Do you have any questions?'], 'Write two questions to check understanding.'),
-          ],
-          formative: quiz('a2-u1-f', [
-            q('Which phrase is professional?', ['What you want?', 'How can I help you today?', 'Say fast.'], 1),
-            q('Which sentence gives time information?', ['The appointment is at 10:30.', 'The appointment is nice.', 'The appointment is blue.'], 0),
-            q('Which checks understanding?', ['Is that clear?', 'Go there.', 'Finished.'], 0),
-          ]),
-          summative: summative('a2-u1-s', [
-            q('Choose the best customer greeting.', ['Yes?', 'How can I help you today?', 'Speak.'], 1),
-            q('Which sentence gives directions?', ['Please go to reception.', 'I am tired.', 'The bag is black.'], 0),
-            q('Which is polite?', ['Wait there please.', 'Wait!', 'You wait now.'], 0),
-            q('Which phrase offers help?', ['Can I help you?', 'You help me.', 'I helped yesterday.'], 0),
-          ], 'Write 70-90 words describing how you welcome and help a customer, guest, or patient.'),
-        },
-        {
-          id: 'a2-u2',
-          title: 'Simple Workplace Messages',
-          outcome: 'Learners can write short messages to colleagues, supervisors, or customers.',
-          lessons: [
-            lesson('a2-u2-l1', 'Short emails and messages', 'Write clear basic workplace messages.', ['I am running late.', 'The room is ready.', 'Please call the customer.'], 'Write a short message to your supervisor.'),
-            lesson('a2-u2-l2', 'Explaining a problem simply', 'Describe common workplace problems.', ['The printer is not working.', 'The guest is waiting.', 'We need more towels.'], 'Write two workplace problems.'),
-            lesson('a2-u2-l3', 'Requesting action', 'Ask someone to do something politely.', ['Could you check this, please?', 'Please send the form.', 'Can you update the booking?'], 'Write three polite requests.'),
-          ],
-          formative: quiz('a2-u2-f', [
-            q('Which is a clear problem?', ['The printer is not working.', 'Printer good.', 'I printer.'], 0),
-            q('Which is a polite request?', ['Send it now.', 'Could you send it, please?', 'You send.'], 1),
-            q('A good work message should be...', ['clear and short', 'unclear and long', 'only one word'], 0),
-          ]),
-          summative: summative('a2-u2-s', [
-            q('Choose the clearest message.', ['I late.', 'I am running late today.', 'Late me.'], 1),
-            q('Which phrase asks for action?', ['Could you check this?', 'I checked yesterday.', 'The check is blue.'], 0),
-            q('Which describes a problem?', ['The guest is waiting.', 'The guest happy yesterday.', 'Guest table.'], 0),
-            q('Which ending is polite?', ['Thanks', 'Now', 'No'], 0),
-          ], 'Write a 70-90 word workplace message explaining a problem and asking for help.'),
-        },
-      ],
+      units: elementaryUnits(),
     },
     {
       id: 'intermediate',
@@ -282,7 +239,7 @@ const vocabularyUnits = {
 };
 
 espCourse.levels.forEach((level) => {
-  if (level.id !== 'beginner') level.units.push(vocabularyUnits[level.id]);
+  if (!['beginner', 'elementary'].includes(level.id)) level.units.push(vocabularyUnits[level.id]);
 });
 
 function beginnerUnits() {
@@ -485,6 +442,196 @@ function beginnerUnits() {
       q('Choose the polite closing.', ['Have a good day.', 'Finished now.', 'Go.'], 0),
     ], 'Write 70-90 words about yourself at work. Include your role, routine, one customer phrase, one request, and one problem report.')),
   ];
+}
+
+function elementaryUnits() {
+  return [
+    elementaryUnit('a2-u1', 'Customer and Guest Communication', 'Learners can greet customers, offer help, and give simple information.', [
+      lesson('a2-u1-l1', 'Welcoming customers professionally', 'Use polite opening phrases and helpful tone.', ['Good afternoon, how can I help?', 'Welcome to the clinic.', 'Please take a seat.'], 'Write a short welcome script for your workplace.'),
+      lesson('a2-u1-l2', 'Giving simple information', 'Explain times, places, prices, and next steps.', ['Breakfast is from 7 am.', 'The office is on the second floor.', 'Your appointment is at 10:30.'], 'Write three useful information sentences.'),
+      lesson('a2-u1-l3', 'Checking understanding', 'Confirm that customers and colleagues understand.', ['Is that clear?', 'Would you like me to explain again?', 'Do you have any questions?'], 'Write two questions to check understanding.'),
+    ], vocabularyActivity('a2-u1-vocab', 'Customer Communication Vocabulary', ['welcome', 'appointment', 'information', 'available', 'explain', 'clear', 'question', 'customer', 'service', 'support'], {
+      story: [text('Welcome to our '), gap('service', ['service', 'question', 'available']), text('. Your '), gap('appointment', ['clear', 'appointment', 'support']), text(' is at 10:30. I can '), gap('explain', ['explain', 'customer', 'information']), text(' the next step.')],
+      match: [match('available', 'Free or ready to use.'), match('support', 'Help given to someone.'), match('clear', 'Easy to understand.')],
+      writingWords: ['welcome', 'customer', 'question', 'information'],
+    }), quiz('a2-u1-f', [
+      q('Which phrase is professional?', ['What you want?', 'How can I help you today?', 'Say fast.'], 1),
+      q('Which sentence gives time information?', ['The appointment is at 10:30.', 'The appointment is nice.', 'The appointment is blue.'], 0),
+      q('Which checks understanding?', ['Is that clear?', 'Go there.', 'Finished.'], 0),
+    ]), summative('a2-u1-s', [
+      q('Choose the best customer greeting.', ['Yes?', 'How can I help you today?', 'Speak.'], 1),
+      q('Which sentence gives directions?', ['Please go to reception.', 'I am tired.', 'The bag is black.'], 0),
+      q('Which is polite?', ['Wait there please.', 'Wait!', 'You wait now.'], 0),
+      q('Which phrase offers help?', ['Can I help you?', 'You help me.', 'I helped yesterday.'], 0),
+    ], 'Write 70-90 words describing how you welcome and help a customer, guest, or patient.')),
+    elementaryUnit('a2-u2', 'Simple Workplace Messages', 'Learners can write short messages to colleagues, supervisors, or customers.', [
+      lesson('a2-u2-l1', 'Short emails and messages', 'Write clear basic workplace messages.', ['I am running late.', 'The room is ready.', 'Please call the customer.'], 'Write a short message to your supervisor.'),
+      lesson('a2-u2-l2', 'Explaining a problem simply', 'Describe common workplace problems.', ['The printer is not working.', 'The guest is waiting.', 'We need more towels.'], 'Write two workplace problems.'),
+      lesson('a2-u2-l3', 'Requesting action', 'Ask someone to do something politely.', ['Could you check this, please?', 'Please send the form.', 'Can you update the booking?'], 'Write three polite requests.'),
+    ], vocabularyActivity('a2-u2-vocab', 'Message Vocabulary', ['message', 'late', 'ready', 'problem', 'request', 'send', 'update', 'supervisor', 'customer', 'urgent'], {
+      story: [text('Please send a '), gap('message', ['message', 'late', 'ready']), text(' to the supervisor. The customer has a '), gap('problem', ['request', 'problem', 'send']), text(', so this is '), gap('urgent', ['urgent', 'update', 'customer']), text('.')],
+      match: [match('supervisor', 'A person who manages work.'), match('request', 'Something you ask for politely.'), match('update', 'New information about something.')],
+      writingWords: ['message', 'problem', 'send', 'urgent'],
+    }), quiz('a2-u2-f', [
+      q('Which is a clear problem?', ['The printer is not working.', 'Printer good.', 'I printer.'], 0),
+      q('Which is a polite request?', ['Send it now.', 'Could you send it, please?', 'You send.'], 1),
+      q('A good work message should be...', ['clear and short', 'unclear and long', 'only one word'], 0),
+    ]), summative('a2-u2-s', [
+      q('Choose the clearest message.', ['I late.', 'I am running late today.', 'Late me.'], 1),
+      q('Which phrase asks for action?', ['Could you check this?', 'I checked yesterday.', 'The check is blue.'], 0),
+      q('Which describes a problem?', ['The guest is waiting.', 'The guest happy yesterday.', 'Guest table.'], 0),
+      q('Which ending is polite?', ['Thanks', 'Now', 'No'], 0),
+    ], 'Write a 70-90 word workplace message explaining a problem and asking for help.')),
+    elementaryUnit('a2-u3', 'Appointments, Bookings, and Schedules', 'Learners can confirm bookings, explain availability, and talk about schedules.', [
+      lesson('a2-u3-l1', 'Confirming appointments', 'Confirm times, names, and booking details.', ['Your appointment is confirmed.', 'The booking is under your name.', 'Could I confirm your phone number?'], 'Write three confirmation sentences.'),
+      lesson('a2-u3-l2', 'Availability and changes', 'Explain when something is available or unavailable.', ['We have availability on Tuesday.', 'That time is not available.', 'I can offer 3 pm instead.'], 'Write two available times and one unavailable time.'),
+      lesson('a2-u3-l3', 'Changing a booking', 'Use polite language to change times.', ['Would you like to change the booking?', 'The next available time is 11 am.', 'I can move it to Friday.'], 'Write a short booking-change message.'),
+    ], vocabularyActivity('a2-u3-vocab', 'Booking Vocabulary', ['booking', 'confirm', 'schedule', 'available', 'unavailable', 'change', 'instead', 'details', 'offer', 'cancel'], {
+      story: [text('I can '), gap('confirm', ['confirm', 'cancel', 'instead']), text(' your booking. The time is not '), gap('available', ['details', 'available', 'change']), text(', but I can '), gap('offer', ['offer', 'schedule', 'unavailable']), text(' 3 pm instead.')],
+      match: [match('schedule', 'A plan of times.'), match('instead', 'In place of another option.'), match('cancel', 'To stop a booking or plan.')],
+      writingWords: ['booking', 'confirm', 'available', 'change'],
+    }), quiz('a2-u3-f', [
+      q('Which confirms a booking?', ['Your appointment is confirmed.', 'Appointment nice.', 'You time.'], 0),
+      q('Unavailable means...', ['not free', 'very clean', 'near reception'], 0),
+      q('Which offers another time?', ['I can offer 3 pm instead.', 'I like 3 pm.', '3 pm blue.'], 0),
+    ]), summative('a2-u3-s', [
+      q('Choose the clearest booking sentence.', ['The booking is under your name.', 'Booking under name your.', 'Name booking under.'], 0),
+      q('Which phrase changes a booking?', ['I can move it to Friday.', 'I moved yesterday home.', 'Move booking maybe.'], 0),
+      q('Which word means not available?', ['unavailable', 'support', 'message'], 0),
+      q('Which is polite?', ['Would you like to change the booking?', 'Change now?', 'You change it.'], 0),
+    ], 'Write 70-90 words confirming an appointment and offering a different time if the first time is unavailable.')),
+    elementaryUnit('a2-u4', 'Directions and Local Information', 'Learners can give directions, explain locations, and share simple local information.', [
+      lesson('a2-u4-l1', 'Giving directions inside a building', 'Use clear direction phrases.', ['Go past reception.', 'Take the lift to the second floor.', 'It is opposite the waiting area.'], 'Write directions to one workplace location.'),
+      lesson('a2-u4-l2', 'Local places and transport', 'Explain nearby places and transport options.', ['The bus stop is outside.', 'The pharmacy is next door.', 'The car park is behind the building.'], 'Write three local information sentences.'),
+      lesson('a2-u4-l3', 'Checking if directions are understood', 'Check understanding after giving directions.', ['Would you like me to show you?', 'Do you know where that is?', 'I can write the address for you.'], 'Write two checking questions.'),
+    ], vocabularyActivity('a2-u4-vocab', 'Directions Vocabulary', ['opposite', 'nearby', 'outside', 'behind', 'address', 'transport', 'pharmacy', 'lift', 'floor', 'entrance'], {
+      story: [text('The pharmacy is '), gap('nearby', ['nearby', 'floor', 'lift']), text('. It is '), gap('opposite', ['address', 'opposite', 'transport']), text(' the entrance. The bus stop is '), gap('outside', ['outside', 'behind', 'pharmacy']), text('.')],
+      match: [match('behind', 'At the back of something.'), match('address', 'The details of where a place is.'), match('transport', 'Ways to travel, such as bus or train.')],
+      writingWords: ['opposite', 'outside', 'address', 'entrance'],
+    }), quiz('a2-u4-f', [
+      q('Which gives directions?', ['Take the lift to the second floor.', 'I am very busy.', 'The appointment is confirmed.'], 0),
+      q('Opposite means...', ['across from', 'late', 'finished'], 0),
+      q('Which checks understanding?', ['Do you know where that is?', 'The bus is outside.', 'I work here.'], 0),
+    ]), summative('a2-u4-s', [
+      q('Choose the direction phrase.', ['Go past reception.', 'Reception is friendly.', 'I called reception.'], 0),
+      q('Which is local information?', ['The car park is behind the building.', 'The booking is cancelled.', 'The form is ready.'], 0),
+      q('Which word is a place?', ['pharmacy', 'instead', 'confirm'], 0),
+      q('Which is helpful?', ['Would you like me to show you?', 'Find it yourself.', 'You go.'], 0),
+    ], 'Write 70-90 words giving directions to a workplace location and one nearby local place.')),
+    elementaryUnit('a2-u5', 'Handling Simple Problems', 'Learners can describe routine problems and offer simple solutions.', [
+      lesson('a2-u5-l1', 'Explaining what is wrong', 'Describe simple problems clearly.', ['The system is slow.', 'The order is missing.', 'The room is not ready yet.'], 'Write three common problems.'),
+      lesson('a2-u5-l2', 'Apologising and reassuring', 'Use simple apology and reassurance language.', ['I am sorry about that.', 'I will check it now.', 'We will fix this as soon as possible.'], 'Write two apology phrases.'),
+      lesson('a2-u5-l3', 'Offering a practical solution', 'Suggest simple next steps.', ['I can call maintenance.', 'We can replace the item.', 'I will ask my supervisor.'], 'Write three simple solutions.'),
+    ], vocabularyActivity('a2-u5-vocab', 'Problem Solving Vocabulary', ['system', 'slow', 'missing', 'ready', 'apology', 'solution', 'replace', 'maintenance', 'fix', 'supervisor'], {
+      story: [text('The order is '), gap('missing', ['missing', 'ready', 'slow']), text('. I am sorry about that. I will ask my '), gap('supervisor', ['system', 'supervisor', 'replace']), text(' and find a '), gap('solution', ['solution', 'fix', 'apology']), text('.')],
+      match: [match('maintenance', 'People who repair things.'), match('replace', 'To give another item instead.'), match('apology', 'A polite way to say sorry.')],
+      writingWords: ['missing', 'solution', 'fix', 'supervisor'],
+    }), quiz('a2-u5-f', [
+      q('Which describes a problem?', ['The room is not ready yet.', 'The room is on the left.', 'The room is large.'], 0),
+      q('Which is an apology?', ['I am sorry about that.', 'I am here.', 'I am ready.'], 0),
+      q('Which offers a solution?', ['I can call maintenance.', 'Maintenance is a word.', 'I called yesterday.'], 0),
+    ]), summative('a2-u5-s', [
+      q('Choose the best problem sentence.', ['The system is slow.', 'The system is Monday.', 'Slow system very.'], 0),
+      q('Which reassures someone?', ['I will check it now.', 'No idea.', 'Wait.'], 0),
+      q('Which word means repair?', ['fix', 'floor', 'form'], 0),
+      q('Which is professional?', ['We will fix this as soon as possible.', 'Maybe later.', 'Problem not mine.'], 0),
+    ], 'Write 70-90 words describing a simple workplace problem, apologising, and offering a solution.')),
+    elementaryUnit('a2-u6', 'Teamwork and Colleague Communication', 'Learners can share updates, ask colleagues for help, and communicate respectfully in a team.', [
+      lesson('a2-u6-l1', 'Sharing task updates', 'Tell colleagues what has been done and what is next.', ['I have finished the list.', 'I still need to call the customer.', 'The next task is checking the stock.'], 'Write three task updates.'),
+      lesson('a2-u6-l2', 'Asking colleagues for support', 'Ask for help without sounding rude.', ['Could you help me with this task?', 'Can we do this together?', 'Do you have a moment?'], 'Write three colleague requests.'),
+      lesson('a2-u6-l3', 'Respectful workplace tone', 'Use respectful phrases with colleagues.', ['Thanks for your help.', 'I appreciate it.', 'Let me know if you need anything.'], 'Write a short thank-you message.'),
+    ], vocabularyActivity('a2-u6-vocab', 'Teamwork Vocabulary', ['colleague', 'task', 'update', 'support', 'together', 'moment', 'respectful', 'appreciate', 'stock', 'anything'], {
+      story: [text('I gave my colleague an '), gap('update', ['update', 'stock', 'moment']), text('. We worked '), gap('together', ['support', 'together', 'anything']), text(' on the task. I said, I '), gap('appreciate', ['respectful', 'appreciate', 'colleague']), text(' your help.')],
+      match: [match('colleague', 'A person you work with.'), match('support', 'Help.'), match('stock', 'Items kept for use or sale.')],
+      writingWords: ['colleague', 'task', 'support', 'appreciate'],
+    }), quiz('a2-u6-f', [
+      q('Which is a task update?', ['I have finished the list.', 'The list is blue.', 'I like lists.'], 0),
+      q('Which asks for support politely?', ['Could you help me with this task?', 'Do it.', 'You help now.'], 0),
+      q('Which phrase is respectful?', ['Thanks for your help.', 'Move.', 'No.'], 0),
+    ]), summative('a2-u6-s', [
+      q('Choose the colleague request.', ['Do you have a moment?', 'You moment?', 'Moment now.'], 0),
+      q('Which means working as a pair or group?', ['together', 'missing', 'opposite'], 0),
+      q('Which phrase thanks someone?', ['I appreciate it.', 'I need it.', 'I send it.'], 0),
+      q('Which is clear?', ['The next task is checking the stock.', 'Stock checking next task is.', 'Task stock next.'], 0),
+    ], 'Write 70-90 words giving a team update and asking a colleague for support politely.')),
+    elementaryUnit('a2-u7', 'Telephone and Front Desk Communication', 'Learners can answer calls, take simple messages, and transfer enquiries.', [
+      lesson('a2-u7-l1', 'Answering the phone', 'Use simple professional phone openings.', ['Good morning, UpSkillPro, how can I help?', 'Can I take your name, please?', 'Could you repeat your number?'], 'Write a phone greeting.'),
+      lesson('a2-u7-l2', 'Taking a message', 'Record names, numbers, and reasons for calling.', ['Can I take a message?', 'What is the best number to call back?', 'I will pass this to the team.'], 'Write a short phone message.'),
+      lesson('a2-u7-l3', 'Transferring calls', 'Explain transfer and waiting language.', ['I will transfer you now.', 'Please hold for a moment.', 'The line is busy.'], 'Write three transfer phrases.'),
+    ], vocabularyActivity('a2-u7-vocab', 'Telephone Vocabulary', ['caller', 'transfer', 'hold', 'line', 'busy', 'number', 'message', 'repeat', 'call back', 'enquiry'], {
+      story: [text('The '), gap('caller', ['caller', 'line', 'busy']), text(' has an enquiry. I ask them to '), gap('hold', ['hold', 'number', 'message']), text(' for a moment, then I '), gap('transfer', ['repeat', 'transfer', 'call back']), text(' the call.')],
+      match: [match('line', 'A phone connection.'), match('call back', 'Phone someone again later.'), match('enquiry', 'A request for information.')],
+      writingWords: ['caller', 'message', 'repeat', 'transfer'],
+    }), quiz('a2-u7-f', [
+      q('Which is a phone greeting?', ['Good morning, how can I help?', 'Go there.', 'I am late.'], 0),
+      q('Which asks for a phone number?', ['What is the best number to call back?', 'Where is reception?', 'What colour is it?'], 0),
+      q('Please hold means...', ['wait on the phone', 'finish the call', 'walk upstairs'], 0),
+    ]), summative('a2-u7-s', [
+      q('Choose the best phone phrase.', ['Can I take your name, please?', 'Name now.', 'You name.'], 0),
+      q('Which phrase transfers a call?', ['I will transfer you now.', 'I will start at 9.', 'I will clean the table.'], 0),
+      q('Busy line means...', ['the phone connection is not free', 'the office is clean', 'the caller is early'], 0),
+      q('Which is professional?', ['Could you repeat your number?', 'Say number again.', 'Number?'], 0),
+    ], 'Write 70-90 words showing how you answer a call, take a message, and transfer the caller.')),
+    elementaryUnit('a2-u8', 'Workplace Forms and Records', 'Learners can complete simple forms, check details, and explain missing information.', [
+      lesson('a2-u8-l1', 'Personal and contact details', 'Ask for and record basic details.', ['Please write your full name.', 'Could I check your email address?', 'What is your postcode?'], 'Write three questions for a form.'),
+      lesson('a2-u8-l2', 'Checking forms', 'Notice and explain missing information.', ['This section is missing.', 'Please sign here.', 'The date is incorrect.'], 'Write three form-checking sentences.'),
+      lesson('a2-u8-l3', 'Explaining documents simply', 'Explain what a document or record is for.', ['This form is for registration.', 'We need this record for safety.', 'Please keep a copy.'], 'Write a short explanation of a form.'),
+    ], vocabularyActivity('a2-u8-vocab', 'Forms Vocabulary', ['form', 'record', 'section', 'signature', 'date', 'incorrect', 'postcode', 'email', 'registration', 'copy'], {
+      story: [text('Please complete this '), gap('form', ['form', 'copy', 'date']), text('. The email '), gap('section', ['record', 'section', 'postcode']), text(' is missing. Please add your '), gap('signature', ['incorrect', 'registration', 'signature']), text(' here.')],
+      match: [match('record', 'Information kept for future use.'), match('incorrect', 'Not correct.'), match('copy', 'Another version of a document.')],
+      writingWords: ['form', 'email', 'date', 'record'],
+    }), quiz('a2-u8-f', [
+      q('Which asks for contact details?', ['Could I check your email address?', 'Can I clean the table?', 'Where is the lift?'], 0),
+      q('Missing information means...', ['information is not there', 'information is polite', 'information is early'], 0),
+      q('Which asks someone to sign?', ['Please sign here.', 'Please sit here.', 'Please go here.'], 0),
+    ]), summative('a2-u8-s', [
+      q('Choose the form sentence.', ['This section is missing.', 'This section is happy.', 'Missing this section is.'], 0),
+      q('Which word means not correct?', ['incorrect', 'available', 'nearby'], 0),
+      q('Which is a document purpose?', ['This form is for registration.', 'This form is beside reception.', 'This form is blue.'], 0),
+      q('Which is professional?', ['Please keep a copy.', 'Keep copy now.', 'Copy you keep.'], 0),
+    ], 'Write 70-90 words explaining how to complete a simple workplace form and what to do if information is missing.')),
+    elementaryUnit('a2-u9', 'Service Recovery and Follow-up', 'Learners can apologise, explain next steps, and follow up after a service problem.', [
+      lesson('a2-u9-l1', 'Responding after a problem', 'Use calm service recovery language.', ['Thank you for your patience.', 'I am sorry for the inconvenience.', 'I will look into this for you.'], 'Write three recovery phrases.'),
+      lesson('a2-u9-l2', 'Explaining next steps', 'Give simple next-step information.', ['First, I will check the record.', 'Then I will speak to the team.', 'I will update you by 3 pm.'], 'Write a three-step follow-up.'),
+      lesson('a2-u9-l3', 'Following up in writing', 'Write a short follow-up message.', ['Thank you for contacting us.', 'We have now fixed the issue.', 'Please contact us if you need more help.'], 'Write a short follow-up message.'),
+    ], vocabularyActivity('a2-u9-vocab', 'Follow-up Vocabulary', ['patience', 'inconvenience', 'issue', 'follow-up', 'resolved', 'contact', 'update', 'record', 'response', 'apologise'], {
+      story: [text('Thank you for your '), gap('patience', ['patience', 'record', 'contact']), text('. I apologise for the '), gap('inconvenience', ['response', 'inconvenience', 'resolved']), text('. The issue is now '), gap('resolved', ['follow-up', 'update', 'resolved']), text('.')],
+      match: [match('issue', 'A problem.'), match('follow-up', 'A later message or action.'), match('response', 'A reply.')],
+      writingWords: ['apologise', 'issue', 'update', 'contact'],
+    }), quiz('a2-u9-f', [
+      q('Which phrase is service recovery?', ['I am sorry for the inconvenience.', 'I am on the second floor.', 'I start at 9.'], 0),
+      q('Which gives a next step?', ['I will update you by 3 pm.', 'The form is ready.', 'The car park is behind.'], 0),
+      q('Resolved means...', ['fixed or completed', 'missing', 'not available'], 0),
+    ]), summative('a2-u9-s', [
+      q('Choose the best apology.', ['I am sorry for the inconvenience.', 'Bad luck.', 'Not my problem.'], 0),
+      q('Which is a follow-up phrase?', ['Thank you for contacting us.', 'Turn left.', 'Could I check your name?'], 0),
+      q('Which word means a problem?', ['issue', 'copy', 'floor'], 0),
+      q('Which sentence is clear?', ['We have now fixed the issue.', 'Issue fixed now have we.', 'Fixed issue maybe.'], 0),
+    ], 'Write 70-90 words following up with a customer after a service problem has been resolved.')),
+    elementaryUnit('a2-u10', 'Elementary Review and Workplace Communication', 'Learners review A2 communication across customers, messages, forms, calls, and follow-up.', [
+      lesson('a2-u10-l1', 'Reviewing customer language', 'Review greetings, help, appointments, and directions.', ['How can I help you today?', 'Your appointment is confirmed.', 'Please go to reception.'], 'Write six customer phrases from this level.'),
+      lesson('a2-u10-l2', 'Reviewing colleague language', 'Review messages, requests, updates, and teamwork.', ['Could you check this, please?', 'I have finished the list.', 'Thanks for your support.'], 'Write six colleague phrases from this level.'),
+      lesson('a2-u10-l3', 'Planning an A2 workplace response', 'Plan a clear response to a common workplace situation.', ['Situation', 'Problem', 'Action', 'Follow-up'], 'Plan a workplace response using four headings.'),
+    ], vocabularyActivity('a2-u10-vocab', 'A2 Review Vocabulary', ['communication', 'appointment', 'message', 'direction', 'problem', 'solution', 'teamwork', 'follow-up', 'details', 'professional'], {
+      story: [text('Good workplace '), gap('communication', ['communication', 'details', 'direction']), text(' helps the team. If there is a '), gap('problem', ['teamwork', 'problem', 'appointment']), text(', we explain the '), gap('solution', ['solution', 'message', 'professional']), text(' and send a follow-up.')],
+      match: [match('details', 'Specific information.'), match('professional', 'Suitable for work.'), match('teamwork', 'Working well with others.')],
+      writingWords: ['communication', 'professional', 'solution', 'follow-up'],
+    }), quiz('a2-u10-f', [
+      q('Which is professional customer language?', ['How can I help you today?', 'What now?', 'Speak fast.'], 0),
+      q('Which is a workplace update?', ['I have finished the list.', 'The list is blue.', 'I like lists.'], 0),
+      q('Which is follow-up language?', ['I will update you by 3 pm.', 'I am upstairs.', 'This is a postcode.'], 0),
+    ]), summative('a2-u10-s', [
+      q('Choose the best request.', ['Could you check this, please?', 'Check this now.', 'You check.'], 0),
+      q('Choose the best appointment phrase.', ['Your appointment is confirmed.', 'Appointment confirmed your is.', 'Confirmed appointment maybe.'], 0),
+      q('Choose the best problem response.', ['I will look into this for you.', 'Not mine.', 'No.'], 0),
+      q('Choose the best follow-up phrase.', ['Please contact us if you need more help.', 'Contact if help maybe.', 'More help contact.'], 0),
+      q('Choose the most professional closing.', ['Thank you for your patience.', 'Finished.', 'Bye now.'], 0),
+    ], 'Write 90-110 words responding to a customer or colleague. Include the situation, problem, action, and follow-up.')),
+  ];
+}
+
+function elementaryUnit(id, title, outcome, lessons, vocabulary, formative, summativeAssessment) {
+  return { id, title, outcome, lessons, vocabulary, formative, summative: summativeAssessment };
 }
 
 function beginnerUnit(id, title, outcome, lessons, vocabulary, formative, summativeAssessment) {
