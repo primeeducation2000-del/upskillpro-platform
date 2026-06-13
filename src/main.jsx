@@ -41,6 +41,30 @@ const AdminAnalyticsDashboard = React.lazy(() => import('./AdminAnalyticsDashboa
 const LearnerLms = React.lazy(() => import('./LearnerLms.jsx'));
 const AssessorDashboard = React.lazy(() => import('./AssessorDashboard.jsx'));
 
+class RouteErrorBoundary extends React.Component {
+  constructor(props) {
+    super(props);
+    this.state = { hasError: false };
+  }
+
+  static getDerivedStateFromError() {
+    return { hasError: true };
+  }
+
+  render() {
+    if (this.state.hasError) {
+      return (
+        <main className="admin-loading">
+          <strong>Route failed to load.</strong>
+          <span>Please refresh the page. If it continues, clear the browser cache and reopen this link.</span>
+        </main>
+      );
+    }
+
+    return this.props.children;
+  }
+}
+
 const positioning =
   'UpSkillPro delivers ESP English and Soft Skills training to improve workforce performance, communication, and customer service across hospitality, healthcare, and business sectors.';
 
@@ -242,9 +266,11 @@ function App() {
 
   if (path.startsWith('/assessor-login') || path.startsWith('/assessor')) {
     return (
-      <React.Suspense fallback={<div className="admin-loading">Loading assessor portal...</div>}>
-        <AssessorDashboard />
-      </React.Suspense>
+      <RouteErrorBoundary>
+        <React.Suspense fallback={<div className="admin-loading">Loading assessor portal...</div>}>
+          <AssessorDashboard />
+        </React.Suspense>
+      </RouteErrorBoundary>
     );
   }
 

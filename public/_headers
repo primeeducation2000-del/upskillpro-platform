@@ -18,9 +18,11 @@
 
 /assessor-login
   X-Robots-Tag: noindex, nofollow, noarchive
+  Cache-Control: no-store
 
 /assessor/*
   X-Robots-Tag: noindex, nofollow, noarchive
+  Cache-Control: no-store
 
 /api/lms-learner-auth
   Cache-Control: no-store
