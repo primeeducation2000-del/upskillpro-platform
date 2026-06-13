@@ -285,14 +285,25 @@ export default function AssessorDashboard() {
               {level.units.map((unit) => (
                 <div key={unit.id}>
                   <strong>{unit.title}</strong>
-                  {[unit.formative, unit.summative].map((assessment) => (
-                    <ul key={assessment.id}>
-                      {assessment.questions.map((question) => (
-                        <li key={question.prompt}>{question.prompt} <span>Correct: {question.options[question.answer]}</span></li>
+                  {unit.vocabulary ? (
+                    <>
+                      <p>{unit.vocabulary.title}</p>
+                      <ul>
+                        {unit.vocabulary.words.map((word) => <li key={word}>{word}</li>)}
+                      </ul>
+                    </>
+                  ) : (
+                    <>
+                      {[unit.formative, unit.summative].map((assessment) => (
+                        <ul key={assessment.id}>
+                          {assessment.questions.map((question) => (
+                            <li key={question.prompt}>{question.prompt} <span>Correct: {question.options[question.answer]}</span></li>
+                          ))}
+                        </ul>
                       ))}
-                    </ul>
-                  ))}
-                  {unit.summative.writingPrompt && <p>Writing: {unit.summative.writingPrompt}</p>}
+                      {unit.summative.writingPrompt && <p>Writing: {unit.summative.writingPrompt}</p>}
+                    </>
+                  )}
                 </div>
               ))}
             </article>
