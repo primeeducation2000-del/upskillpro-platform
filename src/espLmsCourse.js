@@ -29,50 +29,7 @@ export const espCourse = {
       level: 'Upper Intermediate',
       cefr: 'B2',
       goal: 'Strengthen professional discussions, written accuracy, and service improvement communication.',
-      units: [
-        {
-          id: 'b2-u1',
-          title: 'Meetings and Professional Discussions',
-          outcome: 'Learners can contribute opinions, agree/disagree politely, and summarise decisions.',
-          lessons: [
-            lesson('b2-u1-l1', 'Giving opinions professionally', 'Use balanced opinion phrases in workplace discussions.', ['In my view...', 'From my experience...', 'One possible solution is...'], 'Write three professional opinion sentences.'),
-            lesson('b2-u1-l2', 'Agreeing and disagreeing politely', 'Respond to ideas without sounding rude.', ['I see your point, but...', 'I agree with that because...', 'Could we also consider...?'], 'Write one agreement and one polite disagreement.'),
-            lesson('b2-u1-l3', 'Summarising decisions', 'Summarise meeting outcomes and next actions.', ['We agreed to...', 'The next step is...', 'I will follow up by Friday.'], 'Write a short meeting summary.'),
-          ],
-          formative: quiz('b2-u1-f', [
-            q('Which phrase gives an opinion professionally?', ['You are wrong.', 'In my view...', 'No way.'], 1),
-            q('Which phrase disagrees politely?', ['I see your point, but...', 'Bad idea.', 'Never.'], 0),
-            q('Which summarises an action?', ['I will follow up by Friday.', 'Friday is nice.', 'I like meetings.'], 0),
-          ]),
-          summative: summative('b2-u1-s', [
-            q('Best professional disagreement:', ['I see your point, but we may need more data.', 'No, impossible.', 'That is stupid.'], 0),
-            q('Which is a meeting outcome?', ['We agreed to update the process.', 'We spoke a lot.', 'The meeting was in a room.'], 0),
-            q('Which phrase adds another idea?', ['Could we also consider training new staff?', 'No.', 'You forgot.'], 0),
-            q('Which is concise and professional?', ['The next step is to contact the supplier.', 'Supplier next contact step is.', 'I think maybe supplier something.'], 0),
-          ], 'Write 140-170 words summarising a workplace meeting, including opinions, decisions, and next actions.'),
-        },
-        {
-          id: 'b2-u2',
-          title: 'Reports and Service Improvement',
-          outcome: 'Learners can describe performance issues and recommend improvements.',
-          lessons: [
-            lesson('b2-u2-l1', 'Describing trends', 'Use data language to describe changes.', ['Customer satisfaction increased.', 'Complaints decreased slightly.', 'Response times remained stable.'], 'Write three trend sentences.'),
-            lesson('b2-u2-l2', 'Explaining causes', 'Connect problems with likely causes.', ['This may be due to...', 'One reason could be...', 'The main cause appears to be...'], 'Write two cause sentences.'),
-            lesson('b2-u2-l3', 'Making recommendations', 'Suggest practical improvements.', ['I recommend introducing a checklist.', 'We should review the process.', 'It would be useful to provide refresher training.'], 'Write three recommendations.'),
-          ],
-          formative: quiz('b2-u2-f', [
-            q('Which sentence describes a trend?', ['Complaints decreased slightly.', 'Complaint is a noun.', 'I like reports.'], 0),
-            q('Which phrase explains a cause?', ['This may be due to...', 'Thank you very much.', 'See you soon.'], 0),
-            q('Which is a recommendation?', ['We should review the process.', 'The process was old.', 'Review was yesterday.'], 0),
-          ]),
-          summative: summative('b2-u2-s', [
-            q('Which sentence is most report-like?', ['Response times increased by 12%.', 'Things got bad.', 'People waited loads.'], 0),
-            q('Which phrase introduces a recommendation?', ['I recommend...', 'I remember...', 'I repeat...'], 0),
-            q('Which explains cause?', ['This may be due to staff shortages.', 'This is staff.', 'Shortages are words.'], 0),
-            q('Which is precise?', ['Customer complaints fell from 18 to 10.', 'Complaints went down a bit maybe.', 'Customers not happy sometimes.'], 0),
-          ], 'Write 140-170 words describing a workplace issue, possible causes, and recommendations for improvement.'),
-        },
-      ],
+      units: upperIntermediateUnits(),
     },
     {
       id: 'advanced',
@@ -196,7 +153,7 @@ const vocabularyUnits = {
 };
 
 espCourse.levels.forEach((level) => {
-  if (!['beginner', 'elementary', 'intermediate'].includes(level.id)) level.units.push(vocabularyUnits[level.id]);
+  if (!['beginner', 'elementary', 'intermediate', 'upper-intermediate'].includes(level.id)) level.units.push(vocabularyUnits[level.id]);
 });
 
 function beginnerUnits() {
@@ -399,6 +356,196 @@ function beginnerUnits() {
       q('Choose the polite closing.', ['Have a good day.', 'Finished now.', 'Go.'], 0),
     ], 'Write 70-90 words about yourself at work. Include your role, routine, one customer phrase, one request, and one problem report.')),
   ];
+}
+
+function upperIntermediateUnits() {
+  return [
+    upperIntermediateUnit('b2-u1', 'Meetings and Professional Discussions', 'Learners can contribute opinions, agree/disagree politely, and summarise decisions.', [
+      lesson('b2-u1-l1', 'Giving opinions professionally', 'Use balanced opinion phrases in workplace discussions.', ['In my view...', 'From my experience...', 'One possible solution is...'], 'Write three professional opinion sentences.'),
+      lesson('b2-u1-l2', 'Agreeing and disagreeing politely', 'Respond to ideas without sounding rude.', ['I see your point, but...', 'I agree with that because...', 'Could we also consider...?'], 'Write one agreement and one polite disagreement.'),
+      lesson('b2-u1-l3', 'Summarising decisions', 'Summarise meeting outcomes and next actions.', ['We agreed to...', 'The next step is...', 'I will follow up by Friday.'], 'Write a short meeting summary.'),
+    ], vocabularyActivity('b2-u1-vocab', 'Meeting Vocabulary', ['perspective', 'consider', 'decision', 'agenda', 'consensus', 'objective', 'summary', 'action', 'deadline', 'contribution'], {
+      story: [text('From my '), gap('perspective', ['perspective', 'deadline', 'action']), text(', the main '), gap('objective', ['summary', 'objective', 'consensus']), text(' is clear. We reached a '), gap('decision', ['consider', 'decision', 'agenda']), text(' and agreed the next actions.')],
+      match: [match('consensus', 'General agreement in a group.'), match('contribution', 'Something added to a discussion or task.'), match('agenda', 'A list of meeting topics.')],
+      writingWords: ['perspective', 'decision', 'summary', 'deadline'],
+    }), quiz('b2-u1-f', [
+      q('Which phrase gives an opinion professionally?', ['You are wrong.', 'In my view...', 'No way.'], 1),
+      q('Which phrase disagrees politely?', ['I see your point, but...', 'Bad idea.', 'Never.'], 0),
+      q('Which summarises an action?', ['I will follow up by Friday.', 'Friday is nice.', 'I like meetings.'], 0),
+    ]), summative('b2-u1-s', [
+      q('Best professional disagreement:', ['I see your point, but we may need more data.', 'No, impossible.', 'That is stupid.'], 0),
+      q('Which is a meeting outcome?', ['We agreed to update the process.', 'We spoke a lot.', 'The meeting was in a room.'], 0),
+      q('Which phrase adds another idea?', ['Could we also consider training new staff?', 'No.', 'You forgot.'], 0),
+      q('Which is concise and professional?', ['The next step is to contact the supplier.', 'Supplier next contact step is.', 'I think maybe supplier something.'], 0),
+    ], 'Write 140-170 words summarising a workplace meeting, including opinions, decisions, and next actions.')),
+    upperIntermediateUnit('b2-u2', 'Reports and Service Improvement', 'Learners can describe performance issues and recommend improvements.', [
+      lesson('b2-u2-l1', 'Describing trends', 'Use data language to describe changes.', ['Customer satisfaction increased.', 'Complaints decreased slightly.', 'Response times remained stable.'], 'Write three trend sentences.'),
+      lesson('b2-u2-l2', 'Explaining causes', 'Connect problems with likely causes.', ['This may be due to...', 'One reason could be...', 'The main cause appears to be...'], 'Write two cause sentences.'),
+      lesson('b2-u2-l3', 'Making recommendations', 'Suggest practical improvements.', ['I recommend introducing a checklist.', 'We should review the process.', 'It would be useful to provide refresher training.'], 'Write three recommendations.'),
+    ], vocabularyActivity('b2-u2-vocab', 'Reporting Vocabulary', ['trend', 'increase', 'decrease', 'stable', 'evidence', 'cause', 'recommendation', 'impact', 'measure', 'improvement'], {
+      story: [text('The report shows an '), gap('increase', ['increase', 'stable', 'cause']), text(' in satisfaction and a small '), gap('decrease', ['impact', 'decrease', 'measure']), text(' in complaints. The main '), gap('recommendation', ['recommendation', 'trend', 'evidence']), text(' is to review the process.')],
+      match: [match('trend', 'A pattern of change over time.'), match('evidence', 'Information that supports a point.'), match('impact', 'The effect of something.')],
+      writingWords: ['trend', 'evidence', 'recommendation', 'improvement'],
+    }), quiz('b2-u2-f', [
+      q('Which sentence describes a trend?', ['Complaints decreased slightly.', 'Complaint is a noun.', 'I like reports.'], 0),
+      q('Which phrase explains a cause?', ['This may be due to...', 'Thank you very much.', 'See you soon.'], 0),
+      q('Which is a recommendation?', ['We should review the process.', 'The process was old.', 'Review was yesterday.'], 0),
+    ]), summative('b2-u2-s', [
+      q('Which sentence is most report-like?', ['Response times increased by 12%.', 'Things got bad.', 'People waited loads.'], 0),
+      q('Which phrase introduces a recommendation?', ['I recommend...', 'I remember...', 'I repeat...'], 0),
+      q('Which explains cause?', ['This may be due to staff shortages.', 'This is staff.', 'Shortages are words.'], 0),
+      q('Which is precise?', ['Customer complaints fell from 18 to 10.', 'Complaints went down a bit maybe.', 'Customers not happy sometimes.'], 0),
+    ], 'Write 140-170 words describing a workplace issue, possible causes, and recommendations for improvement.')),
+    upperIntermediateUnit('b2-u3', 'Negotiating and Reaching Agreement', 'Learners can negotiate priorities, clarify positions, and reach practical agreements.', [
+      lesson('b2-u3-l1', 'Stating a position diplomatically', 'Explain your position without sounding confrontational.', ['Our main concern is...', 'From our side, the priority is...', 'We would prefer to...'], 'Write three diplomatic position statements.'),
+      lesson('b2-u3-l2', 'Making concessions', 'Use language for compromise.', ['We could be flexible on...', 'In return, we would need...', 'That might be possible if...'], 'Write two concession sentences.'),
+      lesson('b2-u3-l3', 'Confirming agreement', 'Summarise agreed points and next steps.', ['To confirm, we have agreed...', 'The agreed deadline is...', 'I will send the revised plan.'], 'Write a short agreement summary.'),
+    ], vocabularyActivity('b2-u3-vocab', 'Negotiation Vocabulary', ['position', 'priority', 'compromise', 'flexible', 'concession', 'condition', 'agreement', 'revised', 'confirm', 'deadline'], {
+      story: [text('Our '), gap('position', ['position', 'revised', 'deadline']), text(' is that quality is the main priority. We can be '), gap('flexible', ['flexible', 'confirm', 'condition']), text(' on timing if there is a clear '), gap('agreement', ['agreement', 'concession', 'compromise']), text('.')],
+      match: [match('compromise', 'An agreement where both sides adjust.'), match('condition', 'Something required before agreement.'), match('revised', 'Changed or updated.')],
+      writingWords: ['priority', 'compromise', 'agreement', 'confirm'],
+    }), quiz('b2-u3-f', [
+      q('Which states a position diplomatically?', ['Our main concern is cost.', 'You are wrong.', 'No chance.'], 0),
+      q('Which phrase makes a concession?', ['We could be flexible on timing.', 'We refuse everything.', 'You must agree.'], 0),
+      q('Which confirms agreement?', ['To confirm, we have agreed the deadline.', 'Maybe yes.', 'Deadline nice.'], 0),
+    ]), summative('b2-u3-s', [
+      q('Best negotiation phrase:', ['That might be possible if we can adjust the deadline.', 'No, never.', 'Do it our way.'], 0),
+      q('Which is a condition?', ['In return, we would need earlier notice.', 'The notice is blue.', 'I noticed it.'], 0),
+      q('Which summarises agreement?', ['The agreed deadline is Friday.', 'Friday is busy.', 'Deadline maybe.'], 0),
+      q('Which word means changed?', ['revised', 'stable', 'agenda'], 0),
+    ], 'Write 140-170 words negotiating a workplace change. Include your position, one compromise, and the final agreement.')),
+    upperIntermediateUnit('b2-u4', 'Presentations and Briefings', 'Learners can structure a short professional presentation and explain key points clearly.', [
+      lesson('b2-u4-l1', 'Opening a presentation', 'Introduce the purpose and structure of a briefing.', ['Today I will cover...', 'The purpose of this briefing is...', 'I will focus on three points.'], 'Write a presentation opening.'),
+      lesson('b2-u4-l2', 'Explaining key points', 'Develop points with examples and transitions.', ['This is important because...', 'For instance...', 'Moving on to the next point...'], 'Write two developed key points.'),
+      lesson('b2-u4-l3', 'Closing with recommendations', 'End with a clear recommendation and action.', ['To conclude...', 'I recommend that we...', 'The next step should be...'], 'Write a presentation closing.'),
+    ], vocabularyActivity('b2-u4-vocab', 'Presentation Vocabulary', ['briefing', 'purpose', 'structure', 'focus', 'example', 'transition', 'conclude', 'recommend', 'audience', 'visual'], {
+      story: [text('The '), gap('purpose', ['purpose', 'visual', 'audience']), text(' of this briefing is to explain the new process. I will '), gap('focus', ['recommend', 'focus', 'conclude']), text(' on three points and finish with a '), gap('recommend', ['transition', 'recommend', 'structure']), text('ation.')],
+      match: [match('transition', 'Language that moves from one point to another.'), match('audience', 'The people listening or reading.'), match('visual', 'An image, chart, or slide used to explain something.')],
+      writingWords: ['briefing', 'purpose', 'example', 'conclude'],
+    }), quiz('b2-u4-f', [
+      q('Which opens a presentation?', ['Today I will cover three points.', 'I covered yesterday.', 'Three points maybe.'], 0),
+      q('Which develops a point?', ['This is important because...', 'Important this.', 'Because maybe.'], 0),
+      q('Which closes with action?', ['The next step should be staff training.', 'Training is a word.', 'Next step maybe.'], 0),
+    ]), summative('b2-u4-s', [
+      q('Choose the clearest presentation opening.', ['The purpose of this briefing is to review service delays.', 'Briefing purpose review delays service.', 'Hi, delays.'], 0),
+      q('Which phrase gives an example?', ['For instance...', 'In conclusion...', 'Despite this...'], 0),
+      q('Which phrase introduces a recommendation?', ['I recommend that we...', 'I remember that we...', 'I repeat that we...'], 0),
+      q('Which word means listeners?', ['audience', 'visual', 'transition'], 0),
+    ], 'Write 140-170 words for a short workplace presentation including opening, key points, example, and recommendation.')),
+    upperIntermediateUnit('b2-u5', 'Performance Conversations and Feedback', 'Learners can discuss performance, give balanced feedback, and agree improvement actions.', [
+      lesson('b2-u5-l1', 'Describing performance objectively', 'Use evidence and examples when discussing performance.', ['The data shows...', 'One example is...', 'The standard requires...'], 'Write three evidence-based performance sentences.'),
+      lesson('b2-u5-l2', 'Balancing strengths and development areas', 'Give feedback that is fair and constructive.', ['A key strength is...', 'One area to develop is...', 'A practical improvement would be...'], 'Write balanced feedback for a colleague.'),
+      lesson('b2-u5-l3', 'Agreeing an improvement plan', 'Set clear targets and review points.', ['The target is...', 'We will review progress in two weeks.', 'Support will include...'], 'Write a short improvement plan.'),
+    ], vocabularyActivity('b2-u5-vocab', 'Performance Vocabulary', ['performance', 'standard', 'evidence', 'strength', 'development', 'constructive', 'target', 'review', 'support', 'progress'], {
+      story: [text('The performance '), gap('standard', ['standard', 'target', 'support']), text(' requires clear communication. A key '), gap('strength', ['development', 'strength', 'review']), text(' is reliability. One area for '), gap('development', ['constructive', 'development', 'evidence']), text(' is written accuracy.')],
+      match: [match('constructive', 'Helpful and focused on improvement.'), match('target', 'A goal to reach.'), match('progress', 'Movement or improvement over time.')],
+      writingWords: ['performance', 'evidence', 'target', 'support'],
+    }), quiz('b2-u5-f', [
+      q('Which is objective evidence?', ['The data shows response times improved.', 'I feel it was okay.', 'Everyone knows.'], 0),
+      q('Which is balanced feedback?', ['A strength is speed; an area to develop is accuracy.', 'Bad work.', 'Fine.'], 0),
+      q('Which sets a review point?', ['We will review progress in two weeks.', 'Progress is nice.', 'Review maybe.'], 0),
+    ]), summative('b2-u5-s', [
+      q('Best feedback phrase:', ['One area to develop is accuracy in written updates.', 'You are careless.', 'Not good enough.'], 0),
+      q('Which phrase uses evidence?', ['One example is the March customer report.', 'Example maybe.', 'I think so.'], 0),
+      q('Which phrase sets a target?', ['The target is 95% completion by Friday.', 'Target is a noun.', 'Friday maybe.'], 0),
+      q('Which word means helpful feedback?', ['constructive', 'visual', 'stable'], 0),
+    ], 'Write 140-170 words giving balanced performance feedback with evidence, one development area, and an improvement plan.')),
+    upperIntermediateUnit('b2-u6', 'Risk, Safety, and Compliance Communication', 'Learners can explain risk, compliance requirements, and safe actions professionally.', [
+      lesson('b2-u6-l1', 'Explaining risk clearly', 'Describe possible risks and consequences.', ['There is a risk that...', 'This could lead to...', 'The main consequence would be...'], 'Write three risk sentences.'),
+      lesson('b2-u6-l2', 'Compliance and requirements', 'Explain rules, standards, and required action.', ['This is required by policy.', 'Staff must follow the procedure.', 'The record must be updated.'], 'Write two compliance requirements.'),
+      lesson('b2-u6-l3', 'Recommending preventative action', 'Suggest actions to reduce risk.', ['To reduce the risk, we should...', 'A preventative measure would be...', 'This would improve compliance.'], 'Write three preventative actions.'),
+    ], vocabularyActivity('b2-u6-vocab', 'Risk Vocabulary', ['risk', 'consequence', 'compliance', 'policy', 'procedure', 'preventative', 'requirement', 'measure', 'audit', 'standard'], {
+      story: [text('There is a '), gap('risk', ['risk', 'audit', 'standard']), text(' that records are incomplete. This could affect '), gap('compliance', ['measure', 'compliance', 'policy']), text('. A preventative '), gap('measure', ['requirement', 'measure', 'procedure']), text(' is weekly checking.')],
+      match: [match('audit', 'A formal check of records or processes.'), match('requirement', 'Something that must be done.'), match('standard', 'The expected level or rule.')],
+      writingWords: ['risk', 'policy', 'procedure', 'preventative'],
+    }), quiz('b2-u6-f', [
+      q('Which explains risk?', ['There is a risk that records may be incomplete.', 'Records are files.', 'Risk maybe.'], 0),
+      q('Which states compliance?', ['This is required by policy.', 'Policy is long.', 'I like policy.'], 0),
+      q('Which reduces risk?', ['A preventative measure would be weekly checks.', 'Checks are common.', 'Measure maybe.'], 0),
+    ]), summative('b2-u6-s', [
+      q('Choose the best consequence sentence.', ['This could lead to delays in patient care.', 'Care delays maybe.', 'This is care.'], 0),
+      q('Which phrase states a required action?', ['Staff must follow the procedure.', 'Staff procedure.', 'Follow maybe.'], 0),
+      q('Which phrase recommends prevention?', ['To reduce the risk, we should update the checklist.', 'Checklist is useful.', 'Risk happened.'], 0),
+      q('Which word means formal check?', ['audit', 'transition', 'audience'], 0),
+    ], 'Write 140-170 words explaining a workplace risk, compliance requirement, and preventative action.')),
+    upperIntermediateUnit('b2-u7', 'Data Commentary and Performance Insights', 'Learners can interpret simple data, compare results, and explain business implications.', [
+      lesson('b2-u7-l1', 'Comparing figures', 'Use comparative language for data.', ['Sales were higher than last month.', 'Complaints were lower than expected.', 'Completion rates were similar across teams.'], 'Write three comparison sentences.'),
+      lesson('b2-u7-l2', 'Explaining implications', 'Connect figures to meaning.', ['This suggests that...', 'The implication is...', 'This may indicate...'], 'Write two implication sentences.'),
+      lesson('b2-u7-l3', 'Turning data into action', 'Recommend action from evidence.', ['Based on these figures...', 'The data supports...', 'A practical next step is...'], 'Write a data-based action point.'),
+    ], vocabularyActivity('b2-u7-vocab', 'Data Vocabulary', ['figure', 'compare', 'rate', 'similar', 'indicate', 'implication', 'evidence', 'insight', 'percentage', 'outcome'], {
+      story: [text('The completion '), gap('rate', ['rate', 'outcome', 'insight']), text(' increased by 12%. This may '), gap('indicate', ['compare', 'indicate', 'similar']), text(' better engagement. The main '), gap('implication', ['percentage', 'implication', 'figure']), text(' is that training should continue.')],
+      match: [match('percentage', 'A number shown as part of 100.'), match('insight', 'A useful understanding from information.'), match('outcome', 'A result.')],
+      writingWords: ['figure', 'evidence', 'insight', 'outcome'],
+    }), quiz('b2-u7-f', [
+      q('Which compares figures?', ['Complaints were lower than expected.', 'Complaints are words.', 'Expected complaints maybe.'], 0),
+      q('Which explains implication?', ['This suggests that customers understood the process.', 'This is a process.', 'Customers understand maybe.'], 0),
+      q('Which bases action on data?', ['Based on these figures, we should review staffing.', 'Figures are numbers.', 'Staffing is busy.'], 0),
+    ]), summative('b2-u7-s', [
+      q('Choose the clearest data sentence.', ['Completion rates rose from 70% to 82%.', 'Rates got better.', 'Completion nice.'], 0),
+      q('Which word means useful understanding?', ['insight', 'agenda', 'concession'], 0),
+      q('Which phrase introduces evidence?', ['The data supports this recommendation.', 'Data is useful.', 'I recommend maybe.'], 0),
+      q('Which explains meaning?', ['The implication is that demand is increasing.', 'Demand number.', 'Increasing maybe.'], 0),
+    ], 'Write 140-170 words explaining a small set of performance data, its implication, and one recommended action.')),
+    upperIntermediateUnit('b2-u8', 'Coaching and Supporting Colleagues', 'Learners can guide colleagues, explain improvement steps, and encourage development.', [
+      lesson('b2-u8-l1', 'Giving guidance without taking over', 'Use supportive coaching language.', ['One approach you could try is...', 'It may help to...', 'What do you think would work best?'], 'Write three coaching prompts.'),
+      lesson('b2-u8-l2', 'Explaining improvement steps', 'Break development into practical actions.', ['The first step is...', 'After that, you can practise...', 'A useful habit would be...'], 'Write a three-step coaching plan.'),
+      lesson('b2-u8-l3', 'Encouraging reflection', 'Ask questions that support self-review.', ['What went well?', 'What would you change next time?', 'What support would help you?'], 'Write three reflection questions.'),
+    ], vocabularyActivity('b2-u8-vocab', 'Coaching Vocabulary', ['guidance', 'approach', 'habit', 'reflect', 'improve', 'supportive', 'confidence', 'feedback', 'practice', 'development'], {
+      story: [text('A supportive coach gives clear '), gap('guidance', ['guidance', 'habit', 'reflect']), text(' and asks the learner to '), gap('reflect', ['practice', 'reflect', 'confidence']), text('. This helps build '), gap('confidence', ['approach', 'confidence', 'development']), text(' over time.')],
+      match: [match('approach', 'A way of doing something.'), match('habit', 'Something done regularly.'), match('development', 'Growth or improvement.')],
+      writingWords: ['guidance', 'improve', 'feedback', 'practice'],
+    }), quiz('b2-u8-f', [
+      q('Which is supportive coaching?', ['One approach you could try is...', 'Do it my way.', 'You are wrong.'], 0),
+      q('Which asks for reflection?', ['What would you change next time?', 'Did you finish?', 'Where is it?'], 0),
+      q('Which describes an improvement step?', ['After that, practise the call script.', 'Practice is good.', 'After that maybe.'], 0),
+    ]), summative('b2-u8-s', [
+      q('Choose the best coaching question.', ['What support would help you?', 'Why did you fail?', 'Are you listening?'], 0),
+      q('Which phrase suggests an option?', ['It may help to practise with a colleague.', 'Practise now.', 'You must.'], 0),
+      q('Which word means self-review?', ['reflect', 'audit', 'confirm'], 0),
+      q('Which phrase is developmental?', ['A useful habit would be checking your message before sending.', 'Bad message.', 'You need habit.'], 0),
+    ], 'Write 140-170 words coaching a colleague through a workplace communication improvement. Include guidance, reflection, and support.')),
+    upperIntermediateUnit('b2-u9', 'Proposals and Business Cases', 'Learners can present a proposal, justify benefits, and address concerns.', [
+      lesson('b2-u9-l1', 'Presenting a proposal', 'Introduce a proposal and its purpose.', ['I propose that we...', 'The purpose of this proposal is...', 'This would address...'], 'Write a proposal opening.'),
+      lesson('b2-u9-l2', 'Justifying benefits', 'Explain value, impact, and expected results.', ['The main benefit would be...', 'This would improve...', 'We expect this to reduce...'], 'Write three benefit statements.'),
+      lesson('b2-u9-l3', 'Addressing concerns', 'Respond to possible objections.', ['One possible concern is...', 'However, this can be managed by...', 'To reduce the cost, we could...'], 'Write one concern and response.'),
+    ], vocabularyActivity('b2-u9-vocab', 'Proposal Vocabulary', ['proposal', 'benefit', 'justify', 'cost', 'objection', 'address', 'value', 'expected', 'resource', 'feasible'], {
+      story: [text('The '), gap('proposal', ['proposal', 'resource', 'feasible']), text(' would improve onboarding. The main '), gap('benefit', ['objection', 'benefit', 'cost']), text(' is faster staff confidence. One concern is '), gap('cost', ['value', 'cost', 'justify']), text(', but this can be managed.')],
+      match: [match('feasible', 'Possible and realistic.'), match('resource', 'Time, money, people, or materials used for work.'), match('justify', 'To give good reasons for something.')],
+      writingWords: ['proposal', 'benefit', 'objection', 'feasible'],
+    }), quiz('b2-u9-f', [
+      q('Which introduces a proposal?', ['I propose that we introduce refresher training.', 'Training maybe.', 'I like training.'], 0),
+      q('Which explains benefit?', ['This would reduce onboarding time.', 'Time is short.', 'Onboarding exists.'], 0),
+      q('Which addresses a concern?', ['However, this can be managed by using existing resources.', 'No concern.', 'Resources are things.'], 0),
+    ]), summative('b2-u9-s', [
+      q('Choose the strongest proposal phrase.', ['The purpose of this proposal is to improve staff retention.', 'Proposal is here.', 'I propose maybe.'], 0),
+      q('Which phrase justifies value?', ['The main benefit would be improved customer satisfaction.', 'Customers are happy.', 'Benefit good.'], 0),
+      q('Which word means realistic?', ['feasible', 'visual', 'stable'], 0),
+      q('Which phrase addresses cost?', ['To reduce the cost, we could use online delivery.', 'Cost is money.', 'Cost bad.'], 0),
+    ], 'Write 140-170 words proposing a workplace improvement. Include purpose, benefits, concern, and response.')),
+    upperIntermediateUnit('b2-u10', 'Upper Intermediate Review and Service Improvement', 'Learners combine B2 skills in a final professional communication scenario.', [
+      lesson('b2-u10-l1', 'Reviewing B2 professional language', 'Review meetings, reports, negotiation, data, coaching, and proposals.', ['I see your point, but...', 'The data suggests...', 'I propose that we...'], 'Write ten useful B2 phrases.'),
+      lesson('b2-u10-l2', 'Structuring a professional response', 'Organise a longer response with evidence and recommendation.', ['Context', 'Evidence', 'Analysis', 'Recommendation'], 'Plan a four-part professional response.'),
+      lesson('b2-u10-l3', 'Editing for precision and tone', 'Improve clarity, accuracy, and professional register.', ['Is the recommendation specific?', 'Is the tone balanced?', 'Is the evidence clear?'], 'Edit a short workplace paragraph.'),
+    ], vocabularyActivity('b2-u10-vocab', 'B2 Review Vocabulary', ['recommendation', 'evidence', 'analysis', 'proposal', 'negotiation', 'performance', 'compliance', 'coaching', 'insight', 'strategy'], {
+      story: [text('A strong B2 response uses '), gap('evidence', ['evidence', 'coaching', 'strategy']), text(' and clear '), gap('analysis', ['analysis', 'proposal', 'compliance']), text('. It ends with a practical '), gap('recommendation', ['negotiation', 'recommendation', 'performance']), text('.')],
+      match: [match('strategy', 'A plan for achieving a goal.'), match('compliance', 'Following rules or standards.'), match('negotiation', 'Discussion to reach agreement.')],
+      writingWords: ['recommendation', 'proposal', 'insight', 'strategy'],
+    }), quiz('b2-u10-f', [
+      q('Which phrase is balanced disagreement?', ['I see your point, but we may need more evidence.', 'No way.', 'Wrong.'], 0),
+      q('Which phrase uses data?', ['The data suggests demand is increasing.', 'Demand maybe.', 'Data is numbers.'], 0),
+      q('Which phrase introduces a proposal?', ['I propose that we review the process.', 'Process good.', 'Proposal maybe.'], 0),
+    ]), summative('b2-u10-s', [
+      q('Choose the most professional recommendation.', ['I recommend introducing a weekly performance review.', 'Do reviews.', 'Review good.'], 0),
+      q('Choose the best evidence phrase.', ['The figures show a 12% increase in enquiries.', 'Lots more people.', 'Numbers went up.'], 0),
+      q('Choose the best negotiation phrase.', ['That might be possible if we adjust the deadline.', 'No.', 'Do it now.'], 0),
+      q('Choose the best proposal response.', ['One possible concern is cost; however, this can be managed.', 'Cost bad.', 'No concern.'], 0),
+      q('Choose the clearest closing.', ['The next step is to agree owners and deadlines.', 'Next step stuff.', 'Finished.'], 0),
+    ], 'Write 160-190 words recommending a service improvement. Include evidence, analysis, possible concern, and next steps.')),
+  ];
+}
+
+function upperIntermediateUnit(id, title, outcome, lessons, vocabulary, formative, summativeAssessment) {
+  return { id, title, outcome, lessons, vocabulary, formative, summative: summativeAssessment };
 }
 
 function intermediateUnits() {
