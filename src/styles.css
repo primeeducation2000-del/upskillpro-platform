@@ -3422,6 +3422,97 @@ footer p {
   width: fit-content;
 }
 
+.vocabulary-card {
+  gap: 20px;
+}
+
+.vocabulary-word-bank {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.vocabulary-word-bank span {
+  padding: 8px 11px;
+  border: 1px solid rgba(54, 227, 159, 0.22);
+  border-radius: 999px;
+  background: rgba(54, 227, 159, 0.09);
+  color: #8ff0d3;
+  font-weight: 900;
+}
+
+.vocabulary-exercise {
+  display: grid;
+  gap: 12px;
+  padding: 16px;
+  border: 1px solid rgba(255, 255, 255, 0.09);
+  border-radius: 16px;
+  background: rgba(255, 255, 255, 0.045);
+}
+
+.vocabulary-exercise h4 {
+  color: #fff;
+  font-size: 1.08rem;
+}
+
+.vocabulary-story {
+  color: #dbe6ff;
+  font-size: 1.05rem;
+  line-height: 2.2;
+}
+
+.vocabulary-story select,
+.vocabulary-match-grid select {
+  min-height: 38px;
+  margin: 0 4px;
+  border: 1px solid rgba(99, 230, 255, 0.18);
+  border-radius: 10px;
+  background: #202a45;
+  color: #fff;
+  font-weight: 850;
+}
+
+.vocabulary-story option,
+.vocabulary-match-grid option {
+  background: #202a45;
+  color: #fff;
+}
+
+.vocabulary-match-grid,
+.vocabulary-sentence-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 12px;
+}
+
+.vocabulary-match-grid label,
+.vocabulary-sentence-grid label {
+  display: grid;
+  gap: 7px;
+}
+
+.vocabulary-match-grid label span,
+.vocabulary-sentence-grid label span {
+  color: #dbe6ff;
+  font-weight: 850;
+}
+
+.vocabulary-sentence-grid input {
+  min-height: 46px;
+  border: 1px solid rgba(99, 230, 255, 0.16);
+  border-radius: 12px;
+  background: rgba(255, 255, 255, 0.06);
+  color: #fff;
+}
+
+.vocabulary-story select:disabled,
+.vocabulary-match-grid select:disabled,
+.vocabulary-sentence-grid input:disabled {
+  opacity: 1;
+  border-color: rgba(54, 227, 159, 0.28);
+  background: rgba(54, 227, 159, 0.08);
+}
+
 .lms-assessment-grid {
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
@@ -4114,7 +4205,9 @@ footer p {
   .lms-kpis,
   .lms-lessons,
   .lms-assessment-grid,
-  .lms-step-shell {
+  .lms-step-shell,
+  .vocabulary-match-grid,
+  .vocabulary-sentence-grid {
     grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 
@@ -4416,7 +4509,9 @@ footer p {
   .lms-lessons,
   .lms-assessment-grid,
   .lms-step-shell,
-  .lms-step-nav {
+  .lms-step-nav,
+  .vocabulary-match-grid,
+  .vocabulary-sentence-grid {
     grid-template-columns: 1fr;
   }
 

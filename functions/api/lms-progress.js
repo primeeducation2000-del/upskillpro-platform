@@ -1,5 +1,5 @@
 const SESSION_COOKIE = 'upskillpro_learner_session';
-const EMPTY_PROGRESS = { lessons: {}, formative: {}, summative: {}, writing: {} };
+const EMPTY_PROGRESS = { lessons: {}, formative: {}, summative: {}, writing: {}, vocabulary: {} };
 
 function json(data, init = {}) {
   return new Response(JSON.stringify(data), {

@@ -17,7 +17,7 @@ import { espCourse } from './espLmsCourse.js';
 
 const LMS_SESSION_KEY = 'upskillpro-lms-session';
 const LMS_PROGRESS_KEY = 'upskillpro-esp-progress';
-const EMPTY_PROGRESS = { lessons: {}, formative: {}, summative: {}, writing: {} };
+const EMPTY_PROGRESS = { lessons: {}, formative: {}, summative: {}, writing: {}, vocabulary: {} };
 
 function progressStorageKey(learner) {
   return learner?.username ? `${LMS_PROGRESS_KEY}-${learner.username}` : LMS_PROGRESS_KEY;
@@ -306,6 +306,17 @@ function StepNavigator({ unit, activeStepId, progress, onSelect }) {
 }
 
 function StepContent({ step, unit, level, progress, updateProgress, onNext }) {
+  if (step.kind === 'vocabulary') {
+    return (
+      <VocabularyCard
+        level={level}
+        unit={unit}
+        saved={progress.vocabulary[unit.vocabulary.id]}
+        onSave={(result) => updateProgress((current) => ({ ...current, vocabulary: { ...current.vocabulary, [unit.vocabulary.id]: result } }))}
+      />
+    );
+  }
+
   if (step.kind === 'lesson') {
     const lesson = step.lesson;
     const complete = Boolean(progress.lessons[lesson.id]);
@@ -500,11 +511,121 @@ function QuizCard({ type, icon: Icon, level, unit, assessment, saved, onSave, on
   );
 }
 
+function VocabularyCard({ level, unit, saved, onSave }) {
+  const activity = unit.vocabulary;
+  const [storyAnswers, setStoryAnswers] = useState(saved?.storyAnswers || {});
+  const [matchingAnswers, setMatchingAnswers] = useState(saved?.matchingAnswers || {});
+  const [sentences, setSentences] = useState(saved?.sentences || {});
+  const submitted = Boolean(saved?.submittedAt);
+
+  useEffect(() => {
+    setStoryAnswers(saved?.storyAnswers || {});
+    setMatchingAnswers(saved?.matchingAnswers || {});
+    setSentences(saved?.sentences || {});
+  }, [activity.id, saved]);
+
+  const gaps = activity.story.filter((item) => item.type === 'gap');
+  const submit = () => {
+    if (submitted) return;
+    const storyCorrect = gaps.reduce((total, gapItem, index) => total + (storyAnswers[index] === gapItem.answer ? 1 : 0), 0);
+    const matchingCorrect = activity.match.reduce((total, item, index) => total + (matchingAnswers[index] === item.word ? 1 : 0), 0);
+    const total = gaps.length + activity.match.length;
+    const score = Math.round(((storyCorrect + matchingCorrect) / total) * 100);
+    onSave({
+      storyAnswers,
+      matchingAnswers,
+      sentences,
+      score,
+      correct: storyCorrect + matchingCorrect,
+      total,
+      submittedAt: new Date().toISOString(),
+    });
+  };
+
+  return (
+    <article className={`lms-step-card vocabulary-card ${submitted ? 'complete' : ''}`}>
+      <div className="lms-step-card-head">
+        <BookOpenCheck size={24} />
+        <div>
+          <p>{level.cefr} Vocabulary</p>
+          <h3>{activity.title}</h3>
+        </div>
+      </div>
+      <p>Use the ten pre-taught words below to complete the vocabulary practice before moving on.</p>
+      <div className="vocabulary-word-bank">
+        {activity.words.map((word) => <span key={word}>{word}</span>)}
+      </div>
+
+      <section className="vocabulary-exercise">
+        <h4>1. Gap-fill story</h4>
+        <p className="vocabulary-story">
+          {activity.story.map((part, index) => {
+            if (part.type === 'text') return <span key={`${part.value}-${index}`}>{part.value}</span>;
+            const gapIndex = activity.story.slice(0, index).filter((item) => item.type === 'gap').length;
+            return (
+              <select
+                key={`${part.answer}-${index}`}
+                value={storyAnswers[gapIndex] || ''}
+                disabled={submitted}
+                onChange={(event) => setStoryAnswers((current) => ({ ...current, [gapIndex]: event.target.value }))}
+              >
+                <option value="">Choose</option>
+                {part.options.map((option) => <option key={option} value={option}>{option}</option>)}
+              </select>
+            );
+          })}
+        </p>
+      </section>
+
+      <section className="vocabulary-exercise">
+        <h4>2. Match words to definitions</h4>
+        <div className="vocabulary-match-grid">
+          {activity.match.map((item, index) => (
+            <label key={item.definition}>
+              <span>{item.definition}</span>
+              <select
+                value={matchingAnswers[index] || ''}
+                disabled={submitted}
+                onChange={(event) => setMatchingAnswers((current) => ({ ...current, [index]: event.target.value }))}
+              >
+                <option value="">Choose word</option>
+                {activity.match.map((option) => <option key={option.word} value={option.word}>{option.word}</option>)}
+              </select>
+            </label>
+          ))}
+        </div>
+      </section>
+
+      <section className="vocabulary-exercise">
+        <h4>3. Write your own sentences</h4>
+        <div className="vocabulary-sentence-grid">
+          {activity.writingWords.map((word) => (
+            <label key={word}>
+              <span>{word}</span>
+              <input
+                value={sentences[word] || ''}
+                disabled={submitted}
+                placeholder={`Write one sentence using "${word}"`}
+                onChange={(event) => setSentences((current) => ({ ...current, [word]: capitaliseSentence(event.target.value) }))}
+              />
+            </label>
+          ))}
+        </div>
+      </section>
+
+      <button type="button" disabled={submitted} onClick={submit}>{submitted ? `Vocabulary Submitted (${saved.score}%)` : 'Submit Vocabulary Practice'}</button>
+      {submitted && <p className={saved.score >= 60 ? 'lms-pass-note' : 'lms-review-note'}>Vocabulary evidence saved. Score: {saved.score}%.</p>}
+    </article>
+  );
+}
+
 function countUnits() {
   return espCourse.levels.reduce((total, level) => total + level.units.length, 0);
 }
 
 function getUnitSteps(unit) {
+  if (unit.vocabulary) return [{ id: unit.vocabulary.id, kind: 'vocabulary', label: 'Vocabulary Practice' }];
+
   return [
     ...unit.lessons.map((lesson, index) => ({ id: lesson.id, kind: 'lesson', lesson, label: `Lesson ${index + 1}` })),
     { id: unit.formative.id, kind: 'formative', label: 'Formative Check' },
@@ -531,6 +652,7 @@ function isStepAvailable(unit, stepId, progress, assumedCompleteStepId = '') {
 }
 
 function isStepComplete(step, progress) {
+  if (step.kind === 'vocabulary') return progress.vocabulary[step.id]?.score !== undefined;
   if (step.kind === 'lesson') return Boolean(progress.lessons[step.id]);
   if (step.kind === 'formative') return progress.formative[step.id]?.score !== undefined;
   return progress.summative[step.id]?.score !== undefined;
@@ -564,10 +686,12 @@ function getUnitProgress(unit, progress) {
 }
 
 function getUnitTotalItems(unit) {
+  if (unit.vocabulary) return 1;
   return unit.lessons.length + 2;
 }
 
 function getUnitCompleteItems(unit, progress) {
+  if (unit.vocabulary) return progress.vocabulary[unit.vocabulary.id]?.score !== undefined ? 1 : 0;
   const lessons = unit.lessons.filter((lesson) => progress.lessons[lesson.id]).length;
   const formative = progress.formative[unit.formative.id]?.score !== undefined ? 1 : 0;
   const summative = progress.summative[unit.summative.id]?.score !== undefined ? 1 : 0;
@@ -578,4 +702,11 @@ function countSubmittedAssessments(progress) {
   const formative = Object.values(progress.formative).filter((item) => item.score !== undefined).length;
   const summative = Object.values(progress.summative).filter((item) => item.score !== undefined).length;
   return formative + summative;
+}
+
+function capitaliseSentence(value) {
+  const trimmedStart = value.match(/^\s*/)?.[0] || '';
+  const rest = value.slice(trimmedStart.length);
+  if (!rest) return value;
+  return `${trimmedStart}${rest.charAt(0).toUpperCase()}${rest.slice(1)}`;
 }

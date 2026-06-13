@@ -2,7 +2,7 @@ import React, { useEffect, useMemo, useState } from 'react';
 import { BookOpenCheck, CheckCircle2, ClipboardCheck, GraduationCap, LockKeyhole, LogOut, Plus, UserRoundCheck, XCircle } from 'lucide-react';
 import { espCourse } from './espLmsCourse.js';
 
-const EMPTY_PROGRESS = { lessons: {}, formative: {}, summative: {}, writing: {} };
+const EMPTY_PROGRESS = { lessons: {}, formative: {}, summative: {}, writing: {}, vocabulary: {} };
 
 export default function AssessorDashboard() {
   const [isAuthed, setIsAuthed] = useState(false);
@@ -407,14 +407,20 @@ function WritingMarkingForm({ attempt, status, onSave }) {
 
 function getCourseProgress(progress) {
   const allUnits = espCourse.levels.flatMap((level) => level.units);
-  const total = allUnits.reduce((sum, unit) => sum + unit.lessons.length + 2, 0);
+  const total = allUnits.reduce((sum, unit) => sum + getUnitTotalItems(unit), 0);
   const complete = allUnits.reduce((sum, unit) => {
+    if (unit.vocabulary) return sum + (progress.vocabulary?.[unit.vocabulary.id]?.score !== undefined ? 1 : 0);
     const lessons = unit.lessons.filter((lesson) => progress.lessons?.[lesson.id]).length;
     const formative = progress.formative?.[unit.formative.id]?.score !== undefined ? 1 : 0;
     const summative = progress.summative?.[unit.summative.id]?.score !== undefined ? 1 : 0;
     return sum + lessons + formative + summative;
   }, 0);
   return Math.round((complete / total) * 100);
+}
+
+function getUnitTotalItems(unit) {
+  if (unit.vocabulary) return 1;
+  return unit.lessons.length + 2;
 }
 
 function countSubmittedAssessments(progress) {
@@ -528,14 +534,27 @@ function buildResetOptions() {
   const allLessons = [];
   const allFormative = [];
   const allSummative = [];
+  const allVocabulary = [];
   const options = [];
 
   espCourse.levels.forEach((level) => {
     const levelLessons = [];
     const levelFormative = [];
     const levelSummative = [];
+    const levelVocabulary = [];
 
     level.units.forEach((unit) => {
+      if (unit.vocabulary) {
+        levelVocabulary.push(unit.vocabulary.id);
+        allVocabulary.push(unit.vocabulary.id);
+        options.push({
+          id: `vocabulary:${unit.vocabulary.id}`,
+          label: `Vocabulary - ${level.level}`,
+          reset: { vocabularyIds: [unit.vocabulary.id] },
+        });
+        return;
+      }
+
       const unitLessons = unit.lessons.map((lesson) => lesson.id);
       const unitFormative = [unit.formative.id];
       const unitSummative = [unit.summative.id];
@@ -561,12 +580,12 @@ function buildResetOptions() {
     options.push({
       id: `level:${level.id}`,
       label: `Level - ${level.level}`,
-      reset: { lessonIds: levelLessons, formativeIds: levelFormative, summativeIds: levelSummative },
+      reset: { lessonIds: levelLessons, formativeIds: levelFormative, summativeIds: levelSummative, vocabularyIds: levelVocabulary },
     });
   });
 
   return [
-    { id: 'all', label: 'Entire pathway', reset: { lessonIds: allLessons, formativeIds: allFormative, summativeIds: allSummative } },
+    { id: 'all', label: 'Entire pathway', reset: { lessonIds: allLessons, formativeIds: allFormative, summativeIds: allSummative, vocabularyIds: allVocabulary } },
     ...options,
   ];
 }

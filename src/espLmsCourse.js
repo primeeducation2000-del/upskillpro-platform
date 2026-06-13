@@ -256,6 +256,78 @@ export const espCourse = {
   ],
 };
 
+const vocabularyUnits = {
+  beginner: vocabularyUnit('a1-vocab', 'Beginner Workplace Vocabulary', [
+    'role', 'team', 'shift', 'manager', 'uniform', 'clean', 'repeat', 'caution', 'booking', 'customer',
+  ], {
+    story: [
+      text('My '), gap('role', ['role', 'caution', 'booking']), text(' is assistant. I start my '), gap('shift', ['uniform', 'shift', 'team']), text(' at 8 o clock. If I do not understand, I ask my manager to '), gap('repeat', ['repeat', 'clean', 'customer']), text(' the instruction.'),
+    ],
+    match: [
+      match('shift', 'The time when you work.'),
+      match('uniform', 'Clothes you wear for work.'),
+      match('booking', 'A reservation or appointment.'),
+    ],
+    writingWords: ['team', 'manager', 'customer', 'clean'],
+  }),
+  elementary: vocabularyUnit('a2-vocab', 'Customer Communication Vocabulary', [
+    'welcome', 'appointment', 'message', 'request', 'delay', 'available', 'confirm', 'explain', 'problem', 'support',
+  ], {
+    story: [
+      text('Good morning, I would like to '), gap('confirm', ['confirm', 'delay', 'support']), text(' your appointment. If there is a '), gap('delay', ['request', 'delay', 'welcome']), text(', I will send a clear '), gap('message', ['message', 'problem', 'available']), text(' to the customer.'),
+    ],
+    match: [
+      match('request', 'To ask for something politely.'),
+      match('available', 'Free or ready to use.'),
+      match('support', 'Help given to someone.'),
+    ],
+    writingWords: ['welcome', 'explain', 'problem', 'appointment'],
+  }),
+  intermediate: vocabularyUnit('b1-vocab', 'Problem Solving Vocabulary', [
+    'concern', 'clarify', 'solution', 'process', 'reason', 'update', 'complaint', 'arrange', 'follow-up', 'confirm',
+  ], {
+    story: [
+      text('When a customer makes a '), gap('complaint', ['process', 'complaint', 'reason']), text(', I listen carefully and '), gap('clarify', ['arrange', 'clarify', 'confirm']), text(' the details. Then I offer a practical '), gap('solution', ['solution', 'concern', 'update']), text(' and explain the next step.'),
+    ],
+    match: [
+      match('concern', 'A worry or problem someone has.'),
+      match('follow-up', 'An action after the first contact.'),
+      match('process', 'A set of steps for doing something.'),
+    ],
+    writingWords: ['arrange', 'reason', 'update', 'confirm'],
+  }),
+  'upper-intermediate': vocabularyUnit('b2-vocab', 'Performance and Meetings Vocabulary', [
+    'recommendation', 'trend', 'evidence', 'outcome', 'stakeholder', 'summary', 'priority', 'improvement', 'decrease', 'increase',
+  ], {
+    story: [
+      text('The report shows an '), gap('increase', ['increase', 'summary', 'priority']), text(' in customer satisfaction. The main '), gap('recommendation', ['recommendation', 'decrease', 'stakeholder']), text(' is to improve response times. This decision should create a better '), gap('outcome', ['evidence', 'outcome', 'trend']), text(' for the team.'),
+    ],
+    match: [
+      match('trend', 'A pattern of change over time.'),
+      match('evidence', 'Information that supports a point.'),
+      match('stakeholder', 'A person or group affected by a decision.'),
+    ],
+    writingWords: ['priority', 'summary', 'improvement', 'decrease'],
+  }),
+  advanced: vocabularyUnit('c1-vocab', 'Leadership and Strategy Vocabulary', [
+    'strategy', 'implementation', 'accountability', 'perspective', 'evidence-based', 'mitigate', 'objective', 'stakeholder', 'priority', 'impact',
+  ], {
+    story: [
+      text('A strong '), gap('strategy', ['strategy', 'impact', 'perspective']), text(' needs clear objectives and careful '), gap('implementation', ['stakeholder', 'implementation', 'mitigate']), text('. Leaders should use an '), gap('evidence-based', ['evidence-based', 'accountability', 'priority']), text(' approach when making decisions.'),
+    ],
+    match: [
+      match('mitigate', 'To reduce a risk or negative effect.'),
+      match('accountability', 'Responsibility for actions and results.'),
+      match('perspective', 'A way of seeing or understanding a situation.'),
+    ],
+    writingWords: ['objective', 'stakeholder', 'priority', 'impact'],
+  }),
+};
+
+espCourse.levels.forEach((level) => {
+  level.units.push(vocabularyUnits[level.id]);
+});
+
 function lesson(id, title, objective, language, task) {
   return { id, title, objective, language, task };
 }
@@ -270,4 +342,30 @@ function quiz(id, questions) {
 
 function summative(id, questions, writingPrompt) {
   return { id, questions, writingPrompt };
+}
+
+function vocabularyUnit(id, title, words, activities) {
+  return {
+    id,
+    title: 'Vocabulary',
+    outcome: `${title}: practise ten pre-taught words through a gap-fill story, matching task, and sentence writing.`,
+    vocabulary: {
+      id: `${id}-activity`,
+      title,
+      words,
+      ...activities,
+    },
+  };
+}
+
+function text(value) {
+  return { type: 'text', value };
+}
+
+function gap(answer, options) {
+  return { type: 'gap', answer, options };
+}
+
+function match(word, definition) {
+  return { word, definition };
 }

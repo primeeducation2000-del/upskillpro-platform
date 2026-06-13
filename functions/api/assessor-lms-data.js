@@ -75,6 +75,7 @@ function resetProgress(progress, reset) {
     formative: { ...(progress.formative || {}) },
     summative: { ...(progress.summative || {}) },
     writing: { ...(progress.writing || {}) },
+    vocabulary: { ...(progress.vocabulary || {}) },
   };
 
   (reset.lessonIds || []).forEach((id) => {
@@ -86,6 +87,9 @@ function resetProgress(progress, reset) {
   (reset.summativeIds || []).forEach((id) => {
     delete next.summative[id];
     delete next.writing[id];
+  });
+  (reset.vocabularyIds || []).forEach((id) => {
+    delete next.vocabulary[id];
   });
 
   return next;
