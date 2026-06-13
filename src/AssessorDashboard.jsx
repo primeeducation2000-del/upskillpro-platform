@@ -202,35 +202,49 @@ export default function AssessorDashboard() {
           <ClipboardCheck size={20} />
         </div>
         <div className="assessor-attempts">
-          {data.attempts.map((attempt) => (
-            <article key={attempt.id} className="assessor-attempt">
-              <div className="assessor-attempt-head">
-                <div>
-                  <strong>{attempt.full_name || attempt.username}</strong>
-                  <span>{labelFor(attempt.level_id)} | {unitLabelFor(attempt.unit_id)} | {attempt.assessment_type}</span>
+          {data.learners.map((learner) => {
+            const learnerAttempts = data.attempts.filter((attempt) => attempt.learner_id === learner.id);
+            return (
+              <article key={learner.id} className="assessor-learner-attempts">
+                <div className="assessor-attempt-head">
+                  <div>
+                    <strong>{learner.full_name}</strong>
+                    <span>{learner.username} | {learnerAttempts.length} submitted assessment{learnerAttempts.length === 1 ? '' : 's'}</span>
+                  </div>
                 </div>
-                <b>{attempt.score}%</b>
-              </div>
-              <div className="assessor-answer-list">
-                {(attempt.answers || []).map((answer, index) => (
-                  <div className={answer.isCorrect ? 'correct' : 'incorrect'} key={`${attempt.id}-${index}`}>
-                    {answer.isCorrect ? <CheckCircle2 size={16} /> : <XCircle size={16} />}
-                    <span>
-                      <strong>{answer.question}</strong>
-                      Learner: {answer.selectedAnswer || 'No answer'} | Correct: {answer.correctAnswer}
-                    </span>
+                {!learnerAttempts.length && <p className="assessor-muted">No submissions yet for this learner.</p>}
+                {learnerAttempts.map((attempt) => (
+                  <div key={attempt.id} className="assessor-attempt">
+                    <div className="assessor-attempt-head">
+                      <div>
+                        <strong>{labelFor(attempt.level_id)} | {unitLabelFor(attempt.unit_id)}</strong>
+                        <span>{attempt.assessment_type} | {new Date(attempt.created_at).toLocaleString()}</span>
+                      </div>
+                      <b>{attempt.score}%</b>
+                    </div>
+                    <div className="assessor-answer-list">
+                      {(attempt.answers || []).map((answer, index) => (
+                        <div className={answer.isCorrect ? 'correct' : 'incorrect'} key={`${attempt.id}-${index}`}>
+                          {answer.isCorrect ? <CheckCircle2 size={16} /> : <XCircle size={16} />}
+                          <span>
+                            <strong>{answer.question}</strong>
+                            Learner: {answer.selectedAnswer || 'No answer'} | Correct: {answer.correctAnswer}
+                          </span>
+                        </div>
+                      ))}
+                    </div>
+                    {attempt.writing_response && (
+                      <blockquote>
+                        <strong>Writing response</strong>
+                        {attempt.writing_response}
+                      </blockquote>
+                    )}
                   </div>
                 ))}
-              </div>
-              {attempt.writing_response && (
-                <blockquote>
-                  <strong>Writing response</strong>
-                  {attempt.writing_response}
-                </blockquote>
-              )}
-            </article>
-          ))}
-          {!data.attempts.length && <p className="assessor-muted">No assessment attempts submitted yet.</p>}
+              </article>
+            );
+          })}
+          {!data.learners.length && <p className="assessor-muted">No learners created yet.</p>}
         </div>
       </section>
 

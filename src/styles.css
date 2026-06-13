@@ -3718,14 +3718,22 @@ footer p {
   min-height: 42px;
   border: 1px solid rgba(255, 255, 255, 0.12);
   border-radius: 12px;
-  background: rgba(255, 255, 255, 0.07);
+  background: #202a45;
   color: #fff;
   font-weight: 850;
+}
+
+.assessor-reset-controls select option {
+  background: #202a45;
+  color: #fff;
 }
 
 .assessor-reset-controls button {
   min-height: 42px;
   padding: 10px 12px;
+  border: 1px solid rgba(99, 230, 255, 0.22);
+  background: linear-gradient(135deg, rgba(11, 122, 117, 0.9), rgba(37, 56, 99, 0.92));
+  color: #fff;
 }
 
 .assessor-progress {
@@ -3753,11 +3761,23 @@ footer p {
   font-size: 0.82rem;
 }
 
+.assessor-learner-attempts,
 .assessor-attempt {
   padding: 16px;
   border: 1px solid rgba(255, 255, 255, 0.1);
   border-radius: 18px;
   background: rgba(255, 255, 255, 0.045);
+}
+
+.assessor-learner-attempts {
+  display: grid;
+  gap: 12px;
+}
+
+.assessor-learner-attempts > .assessor-attempt-head {
+  margin-bottom: 0;
+  padding-bottom: 12px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.09);
 }
 
 .assessor-attempt-head b {
