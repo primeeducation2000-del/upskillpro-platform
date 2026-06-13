@@ -320,14 +320,7 @@ export default function AssessorDashboard() {
               {level.units.map((unit) => (
                 <div key={unit.id}>
                   <strong>{unit.title}</strong>
-                  {unit.vocabulary ? (
-                    <>
-                      <p>{unit.vocabulary.title}</p>
-                      <ul>
-                        {unit.vocabulary.words.map((word) => <li key={word}>{word}</li>)}
-                      </ul>
-                    </>
-                  ) : (
+                  {unit.lessons ? (
                     <>
                       {[unit.formative, unit.summative].map((assessment) => (
                         <ul key={assessment.id}>
@@ -336,9 +329,24 @@ export default function AssessorDashboard() {
                           ))}
                         </ul>
                       ))}
+                      {unit.vocabulary && (
+                        <>
+                          <p>{unit.vocabulary.title}</p>
+                          <ul>
+                            {unit.vocabulary.words.map((word) => <li key={word}>{word}</li>)}
+                          </ul>
+                        </>
+                      )}
                       {unit.summative.writingPrompt && <p>Writing: {unit.summative.writingPrompt}</p>}
                     </>
-                  )}
+                  ) : unit.vocabulary ? (
+                    <>
+                      <p>{unit.vocabulary.title}</p>
+                      <ul>
+                        {unit.vocabulary.words.map((word) => <li key={word}>{word}</li>)}
+                      </ul>
+                    </>
+                  ) : null}
                 </div>
               ))}
             </article>
@@ -578,18 +586,19 @@ function getCourseProgress(progress) {
   const allUnits = espCourse.levels.flatMap((level) => level.units);
   const total = allUnits.reduce((sum, unit) => sum + getUnitTotalItems(unit), 0);
   const complete = allUnits.reduce((sum, unit) => {
-    if (unit.vocabulary) return sum + (progress.vocabulary?.[unit.vocabulary.id]?.score !== undefined ? 1 : 0);
+    if (unit.vocabulary && !unit.lessons) return sum + (progress.vocabulary?.[unit.vocabulary.id]?.score !== undefined ? 1 : 0);
     const lessons = unit.lessons.filter((lesson) => progress.lessons?.[lesson.id]).length;
+    const vocabulary = unit.vocabulary && progress.vocabulary?.[unit.vocabulary.id]?.score !== undefined ? 1 : 0;
     const formative = progress.formative?.[unit.formative.id]?.score !== undefined ? 1 : 0;
     const summative = progress.summative?.[unit.summative.id]?.score !== undefined ? 1 : 0;
-    return sum + lessons + formative + summative;
+    return sum + lessons + vocabulary + formative + summative;
   }, 0);
   return Math.round((complete / total) * 100);
 }
 
 function getUnitTotalItems(unit) {
-  if (unit.vocabulary) return 1;
-  return unit.lessons.length + 2;
+  if (unit.vocabulary && !unit.lessons) return 1;
+  return unit.lessons.length + (unit.vocabulary ? 1 : 0) + 2;
 }
 
 function countSubmittedAssessments(progress) {
@@ -758,7 +767,7 @@ function buildResetOptions() {
     const levelVocabulary = [];
 
     level.units.forEach((unit) => {
-      if (unit.vocabulary) {
+      if (unit.vocabulary && !unit.lessons) {
         levelVocabulary.push(unit.vocabulary.id);
         allVocabulary.push(unit.vocabulary.id);
         options.push({
@@ -772,21 +781,25 @@ function buildResetOptions() {
       const unitLessons = unit.lessons.map((lesson) => lesson.id);
       const unitFormative = [unit.formative.id];
       const unitSummative = [unit.summative.id];
+      const unitVocabulary = unit.vocabulary ? [unit.vocabulary.id] : [];
       levelLessons.push(...unitLessons);
       levelFormative.push(...unitFormative);
       levelSummative.push(...unitSummative);
+      levelVocabulary.push(...unitVocabulary);
       allLessons.push(...unitLessons);
       allFormative.push(...unitFormative);
       allSummative.push(...unitSummative);
+      allVocabulary.push(...unitVocabulary);
 
       options.push({
         id: `unit:${unit.id}`,
         label: `Unit - ${level.level}: ${unit.title}`,
-        reset: { lessonIds: unitLessons, formativeIds: unitFormative, summativeIds: unitSummative },
+        reset: { lessonIds: unitLessons, formativeIds: unitFormative, summativeIds: unitSummative, vocabularyIds: unitVocabulary },
       });
       unit.lessons.forEach((lesson) => {
         options.push({ id: `lesson:${lesson.id}`, label: `Lesson - ${lesson.title}`, reset: { lessonIds: [lesson.id] } });
       });
+      if (unit.vocabulary) options.push({ id: `vocabulary:${unit.vocabulary.id}`, label: `Vocabulary - ${unit.title}`, reset: { vocabularyIds: unitVocabulary } });
       options.push({ id: `formative:${unit.formative.id}`, label: `Formative - ${unit.title}`, reset: { formativeIds: unitFormative } });
       options.push({ id: `summative:${unit.summative.id}`, label: `Final - ${unit.title}`, reset: { summativeIds: unitSummative } });
     });

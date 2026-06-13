@@ -164,7 +164,7 @@ export async function onRequest({ request, env }) {
       if (!learnerId) return json({ ok: false, error: 'Learner is required.' }, { status: 400 });
 
       const row = await db.prepare('SELECT progress_json FROM lms_progress WHERE learner_id = ?').bind(learnerId).first();
-      const currentProgress = parseJson(row?.progress_json, { lessons: {}, formative: {}, summative: {}, writing: {} });
+      const currentProgress = parseJson(row?.progress_json, { lessons: {}, formative: {}, summative: {}, writing: {}, vocabulary: {} });
       const nextProgress = resetProgress(currentProgress, body.reset || {});
       await db.prepare(`
         INSERT INTO lms_progress (learner_id, progress_json, updated_at)

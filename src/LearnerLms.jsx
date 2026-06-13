@@ -272,7 +272,7 @@ export default function LearnerLms() {
               level={selectedLevel}
               progress={progress}
               updateProgress={updateProgress}
-              onNext={() => setActiveStepId(getNextAvailableStep(selectedUnit, activeStep.id, progress).id)}
+              onNext={(assumedCompleteStepId = activeStep.id) => setActiveStepId(getNextAvailableStep(selectedUnit, activeStep.id, progress, assumedCompleteStepId).id)}
             />
           </div>
         </section>
@@ -312,7 +312,10 @@ function StepContent({ step, unit, level, progress, updateProgress, onNext }) {
         level={level}
         unit={unit}
         saved={progress.vocabulary[unit.vocabulary.id]}
-        onSave={(result) => updateProgress((current) => ({ ...current, vocabulary: { ...current.vocabulary, [unit.vocabulary.id]: result } }))}
+        onSave={(result) => {
+          updateProgress((current) => ({ ...current, vocabulary: { ...current.vocabulary, [unit.vocabulary.id]: result } }));
+          window.setTimeout(() => onNext(unit.vocabulary.id), 160);
+        }}
       />
     );
   }
@@ -624,13 +627,15 @@ function countUnits() {
 }
 
 function getUnitSteps(unit) {
-  if (unit.vocabulary) return [{ id: unit.vocabulary.id, kind: 'vocabulary', label: 'Vocabulary Practice' }];
+  if (unit.vocabulary && !unit.lessons) return [{ id: unit.vocabulary.id, kind: 'vocabulary', label: 'Vocabulary Practice' }];
 
-  return [
+  const steps = [
     ...unit.lessons.map((lesson, index) => ({ id: lesson.id, kind: 'lesson', lesson, label: `Lesson ${index + 1}` })),
-    { id: unit.formative.id, kind: 'formative', label: 'Formative Check' },
-    { id: unit.summative.id, kind: 'summative', label: 'Final Assessment' },
   ];
+  if (unit.vocabulary) steps.push({ id: unit.vocabulary.id, kind: 'vocabulary', label: 'Vocabulary Practice' });
+  steps.push({ id: unit.formative.id, kind: 'formative', label: 'Formative Check' });
+  steps.push({ id: unit.summative.id, kind: 'summative', label: 'Final Assessment' });
+  return steps;
 }
 
 function getFirstAvailableStep(unit, progress) {
@@ -686,16 +691,17 @@ function getUnitProgress(unit, progress) {
 }
 
 function getUnitTotalItems(unit) {
-  if (unit.vocabulary) return 1;
-  return unit.lessons.length + 2;
+  if (unit.vocabulary && !unit.lessons) return 1;
+  return unit.lessons.length + (unit.vocabulary ? 1 : 0) + 2;
 }
 
 function getUnitCompleteItems(unit, progress) {
-  if (unit.vocabulary) return progress.vocabulary[unit.vocabulary.id]?.score !== undefined ? 1 : 0;
+  if (unit.vocabulary && !unit.lessons) return progress.vocabulary[unit.vocabulary.id]?.score !== undefined ? 1 : 0;
   const lessons = unit.lessons.filter((lesson) => progress.lessons[lesson.id]).length;
+  const vocabulary = unit.vocabulary && progress.vocabulary[unit.vocabulary.id]?.score !== undefined ? 1 : 0;
   const formative = progress.formative[unit.formative.id]?.score !== undefined ? 1 : 0;
   const summative = progress.summative[unit.summative.id]?.score !== undefined ? 1 : 0;
-  return lessons + formative + summative;
+  return lessons + vocabulary + formative + summative;
 }
 
 function countSubmittedAssessments(progress) {
