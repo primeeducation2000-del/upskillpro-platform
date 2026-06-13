@@ -3945,6 +3945,60 @@ footer p {
   color: #fff;
 }
 
+.vocab-sentence-marking {
+  display: grid;
+  gap: 14px;
+  margin-top: 12px;
+  padding: 14px;
+  border: 1px solid rgba(54, 227, 159, 0.2);
+  border-radius: 16px;
+  background: rgba(54, 227, 159, 0.06);
+}
+
+.vocab-sentence-mark-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 12px;
+}
+
+.vocab-sentence-mark-grid label {
+  display: grid;
+  gap: 7px;
+  padding: 12px;
+  border: 1px solid rgba(255, 255, 255, 0.09);
+  border-radius: 14px;
+  background: rgba(255, 255, 255, 0.045);
+}
+
+.vocab-sentence-mark-grid span {
+  color: #fff;
+  font-weight: 950;
+}
+
+.vocab-sentence-mark-grid small {
+  color: #b8c6e3;
+}
+
+.vocab-sentence-marking select,
+.vocab-sentence-marking input,
+.vocab-sentence-marking textarea {
+  min-width: 0;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: 12px;
+  background: #202a45;
+  color: #fff;
+}
+
+.vocab-sentence-marking select,
+.vocab-sentence-marking input {
+  min-height: 44px;
+}
+
+.vocab-sentence-marking option {
+  background: #202a45;
+  color: #fff;
+}
+
 .writing-marking-form {
   display: grid;
   gap: 14px;
@@ -4203,6 +4257,7 @@ footer p {
   .assessor-grid,
   .assessor-course-map,
   .writing-criteria-grid,
+  .vocab-sentence-mark-grid,
   .writing-marking-fields {
     grid-template-columns: 1fr;
   }
@@ -4513,6 +4568,7 @@ footer p {
   .assessor-grid,
   .assessor-course-map,
   .writing-criteria-grid,
+  .vocab-sentence-mark-grid,
   .writing-marking-fields {
     grid-template-columns: 1fr;
   }

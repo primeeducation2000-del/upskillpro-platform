@@ -105,6 +105,35 @@ export async function onRequest({ request, env }) {
   if (request.method === 'POST') {
     const body = await request.json().catch(() => ({}));
 
+    if (body.action === 'markVocabularySentences') {
+      const learnerId = String(body.learnerId || '');
+      const activityId = String(body.activityId || '');
+      if (!learnerId || !activityId) return json({ ok: false, error: 'Learner and vocabulary activity are required.' }, { status: 400 });
+
+      const row = await db.prepare('SELECT progress_json FROM lms_progress WHERE learner_id = ?').bind(learnerId).first();
+      const progress = parseJson(row?.progress_json, { lessons: {}, formative: {}, summative: {}, writing: {}, vocabulary: {} });
+      const vocabulary = { ...(progress.vocabulary || {}) };
+      const currentActivity = { ...(vocabulary[activityId] || {}) };
+      vocabulary[activityId] = {
+        ...currentActivity,
+        sentenceMarks: {
+          ratings: body.ratings && typeof body.ratings === 'object' ? body.ratings : {},
+          feedback: String(body.feedback || '').trim(),
+          markedBy: String(body.markedBy || 'Assessor').trim() || 'Assessor',
+          markedAt: new Date().toISOString(),
+        },
+      };
+
+      const nextProgress = { ...progress, vocabulary };
+      await db.prepare(`
+        INSERT INTO lms_progress (learner_id, progress_json, updated_at)
+        VALUES (?, ?, ?)
+        ON CONFLICT(learner_id) DO UPDATE SET progress_json = excluded.progress_json, updated_at = excluded.updated_at
+      `).bind(learnerId, JSON.stringify(nextProgress), new Date().toISOString()).run();
+
+      return json({ ok: true, progress: nextProgress });
+    }
+
     if (body.action === 'markWriting') {
       const attemptId = String(body.attemptId || '');
       if (!attemptId) return json({ ok: false, error: 'Attempt is required.' }, { status: 400 });

@@ -128,6 +128,29 @@ export default function AssessorDashboard() {
     }
   };
 
+  const saveVocabularySentenceMark = async (evidence, mark) => {
+    const statusKey = `${evidence.learnerId}:${evidence.id}`;
+    setMarkingStatus((current) => ({ ...current, [statusKey]: 'Saving...' }));
+    const result = await fetch('/api/assessor-lms-data', {
+      method: 'POST',
+      credentials: 'include',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        action: 'markVocabularySentences',
+        learnerId: evidence.learnerId,
+        activityId: evidence.id,
+        ...mark,
+      }),
+    }).then((response) => response.json()).catch(() => ({ ok: false, error: 'Could not save vocabulary sentence mark.' }));
+
+    if (result.ok) {
+      setMarkingStatus((current) => ({ ...current, [statusKey]: 'Saved' }));
+      await loadData();
+    } else {
+      setMarkingStatus((current) => ({ ...current, [statusKey]: result.error || 'Could not save' }));
+    }
+  };
+
   const stats = useMemo(() => {
     const completed = data.learners.filter((learner) => getCourseProgress(learner.progress || EMPTY_PROGRESS) === 100).length;
     return {
@@ -226,7 +249,7 @@ export default function AssessorDashboard() {
         <div className="assessor-attempts">
           {data.learners.map((learner) => {
             const learnerAttempts = data.attempts.filter((attempt) => attempt.learner_id === learner.id);
-            const vocabularyEvidence = getVocabularyEvidence(learner.progress || EMPTY_PROGRESS);
+            const vocabularyEvidence = getVocabularyEvidence(learner.id, learner.progress || EMPTY_PROGRESS);
             return (
               <article key={learner.id} className="assessor-learner-attempts">
                 <div className="assessor-attempt-head">
@@ -239,7 +262,14 @@ export default function AssessorDashboard() {
                   </div>
                 </div>
                 {!learnerAttempts.length && !vocabularyEvidence.length && <p className="assessor-muted">No submissions yet for this learner.</p>}
-                {vocabularyEvidence.map((evidence) => <VocabularyEvidenceCard key={evidence.id} evidence={evidence} />)}
+                {vocabularyEvidence.map((evidence) => (
+                  <VocabularyEvidenceCard
+                    key={evidence.id}
+                    evidence={evidence}
+                    status={markingStatus[`${evidence.learnerId}:${evidence.id}`]}
+                    onSave={saveVocabularySentenceMark}
+                  />
+                ))}
                 {learnerAttempts.map((attempt) => (
                   <div key={attempt.id} className="assessor-attempt">
                     <div className="assessor-attempt-head">
@@ -347,7 +377,7 @@ function ProgressMeter({ value }) {
   return <div className="assessor-progress"><span style={{ width: `${value}%` }} /><strong>{value}%</strong></div>;
 }
 
-function VocabularyEvidenceCard({ evidence }) {
+function VocabularyEvidenceCard({ evidence, status, onSave }) {
   return (
     <div className="assessor-attempt assessor-vocabulary-evidence">
       <div className="assessor-attempt-head">
@@ -394,7 +424,79 @@ function VocabularyEvidenceCard({ evidence }) {
           <span key={item.word}><b>{item.word}:</b> {item.sentence || 'No sentence submitted'}</span>
         ))}
       </blockquote>
+      <VocabularySentenceMarking evidence={evidence} status={status} onSave={onSave} />
     </div>
+  );
+}
+
+function VocabularySentenceMarking({ evidence, status, onSave }) {
+  const [ratings, setRatings] = useState(() => Object.fromEntries(evidence.sentences.map((item) => [item.word, item.rating || ''])));
+  const [feedback, setFeedback] = useState(evidence.sentenceMarks?.feedback || '');
+  const [markedBy, setMarkedBy] = useState(evidence.sentenceMarks?.markedBy || 'Assessor');
+
+  useEffect(() => {
+    setRatings(Object.fromEntries(evidence.sentences.map((item) => [item.word, item.rating || ''])));
+    setFeedback(evidence.sentenceMarks?.feedback || '');
+    setMarkedBy(evidence.sentenceMarks?.markedBy || 'Assessor');
+  }, [evidence]);
+
+  const submit = (event) => {
+    event.preventDefault();
+    onSave(evidence, { ratings, feedback, markedBy });
+  };
+
+  const generateFeedback = () => {
+    const weak = evidence.sentences.filter((item) => Number(ratings[item.word]) <= 2).map((item) => item.word);
+    const strong = evidence.sentences.filter((item) => Number(ratings[item.word]) >= 4).map((item) => item.word);
+    setFeedback([
+      `Vocabulary Sentence Feedback: The learner used ${evidence.sentences.length} target words from ${evidence.title}.`,
+      strong.length ? `Strong sentence use: ${strong.join(', ')}.` : 'Strength: the learner attempted the sentence-writing task.',
+      weak.length ? `Development needed: improve sentence accuracy or context for ${weak.join(', ')}.` : 'Development point: continue extending sentences with clearer workplace context and accurate punctuation.',
+      'Next step: rewrite any weaker sentence using a full subject, verb, and workplace detail.',
+    ].join('\n'));
+  };
+
+  return (
+    <form className="vocab-sentence-marking" onSubmit={submit}>
+      <div className="writing-marking-head">
+        <div>
+          <strong>Sentence-writing marking</strong>
+          <span>Rate each target-word sentence. This does not change the learner response.</span>
+        </div>
+        {evidence.sentenceMarks?.markedAt && <em>Marked {new Date(evidence.sentenceMarks.markedAt).toLocaleString()}</em>}
+      </div>
+
+      <div className="vocab-sentence-mark-grid">
+        {evidence.sentences.map((item) => (
+          <label key={item.word}>
+            <span>{item.word}</span>
+            <small>{item.sentence || 'No sentence submitted'}</small>
+            <select value={ratings[item.word] || ''} onChange={(event) => setRatings((current) => ({ ...current, [item.word]: event.target.value }))}>
+              <option value="">Select mark</option>
+              {sentenceMarkScale.map((mark) => <option key={mark.value} value={mark.value}>{mark.label}</option>)}
+            </select>
+          </label>
+        ))}
+      </div>
+
+      <div className="writing-marking-fields">
+        <label>
+          <span>Marked by</span>
+          <input value={markedBy} onChange={(event) => setMarkedBy(event.target.value)} />
+        </label>
+      </div>
+
+      <label className="writing-feedback">
+        <span>Vocabulary sentence feedback</span>
+        <textarea value={feedback} onChange={(event) => setFeedback(event.target.value)} rows="4" placeholder="Give feedback on accuracy, word use, and sentence control..." />
+      </label>
+
+      <div className="writing-marking-actions">
+        <button type="button" onClick={generateFeedback}>Generate Sentence Feedback</button>
+        <button type="submit">Save Sentence Marks</button>
+      </div>
+      {status && <p className="assessor-mark-status">{status}</p>}
+    </form>
   );
 }
 
@@ -496,7 +598,7 @@ function countSubmittedAssessments(progress) {
   return formative + summative;
 }
 
-function getVocabularyEvidence(progress) {
+function getVocabularyEvidence(learnerId, progress) {
   return espCourse.levels.flatMap((level) => level.units
     .filter((unit) => unit.vocabulary)
     .map((unit) => {
@@ -506,6 +608,7 @@ function getVocabularyEvidence(progress) {
       const gaps = activity.story.filter((item) => item.type === 'gap');
       return {
         id: activity.id,
+        learnerId,
         level: level.level,
         title: activity.title,
         score: saved.score ?? 0,
@@ -524,11 +627,21 @@ function getVocabularyEvidence(progress) {
         sentences: activity.writingWords.map((word) => ({
           word,
           sentence: saved.sentences?.[word] || '',
+          rating: saved.sentenceMarks?.ratings?.[word] || '',
         })),
+        sentenceMarks: saved.sentenceMarks || null,
       };
     })
     .filter(Boolean));
 }
+
+const sentenceMarkScale = [
+  { value: '1', label: '1 - Not yet accurate' },
+  { value: '2', label: '2 - Partly correct' },
+  { value: '3', label: '3 - Clear sentence' },
+  { value: '4', label: '4 - Strong sentence' },
+  { value: '5', label: '5 - Excellent use' },
+];
 
 const writingCriteria = [
   {
