@@ -2,6 +2,7 @@ const DEFAULT_ASSESSOR_PASSWORD_HASH = 'cad2b291f743744acb66216467d69e010b81c626
 const SESSION_COOKIE = 'upskillpro_assessor_session';
 const GOOGLE_APPS_SCRIPT_URL =
   'https://script.google.com/macros/s/AKfycbyHAm-MZ3SkNKHAbiIrhSwtAFsBe50OaavFCno8ayj8LaCH852-yTzNMW6KxXeREMAj/exec';
+const DEFAULT_ESOL_EXPORT_TOKEN = '3fb09ca3099765d0c1eb5b302b764ff4ea9fcb27a1e0a1a334e81bb059664efc';
 
 function json(data, init = {}) {
   return new Response(JSON.stringify(data), {
@@ -86,7 +87,7 @@ function dedupeAssessments(assessments) {
 }
 
 async function fetchSheetAssessments(env) {
-  const exportToken = env.ESOL_EXPORT_TOKEN;
+  const exportToken = env.ESOL_EXPORT_TOKEN || DEFAULT_ESOL_EXPORT_TOKEN;
   if (!exportToken) return [];
 
   try {
