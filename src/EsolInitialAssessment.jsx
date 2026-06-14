@@ -5,7 +5,7 @@ import { ESOL_ASSESSMENT_CONFIG } from './esolAssessmentConfig.js';
 const ASSESSMENT_DURATION_SECONDS = 75 * 60;
 const TIMER_STORAGE_KEY = 'upskillpro-esol-assessment-started-at';
 
-const readingQuestions = [
+export const readingQuestions = [
   { id: 'q1', level: 'Pre-A1/A1', type: 'Multiple choice', prompt: 'My name is Sara. I am from Spain. Where is Sara from?', options: ['Spain', 'France', 'Italy', 'Brazil'], answer: 'Spain' },
   { id: 'q2', level: 'Pre-A1/A1', type: 'Multiple choice', prompt: 'Choose the correct sentence.', options: ['I am a student.', 'I is a student.', 'I are student.', 'I be student.'], answer: 'I am a student.' },
   { id: 'q3', level: 'Pre-A1/A1', type: 'Short answer', prompt: "Read: Tom works in a hotel. He starts at 8 o'clock. What time does Tom start?", answer: '8' },
@@ -32,7 +32,7 @@ const readingQuestions = [
   { id: 'q24', level: 'C2', type: 'Short answer', prompt: 'According to the final passage, what should technology be treated as?', answer: 'an aid to communication' },
 ];
 
-const recommendations = {
+export const recommendations = {
   'Pre-A1': 'Starter ESOL / Pre-entry support with basic literacy and survival English.',
   A1: 'Beginner ESOL course focusing on everyday communication and core grammar.',
   A2: 'Elementary ESOL course with workplace vocabulary and controlled writing practice.',
@@ -55,7 +55,7 @@ function scoreShortAnswer(response, answer) {
   return answerWords.length > 1 && answerWords.every((word) => normalizedResponse.includes(word)) ? 1 : 0;
 }
 
-function scoreAssessment(responses) {
+export function scoreAssessment(responses) {
   const details = readingQuestions.map((question) => {
     const response = responses[question.id] || '';
     const correct = question.options ? response === question.answer : scoreShortAnswer(response, question.answer) === 1;

@@ -105,7 +105,7 @@ export async function onRequest({ request, env }) {
   if (!session) return json({ ok: false, error: 'Unauthorised assessor session.' }, { status: 401 });
 
   const db = env.UPSKILLPRO_ANALYTICS_DB;
-  if (!db) return json({ ok: true, setupRequired: true, learners: [], attempts: [] });
+  if (!db) return json({ ok: true, setupRequired: true, learners: [], attempts: [], esolAssessments: [] });
 
   if (request.method === 'POST') {
     const body = await request.json().catch(() => ({}));
@@ -246,6 +246,7 @@ export async function onRequest({ request, env }) {
 
   let learners = [];
   let attempts = [];
+  let esolAssessments = [];
   try {
     [learners, attempts] = await Promise.all([
       all(db, `
@@ -263,7 +264,29 @@ export async function onRequest({ request, env }) {
       `),
     ]);
   } catch {
-    return json({ ok: true, setupRequired: true, learners: [], attempts: [] });
+    return json({ ok: true, setupRequired: true, learners: [], attempts: [], esolAssessments: [] });
+  }
+
+  try {
+    const rows = await all(db, `
+      SELECT id, created_at, metadata_json
+      FROM analytics_events
+      WHERE event_type = ?
+      ORDER BY created_at DESC
+      LIMIT 100
+    `, ['esol_assessment_submission']);
+
+    esolAssessments = rows.map((row) => {
+      const payload = parseJson(row.metadata_json, {});
+      return {
+        id: row.id,
+        created_at: row.created_at,
+        ...payload,
+        allReadingResponses: Array.isArray(payload.allReadingResponses) ? payload.allReadingResponses : [],
+      };
+    });
+  } catch {
+    esolAssessments = [];
   }
 
   return json({
@@ -278,5 +301,6 @@ export async function onRequest({ request, env }) {
       answers: parseJson(attempt.answers_json, []),
       writingCriteria: parseJson(attempt.writing_criteria_json, {}),
     })),
+    esolAssessments,
   });
 }

@@ -1,6 +1,7 @@
 import React, { useEffect, useMemo, useState } from 'react';
-import { BookOpenCheck, CheckCircle2, ClipboardCheck, GraduationCap, LockKeyhole, LogOut, Plus, UserRoundCheck, XCircle } from 'lucide-react';
+import { BookOpenCheck, CheckCircle2, ClipboardCheck, FileSearch, GraduationCap, LockKeyhole, LogOut, Plus, UserRoundCheck, XCircle } from 'lucide-react';
 import { espCourse } from './espLmsCourse.js';
+import { readingQuestions } from './EsolInitialAssessment.jsx';
 
 const EMPTY_PROGRESS = { lessons: {}, formative: {}, summative: {}, writing: {}, vocabulary: {}, placement: {} };
 const LEVEL_OPTIONS = espCourse.levels.map((level) => ({ id: level.id, label: `${level.level} (${level.cefr})` }));
@@ -9,7 +10,8 @@ export default function AssessorDashboard() {
   const [isAuthed, setIsAuthed] = useState(false);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
-  const [data, setData] = useState({ learners: [], attempts: [] });
+  const [data, setData] = useState({ learners: [], attempts: [], esolAssessments: [] });
+  const [activeView, setActiveView] = useState('learners');
   const [newLearner, setNewLearner] = useState(null);
   const [resetSelections, setResetSelections] = useState({});
   const [markingStatus, setMarkingStatus] = useState({});
@@ -27,7 +29,12 @@ export default function AssessorDashboard() {
 
   const loadData = async () => {
     const result = await fetch('/api/assessor-lms-data', { credentials: 'include' }).then((response) => response.json()).catch(() => null);
-    if (result?.ok) setData({ learners: result.learners || [], attempts: result.attempts || [], setupRequired: result.setupRequired });
+    if (result?.ok) setData({
+      learners: result.learners || [],
+      attempts: result.attempts || [],
+      esolAssessments: result.esolAssessments || [],
+      setupRequired: result.setupRequired,
+    });
   };
 
   const login = async (event) => {
@@ -181,6 +188,7 @@ export default function AssessorDashboard() {
       completed,
       attempts: data.attempts.length,
       writing: data.attempts.filter((attempt) => attempt.writing_response).length,
+      initialAssessments: data.esolAssessments.length,
     };
   }, [data]);
 
@@ -207,8 +215,28 @@ export default function AssessorDashboard() {
         <Kpi icon={CheckCircle2} label="Completed Pathway" value={stats.completed} />
         <Kpi icon={ClipboardCheck} label="Assessment Attempts" value={stats.attempts} />
         <Kpi icon={BookOpenCheck} label="Writing Responses" value={stats.writing} />
+        <Kpi icon={FileSearch} label="Initial Assessments" value={stats.initialAssessments} />
       </section>
 
+      <nav className="assessor-view-tabs" aria-label="Assessor portal sections">
+        {[
+          { id: 'learners', label: 'Learners' },
+          { id: 'lms-evidence', label: 'LMS Evidence' },
+          { id: 'initial-assessments', label: 'Initial Assessments' },
+          { id: 'course-bank', label: 'Course Bank' },
+        ].map((tab) => (
+          <button
+            key={tab.id}
+            type="button"
+            className={activeView === tab.id ? 'active' : ''}
+            onClick={() => setActiveView(tab.id)}
+          >
+            {tab.label}
+          </button>
+        ))}
+      </nav>
+
+      {activeView === 'learners' && (
       <section className="assessor-grid">
         <article className="assessor-card">
           <div className="assessor-card-head">
@@ -279,7 +307,9 @@ export default function AssessorDashboard() {
           </div>
         </article>
       </section>
+      )}
 
+      {activeView === 'lms-evidence' && (
       <section className="assessor-card">
         <div className="assessor-card-head">
           <h2>Assessment answers and writing</h2>
@@ -346,7 +376,11 @@ export default function AssessorDashboard() {
           {!data.learners.length && <p className="assessor-muted">No learners created yet.</p>}
         </div>
       </section>
+      )}
 
+      {activeView === 'initial-assessments' && <InitialAssessmentsPanel assessments={data.esolAssessments} />}
+
+      {activeView === 'course-bank' && (
       <section className="assessor-card">
         <div className="assessor-card-head">
           <h2>Course levels and question bank</h2>
@@ -392,6 +426,7 @@ export default function AssessorDashboard() {
           ))}
         </div>
       </section>
+      )}
     </main>
   );
 }
@@ -418,6 +453,144 @@ function AssessorLogin({ onSubmit, error }) {
 
 function Kpi({ icon: Icon, label, value }) {
   return <article><Icon size={22} /><span>{label}</span><strong>{value}</strong></article>;
+}
+
+function InitialAssessmentsPanel({ assessments }) {
+  return (
+    <section className="assessor-card initial-assessment-panel">
+      <div className="assessor-card-head">
+        <div>
+          <h2>ESOL initial assessment results</h2>
+          <span className="assessor-muted">Review CEFR placement evidence exactly against the assessment question bank.</span>
+        </div>
+        <FileSearch size={20} />
+      </div>
+
+      {!assessments.length && (
+        <div className="assessor-empty-state">
+          <strong>No initial assessment records in D1 yet.</strong>
+          <span>New submissions from /esol-initial-assessment will appear here after this update is deployed. Google Sheets remains your full submission backup.</span>
+        </div>
+      )}
+
+      <div className="initial-assessment-list">
+        {assessments.map((assessment) => (
+          <InitialAssessmentReview key={assessment.id || assessment.email || assessment.timestamp} assessment={assessment} />
+        ))}
+      </div>
+    </section>
+  );
+}
+
+function InitialAssessmentReview({ assessment }) {
+  const responseMap = Object.fromEntries((assessment.allReadingResponses || []).map((item) => [item.id, item]));
+  const score = assessment.readingScore ?? assessment.reading_score ?? Object.values(responseMap).filter((item) => item.correct).length;
+  const cefr = assessment.estimatedCefrLevel || assessment.estimated_cefr_level || assessment.cefr || 'Not estimated';
+  const recommendation = assessment.placementRecommendation || assessment.placement_recommendation || assessment.recommendation || 'Assessor review required.';
+  const submittedAt = assessment.timestamp || assessment.created_at;
+
+  return (
+    <article className="initial-assessment-card">
+      <div className="initial-assessment-summary">
+        <div>
+          <p>Candidate</p>
+          <h3>{assessment.fullName || assessment.full_name || 'Unnamed candidate'}</h3>
+          <span>{assessment.email || 'No email recorded'}</span>
+        </div>
+        <div className="initial-score-badge">
+          <strong>{score} / {readingQuestions.length}</strong>
+          <span>{cefr}</span>
+        </div>
+      </div>
+
+      <div className="initial-meta-grid">
+        <div><span>Phone</span><strong>{assessment.phone || 'Not provided'}</strong></div>
+        <div><span>Nationality</span><strong>{assessment.nationality || 'Not provided'}</strong></div>
+        <div><span>First language</span><strong>{assessment.firstLanguage || assessment.first_language || 'Not provided'}</strong></div>
+        <div><span>Submitted</span><strong>{submittedAt ? new Date(submittedAt).toLocaleString() : 'Unknown'}</strong></div>
+      </div>
+
+      <div className="initial-recommendation">
+        <span>Placement recommendation</span>
+        <strong>{recommendation}</strong>
+      </div>
+
+      <div className="initial-section-head">
+        <h4>Reading assessment review</h4>
+        <span>Selected answers are compared with the correct answer.</span>
+      </div>
+      <div className="initial-reading-grid">
+        {readingQuestions.map((question, index) => (
+          <InitialQuestionReview
+            key={question.id}
+            question={question}
+            index={index}
+            response={responseMap[question.id]}
+          />
+        ))}
+      </div>
+
+      <div className="initial-section-head">
+        <h4>Writing tasks</h4>
+        <span>Writing is preserved for assessor marking and feedback.</span>
+      </div>
+      <div className="initial-writing-grid">
+        {[
+          { label: 'Task 1: Introduce yourself', text: assessment.writingTask1 || assessment.writing_task_1 },
+          { label: 'Task 2: Challenge or important experience', text: assessment.writingTask2 || assessment.writing_task_2 },
+          { label: 'Task 3: Technology opinion', text: assessment.writingTask3 || assessment.writing_task_3 },
+        ].map((task) => (
+          <div className="initial-writing-card" key={task.label}>
+            <strong>{task.label}</strong>
+            <p>{task.text || 'No response provided.'}</p>
+          </div>
+        ))}
+      </div>
+    </article>
+  );
+}
+
+function InitialQuestionReview({ question, index, response }) {
+  const selectedAnswer = response?.response || '';
+  const isCorrect = Boolean(response?.correct);
+
+  return (
+    <article className={`initial-question-card ${isCorrect ? 'is-correct' : 'is-incorrect'}`}>
+      <div className="initial-question-top">
+        <span>{index + 1}. {question.level}</span>
+        <b>{isCorrect ? 'Correct' : 'Incorrect'}</b>
+      </div>
+      {question.passage && <p className="initial-passage">{question.passage}</p>}
+      <h5>{question.prompt}</h5>
+      {question.options ? (
+        <ul className="initial-question-options">
+          {question.options.map((option) => {
+            const isSelected = option === selectedAnswer;
+            const isAnswer = option === question.answer;
+            return (
+              <li
+                key={option}
+                className={[
+                  isSelected ? 'selected' : '',
+                  isAnswer ? 'correct' : '',
+                  isSelected && !isAnswer ? 'incorrect' : '',
+                ].filter(Boolean).join(' ')}
+              >
+                <span>{option}</span>
+                {isSelected && <em>Learner</em>}
+                {isAnswer && <em>Correct</em>}
+              </li>
+            );
+          })}
+        </ul>
+      ) : (
+        <div className="initial-short-answer">
+          <div><span>Learner answer</span><strong>{selectedAnswer || 'No answer'}</strong></div>
+          <div><span>Accepted answer</span><strong>{question.answer}</strong></div>
+        </div>
+      )}
+    </article>
+  );
 }
 
 function ProgressMeter({ value }) {

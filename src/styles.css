@@ -3712,7 +3712,7 @@ footer p {
 
 .assessor-kpis {
   display: grid;
-  grid-template-columns: repeat(4, minmax(0, 1fr));
+  grid-template-columns: repeat(5, minmax(0, 1fr));
   gap: 14px;
   margin: 18px 0;
 }
@@ -3730,6 +3730,34 @@ footer p {
 
 .assessor-kpis strong {
   font-size: 2rem;
+}
+
+.assessor-view-tabs {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin: 0 0 18px;
+  padding: 8px;
+  border: 1px solid rgba(136, 154, 255, 0.16);
+  border-radius: 18px;
+  background: rgba(255, 255, 255, 0.045);
+}
+
+.assessor-view-tabs button {
+  min-height: 44px;
+  padding: 10px 16px;
+  border: 1px solid transparent;
+  border-radius: 14px;
+  background: transparent;
+  color: #b8c6e3;
+  font-weight: 950;
+}
+
+.assessor-view-tabs button.active,
+.assessor-view-tabs button:hover {
+  border-color: rgba(99, 230, 255, 0.28);
+  background: linear-gradient(135deg, rgba(99, 230, 255, 0.16), rgba(154, 108, 255, 0.16));
+  color: #fff;
 }
 
 .assessor-grid {
@@ -4148,6 +4176,245 @@ footer p {
   padding-left: 18px;
 }
 
+.initial-assessment-panel {
+  display: grid;
+  gap: 16px;
+}
+
+.assessor-empty-state {
+  display: grid;
+  gap: 6px;
+  padding: 18px;
+  border: 1px dashed rgba(99, 230, 255, 0.28);
+  border-radius: 16px;
+  background: rgba(99, 230, 255, 0.07);
+  color: #dbe6ff;
+}
+
+.assessor-empty-state span {
+  color: #b8c6e3;
+}
+
+.initial-assessment-list {
+  display: grid;
+  gap: 18px;
+}
+
+.initial-assessment-card {
+  display: grid;
+  gap: 18px;
+  padding: clamp(16px, 2vw, 22px);
+  border: 1px solid rgba(255, 255, 255, 0.11);
+  border-radius: 20px;
+  background:
+    radial-gradient(circle at top right, rgba(99, 230, 255, 0.08), transparent 34%),
+    rgba(255, 255, 255, 0.045);
+}
+
+.initial-assessment-summary,
+.initial-meta-grid,
+.initial-writing-grid {
+  display: grid;
+  gap: 12px;
+}
+
+.initial-assessment-summary {
+  grid-template-columns: minmax(0, 1fr) auto;
+  align-items: center;
+}
+
+.initial-assessment-summary p,
+.initial-recommendation span,
+.initial-meta-grid span,
+.initial-section-head span,
+.initial-short-answer span {
+  color: #8ff0d3;
+  font-size: 0.78rem;
+  font-weight: 950;
+  letter-spacing: 0;
+  text-transform: uppercase;
+}
+
+.initial-assessment-summary h3 {
+  margin: 5px 0;
+  font-size: clamp(1.5rem, 3vw, 2.25rem);
+}
+
+.initial-assessment-summary span,
+.initial-writing-card p,
+.initial-passage {
+  color: #dbe6ff;
+}
+
+.initial-score-badge {
+  display: grid;
+  place-items: center;
+  min-width: 118px;
+  aspect-ratio: 1;
+  border: 1px solid rgba(54, 227, 159, 0.32);
+  border-radius: 999px;
+  background: radial-gradient(circle, rgba(54, 227, 159, 0.2), rgba(54, 227, 159, 0.06));
+  text-align: center;
+}
+
+.initial-score-badge strong {
+  font-size: 1.4rem;
+}
+
+.initial-score-badge span {
+  color: #36e39f;
+  font-weight: 950;
+}
+
+.initial-meta-grid {
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+}
+
+.initial-meta-grid div,
+.initial-recommendation,
+.initial-writing-card {
+  display: grid;
+  gap: 6px;
+  padding: 14px;
+  border: 1px solid rgba(255, 255, 255, 0.09);
+  border-radius: 14px;
+  background: rgba(10, 18, 42, 0.42);
+}
+
+.initial-meta-grid strong,
+.initial-recommendation strong {
+  color: #fff;
+}
+
+.initial-section-head {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  align-items: end;
+  padding-top: 8px;
+}
+
+.initial-section-head h4 {
+  margin: 0;
+  font-size: 1.22rem;
+}
+
+.initial-reading-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 12px;
+}
+
+.initial-question-card {
+  display: grid;
+  gap: 12px;
+  padding: 14px;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 16px;
+  background: rgba(255, 255, 255, 0.04);
+}
+
+.initial-question-card.is-correct {
+  border-color: rgba(54, 227, 159, 0.22);
+}
+
+.initial-question-card.is-incorrect {
+  border-color: rgba(255, 120, 120, 0.22);
+}
+
+.initial-question-top {
+  display: flex;
+  justify-content: space-between;
+  gap: 10px;
+  color: #b8c6e3;
+  font-size: 0.82rem;
+  font-weight: 950;
+}
+
+.initial-question-top b {
+  color: #36e39f;
+}
+
+.initial-question-card.is-incorrect .initial-question-top b {
+  color: #ff9c9c;
+}
+
+.initial-question-card h5 {
+  margin: 0;
+  color: #fff;
+  font-size: 1rem;
+}
+
+.initial-passage {
+  margin: 0;
+  padding: 12px;
+  border-left: 3px solid rgba(99, 230, 255, 0.58);
+  border-radius: 12px;
+  background: rgba(99, 230, 255, 0.07);
+}
+
+.initial-question-options {
+  display: grid;
+  gap: 8px;
+  padding: 0;
+  margin: 0;
+  list-style: none;
+}
+
+.initial-question-options li,
+.initial-short-answer div {
+  display: flex;
+  justify-content: space-between;
+  gap: 10px;
+  align-items: center;
+  padding: 10px 12px;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 12px;
+  color: #dbe6ff;
+  background: rgba(255, 255, 255, 0.04);
+}
+
+.initial-question-options li.correct {
+  border-color: rgba(54, 227, 159, 0.34);
+  background: rgba(54, 227, 159, 0.09);
+}
+
+.initial-question-options li.selected {
+  box-shadow: inset 3px 0 0 #63e6ff;
+}
+
+.initial-question-options li.incorrect {
+  border-color: rgba(255, 120, 120, 0.36);
+  background: rgba(255, 120, 120, 0.08);
+}
+
+.initial-question-options em {
+  color: #fff;
+  font-size: 0.72rem;
+  font-style: normal;
+  font-weight: 950;
+  white-space: nowrap;
+}
+
+.initial-short-answer {
+  display: grid;
+  gap: 8px;
+}
+
+.initial-short-answer div {
+  align-items: start;
+  flex-direction: column;
+}
+
+.initial-writing-grid {
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+}
+
+.initial-writing-card p {
+  margin: 0;
+  white-space: pre-wrap;
+}
+
 @media print {
   .admin-sidebar,
   .admin-actions {
@@ -4273,6 +4540,9 @@ footer p {
   .assessor-kpis,
   .assessor-grid,
   .assessor-course-map,
+  .initial-meta-grid,
+  .initial-reading-grid,
+  .initial-writing-grid,
   .writing-criteria-grid,
   .vocab-sentence-mark-grid,
   .writing-marking-fields {
@@ -4584,6 +4854,9 @@ footer p {
   .assessor-kpis,
   .assessor-grid,
   .assessor-course-map,
+  .initial-meta-grid,
+  .initial-reading-grid,
+  .initial-writing-grid,
   .writing-criteria-grid,
   .vocab-sentence-mark-grid,
   .writing-marking-fields {
@@ -4591,6 +4864,11 @@ footer p {
   }
 
   .writing-marking-head {
+    display: grid;
+  }
+
+  .initial-assessment-summary,
+  .initial-section-head {
     display: grid;
   }
 
