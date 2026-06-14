@@ -162,6 +162,34 @@ export const ESOL_ASSESSMENT_CONFIG = {
 
 Commit and push the change. Cloudflare Pages will redeploy automatically.
 
+## Historical Assessor Portal Import
+
+The assessor portal can show previous ESOL initial assessment submissions from the Google Sheet as well as new D1-captured submissions.
+
+1. Open the Apps Script project.
+2. Go to `Project Settings`.
+3. Under `Script properties`, add a private shared token:
+
+```text
+ESOL_EXPORT_TOKEN = choose-a-long-private-token
+```
+
+4. Add the same token in Cloudflare Pages as an environment variable:
+
+```text
+ESOL_EXPORT_TOKEN = choose-a-long-private-token
+```
+
+5. Redeploy the Apps Script Web App after pasting the latest `google-apps-script/esol-assessment-web-app.gs`.
+6. Redeploy Cloudflare Pages.
+
+After this is configured, the assessor portal `Initial Assessments` tab merges:
+
+- Existing Google Sheet rows
+- New D1 assessment records
+
+Duplicate records are removed by email, timestamp, and reading score.
+
 ## CEFR Scoring
 
 The page uses 24 progressive reading questions.

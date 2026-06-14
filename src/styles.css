@@ -4286,6 +4286,12 @@ footer p {
   color: #fff;
 }
 
+.sheet-writing-feedback p {
+  margin: 0;
+  color: #dbe6ff;
+  white-space: pre-wrap;
+}
+
 .initial-section-head {
   display: flex;
   justify-content: space-between;

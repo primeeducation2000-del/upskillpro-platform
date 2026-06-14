@@ -4,6 +4,7 @@ const CONFIG = {
   DASHBOARD_SHEET_NAME: 'Admin Dashboard',
   ACCESS_CODES_SHEET_NAME: 'Access Codes',
   OPENAI_API_KEY_PROPERTY: 'OPENAI_API_KEY',
+  EXPORT_TOKEN_PROPERTY: 'ESOL_EXPORT_TOKEN',
   OPENAI_MODEL: 'gpt-4.1-mini',
   OPENAI_RESPONSES_URL: 'https://api.openai.com/v1/responses',
   HEADERS: [
@@ -64,6 +65,9 @@ function doPost(e) {
     const payload = JSON.parse((e && e.postData && e.postData.contents) || '{}');
     if (payload.action === 'validateAccessCode') {
       return json_(validateAccessCode_(payload.accessCode, payload.email));
+    }
+    if (payload.action === 'exportAssessments') {
+      return json_(exportAssessments_(payload.exportToken));
     }
 
     const spreadsheet = getSpreadsheet_();
@@ -133,6 +137,73 @@ function doPost(e) {
 
 function doGet() {
   return json_({ ok: true, message: 'UpSkillPro ESOL assessment endpoint is active.' });
+}
+
+function exportAssessments_(exportToken) {
+  const configuredToken = PropertiesService.getScriptProperties().getProperty(CONFIG.EXPORT_TOKEN_PROPERTY);
+  if (!configuredToken || exportToken !== configuredToken) {
+    return { ok: false, error: 'Unauthorised export request.' };
+  }
+
+  const spreadsheet = getSpreadsheet_();
+  const sheet = getOrCreateSheet_(spreadsheet, CONFIG.SHEET_NAME, CONFIG.HEADERS);
+  const lastRow = sheet.getLastRow();
+  if (lastRow < 2) {
+    return { ok: true, assessments: [] };
+  }
+
+  const values = sheet.getRange(2, 1, lastRow - 1, CONFIG.HEADERS.length).getValues();
+  const assessments = values
+    .filter((row) => row.some((cell) => cell !== ''))
+    .map((row, index) => sheetRowToAssessment_(row, index + 2));
+
+  return { ok: true, assessments };
+}
+
+function sheetRowToAssessment_(row, rowNumber) {
+  const get = (header) => row[CONFIG.HEADERS.indexOf(header)] || '';
+  const parseReadingResponses = (value) => {
+    try {
+      const parsed = JSON.parse(String(value || '[]'));
+      return Array.isArray(parsed) ? parsed : [];
+    } catch (error) {
+      return [];
+    }
+  };
+
+  return {
+    id: 'sheet-row-' + rowNumber,
+    source: 'google-sheet',
+    timestamp: toIsoString_(get('Timestamp')),
+    fullName: get('Full Name'),
+    email: get('Email'),
+    phone: get('Phone'),
+    nationality: get('Nationality'),
+    firstLanguage: get('First Language'),
+    readingScore: Number(get('Reading Score')) || 0,
+    estimatedCefrLevel: get('Estimated CEFR Level'),
+    placementRecommendation: get('Placement Recommendation'),
+    allReadingResponses: parseReadingResponses(get('All Reading Responses')),
+    writingTask1: get('Writing Task 1'),
+    writingTask2: get('Writing Task 2'),
+    writingTask3: get('Writing Task 3'),
+    writingTask1Cefr: get('Writing Task 1 CEFR'),
+    writingTask2Cefr: get('Writing Task 2 CEFR'),
+    writingTask3Cefr: get('Writing Task 3 CEFR'),
+    writingFeedback: get('Writing Feedback'),
+    finalCefrRecommendation: get('Final CEFR Recommendation'),
+    aiMarkingStatus: get('AI Marking Status'),
+    humanReviewNeeded: get('Human Review Needed'),
+  };
+}
+
+function toIsoString_(value) {
+  if (!value) return '';
+  if (Object.prototype.toString.call(value) === '[object Date]' && !isNaN(value.getTime())) {
+    return value.toISOString();
+  }
+  const date = new Date(value);
+  return isNaN(date.getTime()) ? String(value) : date.toISOString();
 }
 
 function createAccessCodes() {

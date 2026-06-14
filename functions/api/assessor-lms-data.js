@@ -1,5 +1,7 @@
 const DEFAULT_ASSESSOR_PASSWORD_HASH = 'cad2b291f743744acb66216467d69e010b81c6267a9457703ededd7fbee61b97';
 const SESSION_COOKIE = 'upskillpro_assessor_session';
+const GOOGLE_APPS_SCRIPT_URL =
+  'https://script.google.com/macros/s/AKfycbyHAm-MZ3SkNKHAbiIrhSwtAFsBe50OaavFCno8ayj8LaCH852-yTzNMW6KxXeREMAj/exec';
 
 function json(data, init = {}) {
   return new Response(JSON.stringify(data), {
@@ -66,6 +68,38 @@ function parseJson(value, fallback) {
     return value ? JSON.parse(value) : fallback;
   } catch {
     return fallback;
+  }
+}
+
+function dedupeAssessments(assessments) {
+  const seen = new Set();
+  return assessments.filter((assessment) => {
+    const key = [
+      String(assessment.email || '').toLowerCase(),
+      assessment.timestamp || assessment.created_at || '',
+      assessment.readingScore ?? assessment.reading_score ?? '',
+    ].join('|');
+    if (seen.has(key)) return false;
+    seen.add(key);
+    return true;
+  });
+}
+
+async function fetchSheetAssessments(env) {
+  const exportToken = env.ESOL_EXPORT_TOKEN;
+  if (!exportToken) return [];
+
+  try {
+    const response = await fetch(GOOGLE_APPS_SCRIPT_URL, {
+      method: 'POST',
+      headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+      body: JSON.stringify({ action: 'exportAssessments', exportToken }),
+    });
+    const result = await response.json();
+    if (!response.ok || !result.ok || !Array.isArray(result.assessments)) return [];
+    return result.assessments;
+  } catch {
+    return [];
   }
 }
 
@@ -247,6 +281,7 @@ export async function onRequest({ request, env }) {
   let learners = [];
   let attempts = [];
   let esolAssessments = [];
+  let sheetAssessments = [];
   try {
     [learners, attempts] = await Promise.all([
       all(db, `
@@ -265,6 +300,12 @@ export async function onRequest({ request, env }) {
     ]);
   } catch {
     return json({ ok: true, setupRequired: true, learners: [], attempts: [], esolAssessments: [] });
+  }
+
+  try {
+    sheetAssessments = await fetchSheetAssessments(env);
+  } catch {
+    sheetAssessments = [];
   }
 
   try {
@@ -301,6 +342,7 @@ export async function onRequest({ request, env }) {
       answers: parseJson(attempt.answers_json, []),
       writingCriteria: parseJson(attempt.writing_criteria_json, {}),
     })),
-    esolAssessments,
+    esolAssessments: dedupeAssessments([...sheetAssessments, ...esolAssessments])
+      .sort((a, b) => new Date(b.timestamp || b.created_at || 0) - new Date(a.timestamp || a.created_at || 0)),
   });
 }

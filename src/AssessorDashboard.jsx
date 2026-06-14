@@ -468,8 +468,8 @@ function InitialAssessmentsPanel({ assessments }) {
 
       {!assessments.length && (
         <div className="assessor-empty-state">
-          <strong>No initial assessment records in D1 yet.</strong>
-          <span>New submissions from /esol-initial-assessment will appear here after this update is deployed. Google Sheets remains your full submission backup.</span>
+          <strong>No initial assessment records are available yet.</strong>
+          <span>Once the Google Sheet export token is configured, previous Sheet submissions and new D1 submissions will appear here.</span>
         </div>
       )}
 
@@ -495,7 +495,7 @@ function InitialAssessmentReview({ assessment }) {
         <div>
           <p>Candidate</p>
           <h3>{assessment.fullName || assessment.full_name || 'Unnamed candidate'}</h3>
-          <span>{assessment.email || 'No email recorded'}</span>
+          <span>{assessment.email || 'No email recorded'} | {assessment.source === 'google-sheet' ? 'Google Sheet record' : 'D1 record'}</span>
         </div>
         <div className="initial-score-badge">
           <strong>{score} / {readingQuestions.length}</strong>
@@ -514,6 +514,15 @@ function InitialAssessmentReview({ assessment }) {
         <span>Placement recommendation</span>
         <strong>{recommendation}</strong>
       </div>
+
+      {(assessment.finalCefrRecommendation || assessment.writingFeedback || assessment.aiMarkingStatus) && (
+        <div className="initial-recommendation sheet-writing-feedback">
+          <span>Sheet writing review</span>
+          <strong>{assessment.finalCefrRecommendation || 'No final CEFR recommendation recorded'}</strong>
+          {assessment.aiMarkingStatus && <p>Status: {assessment.aiMarkingStatus}</p>}
+          {assessment.writingFeedback && <p>{assessment.writingFeedback}</p>}
+        </div>
+      )}
 
       <div className="initial-section-head">
         <h4>Reading assessment review</h4>
