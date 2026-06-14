@@ -2,7 +2,8 @@ import React, { useEffect, useMemo, useState } from 'react';
 import { BookOpenCheck, CheckCircle2, ClipboardCheck, GraduationCap, LockKeyhole, LogOut, Plus, UserRoundCheck, XCircle } from 'lucide-react';
 import { espCourse } from './espLmsCourse.js';
 
-const EMPTY_PROGRESS = { lessons: {}, formative: {}, summative: {}, writing: {}, vocabulary: {} };
+const EMPTY_PROGRESS = { lessons: {}, formative: {}, summative: {}, writing: {}, vocabulary: {}, placement: {} };
+const LEVEL_OPTIONS = espCourse.levels.map((level) => ({ id: level.id, label: `${level.level} (${level.cefr})` }));
 
 export default function AssessorDashboard() {
   const [isAuthed, setIsAuthed] = useState(false);
@@ -71,6 +72,7 @@ export default function AssessorDashboard() {
         fullName: form.get('fullName'),
         username: form.get('username'),
         email: form.get('email'),
+        startLevelId: form.get('startLevelId'),
       }),
     }).then((response) => response.json()).catch(() => ({ ok: false, error: 'Could not create learner.' }));
 
@@ -80,6 +82,27 @@ export default function AssessorDashboard() {
       await loadData();
     } else {
       setError(result.error || 'Could not create learner.');
+    }
+  };
+
+  const setLearnerStartLevel = async (learnerId, startLevelId) => {
+    setMarkingStatus((current) => ({ ...current, [`placement:${learnerId}`]: 'Saving placement...' }));
+    const result = await fetch('/api/assessor-lms-data', {
+      method: 'POST',
+      credentials: 'include',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        action: 'setLearnerStartLevel',
+        learnerId,
+        startLevelId,
+      }),
+    }).then((response) => response.json()).catch(() => ({ ok: false, error: 'Could not update learner placement.' }));
+
+    if (result.ok) {
+      setMarkingStatus((current) => ({ ...current, [`placement:${learnerId}`]: 'Placement saved' }));
+      await loadData();
+    } else {
+      setMarkingStatus((current) => ({ ...current, [`placement:${learnerId}`]: result.error || 'Could not save placement' }));
     }
   };
 
@@ -196,6 +219,12 @@ export default function AssessorDashboard() {
             <label><span>Full name</span><input name="fullName" required /></label>
             <label><span>Username</span><input name="username" placeholder="e.g. ahmed.ali" /></label>
             <label><span>Email</span><input name="email" type="email" /></label>
+            <label>
+              <span>Start level</span>
+              <select name="startLevelId" defaultValue="beginner">
+                {LEVEL_OPTIONS.map((level) => <option key={level.id} value={level.id}>{level.label}</option>)}
+              </select>
+            </label>
             <button type="submit">Create Learner</button>
           </form>
           {newLearner && (
@@ -219,11 +248,21 @@ export default function AssessorDashboard() {
                 <div className="assessor-row" key={learner.id}>
                   <div>
                     <strong>{learner.full_name}</strong>
-                    <span>{learner.username} | {learner.email || 'No email'}</span>
+                    <span>{learner.username} | {learner.email || 'No email'} | Starts at {labelFor(getStartLevelId(progress))}</span>
                   </div>
                   <ProgressMeter value={getCourseProgress(progress)} />
                   <span>{Object.values(progress.lessons || {}).filter(Boolean).length} lessons</span>
                   <span>{countSubmittedAssessments(progress)} submitted</span>
+                  <div className="assessor-reset-controls">
+                    <select
+                      value={getStartLevelId(progress)}
+                      onChange={(event) => setLearnerStartLevel(learner.id, event.target.value)}
+                      title="Set the learner's starting level"
+                    >
+                      {LEVEL_OPTIONS.map((level) => <option key={level.id} value={level.id}>{level.label}</option>)}
+                    </select>
+                    <small>{markingStatus[`placement:${learner.id}`] || 'Placement'}</small>
+                  </div>
                   <div className="assessor-reset-controls">
                     <select
                       value={resetSelections[learner.id] || resetOptions[0].id}
@@ -583,7 +622,8 @@ function WritingMarkingForm({ attempt, status, onSave }) {
 }
 
 function getCourseProgress(progress) {
-  const allUnits = espCourse.levels.flatMap((level) => level.units);
+  const startIndex = getStartLevelIndex(progress);
+  const allUnits = espCourse.levels.slice(startIndex).flatMap((level) => level.units);
   const total = allUnits.reduce((sum, unit) => sum + getUnitTotalItems(unit), 0);
   const complete = allUnits.reduce((sum, unit) => {
     if (unit.vocabulary && !unit.lessons) return sum + (progress.vocabulary?.[unit.vocabulary.id]?.score !== undefined ? 1 : 0);
@@ -594,6 +634,14 @@ function getCourseProgress(progress) {
     return sum + lessons + vocabulary + formative + summative;
   }, 0);
   return Math.round((complete / total) * 100);
+}
+
+function getStartLevelId(progress) {
+  return progress?.placement?.startLevelId || 'beginner';
+}
+
+function getStartLevelIndex(progress) {
+  return Math.max(0, espCourse.levels.findIndex((level) => level.id === getStartLevelId(progress)));
 }
 
 function getUnitTotalItems(unit) {

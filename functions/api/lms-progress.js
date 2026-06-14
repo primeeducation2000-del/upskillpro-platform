@@ -1,5 +1,5 @@
 const SESSION_COOKIE = 'upskillpro_learner_session';
-const EMPTY_PROGRESS = { lessons: {}, formative: {}, summative: {}, writing: {}, vocabulary: {} };
+const EMPTY_PROGRESS = { lessons: {}, formative: {}, summative: {}, writing: {}, vocabulary: {}, placement: {} };
 
 function json(data, init = {}) {
   return new Response(JSON.stringify(data), {
@@ -83,6 +83,13 @@ export async function onRequest({ request, env }) {
   const now = new Date().toISOString();
 
   try {
+    const existingProgress = await getProgress(db, session.learnerId);
+    const existingPlacedAt = existingProgress.placement?.placedAt || '';
+    const incomingPlacedAt = progress.placement?.placedAt || '';
+    if (existingPlacedAt && (!incomingPlacedAt || existingPlacedAt > incomingPlacedAt)) {
+      progress.placement = existingProgress.placement;
+    }
+
     await db.prepare(`
       INSERT INTO lms_progress (learner_id, progress_json, updated_at)
       VALUES (?, ?, ?)

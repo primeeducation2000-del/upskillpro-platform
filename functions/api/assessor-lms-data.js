@@ -71,7 +71,7 @@ function parseJson(value, fallback) {
 
 function resetProgress(progress, reset) {
   if (reset.clearAll) {
-    return { lessons: {}, formative: {}, summative: {}, writing: {}, vocabulary: {} };
+    return { lessons: {}, formative: {}, summative: {}, writing: {}, vocabulary: {}, placement: progress.placement || {} };
   }
 
   const next = {
@@ -80,6 +80,7 @@ function resetProgress(progress, reset) {
     summative: { ...(progress.summative || {}) },
     writing: { ...(progress.writing || {}) },
     vocabulary: { ...(progress.vocabulary || {}) },
+    placement: { ...(progress.placement || {}) },
   };
 
   (reset.lessonIds || []).forEach((id) => {
@@ -109,13 +110,38 @@ export async function onRequest({ request, env }) {
   if (request.method === 'POST') {
     const body = await request.json().catch(() => ({}));
 
+    if (body.action === 'setLearnerStartLevel') {
+      const learnerId = String(body.learnerId || '');
+      const startLevelId = String(body.startLevelId || 'beginner');
+      if (!learnerId) return json({ ok: false, error: 'Learner is required.' }, { status: 400 });
+
+      const row = await db.prepare('SELECT progress_json FROM lms_progress WHERE learner_id = ?').bind(learnerId).first();
+      const progress = parseJson(row?.progress_json, { lessons: {}, formative: {}, summative: {}, writing: {}, vocabulary: {}, placement: {} });
+      const nextProgress = {
+        ...progress,
+        placement: {
+          ...(progress.placement || {}),
+          startLevelId,
+          placedAt: new Date().toISOString(),
+        },
+      };
+
+      await db.prepare(`
+        INSERT INTO lms_progress (learner_id, progress_json, updated_at)
+        VALUES (?, ?, ?)
+        ON CONFLICT(learner_id) DO UPDATE SET progress_json = excluded.progress_json, updated_at = excluded.updated_at
+      `).bind(learnerId, JSON.stringify(nextProgress), new Date().toISOString()).run();
+
+      return json({ ok: true, progress: nextProgress });
+    }
+
     if (body.action === 'markVocabularySentences') {
       const learnerId = String(body.learnerId || '');
       const activityId = String(body.activityId || '');
       if (!learnerId || !activityId) return json({ ok: false, error: 'Learner and vocabulary activity are required.' }, { status: 400 });
 
       const row = await db.prepare('SELECT progress_json FROM lms_progress WHERE learner_id = ?').bind(learnerId).first();
-      const progress = parseJson(row?.progress_json, { lessons: {}, formative: {}, summative: {}, writing: {}, vocabulary: {} });
+      const progress = parseJson(row?.progress_json, { lessons: {}, formative: {}, summative: {}, writing: {}, vocabulary: {}, placement: {} });
       const vocabulary = { ...(progress.vocabulary || {}) };
       const currentActivity = { ...(vocabulary[activityId] || {}) };
       vocabulary[activityId] = {
@@ -168,7 +194,7 @@ export async function onRequest({ request, env }) {
       if (!learnerId) return json({ ok: false, error: 'Learner is required.' }, { status: 400 });
 
       const row = await db.prepare('SELECT progress_json FROM lms_progress WHERE learner_id = ?').bind(learnerId).first();
-      const currentProgress = parseJson(row?.progress_json, { lessons: {}, formative: {}, summative: {}, writing: {}, vocabulary: {} });
+      const currentProgress = parseJson(row?.progress_json, { lessons: {}, formative: {}, summative: {}, writing: {}, vocabulary: {}, placement: {} });
       const nextProgress = resetProgress(currentProgress, body.reset || {});
       await db.prepare(`
         INSERT INTO lms_progress (learner_id, progress_json, updated_at)
@@ -183,6 +209,7 @@ export async function onRequest({ request, env }) {
 
     const fullName = String(body.fullName || '').trim();
     const email = String(body.email || '').trim();
+    const startLevelId = String(body.startLevelId || 'beginner');
     const requestedUsername = String(body.username || '').trim().toLowerCase();
     const username = requestedUsername || fullName.toLowerCase().replace(/[^a-z0-9]+/g, '.').replace(/^\.+|\.+$/g, '') || `learner.${Date.now()}`;
     const code = accessCode();
@@ -200,6 +227,14 @@ export async function onRequest({ request, env }) {
         INSERT INTO lms_learners (id, username, access_code, full_name, email, status, created_at)
         VALUES (?, ?, ?, ?, ?, 'active', ?)
       `).bind(learner.id, learner.username, learner.accessCode, learner.fullName, learner.email, learner.createdAt).run();
+      await db.prepare(`
+        INSERT INTO lms_progress (learner_id, progress_json, updated_at)
+        VALUES (?, ?, ?)
+      `).bind(
+        learner.id,
+        JSON.stringify({ lessons: {}, formative: {}, summative: {}, writing: {}, vocabulary: {}, placement: { startLevelId, placedAt: learner.createdAt } }),
+        learner.createdAt
+      ).run();
     } catch {
       return json({ ok: false, setupRequired: true, error: 'LMS database tables are not ready yet.' }, { status: 503 });
     }
@@ -236,7 +271,7 @@ export async function onRequest({ request, env }) {
     setupRequired: false,
     learners: learners.map((learner) => ({
       ...learner,
-      progress: parseJson(learner.progress_json, { lessons: {}, formative: {}, summative: {}, writing: {} }),
+      progress: parseJson(learner.progress_json, { lessons: {}, formative: {}, summative: {}, writing: {}, vocabulary: {}, placement: {} }),
     })),
     attempts: attempts.map((attempt) => ({
       ...attempt,

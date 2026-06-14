@@ -17,7 +17,7 @@ import { espCourse } from './espLmsCourse.js';
 
 const LMS_SESSION_KEY = 'upskillpro-lms-session';
 const LMS_PROGRESS_KEY = 'upskillpro-esp-progress';
-const EMPTY_PROGRESS = { lessons: {}, formative: {}, summative: {}, writing: {}, vocabulary: {} };
+const EMPTY_PROGRESS = { lessons: {}, formative: {}, summative: {}, writing: {}, vocabulary: {}, placement: {} };
 
 function progressStorageKey(learner) {
   return learner?.username ? `${LMS_PROGRESS_KEY}-${learner.username}` : LMS_PROGRESS_KEY;
@@ -97,16 +97,24 @@ export default function LearnerLms() {
 
   const selectedLevel = espCourse.levels.find((level) => level.id === selectedLevelId) || espCourse.levels[0];
   const selectedUnit = selectedLevel.units.find((unit) => unit.id === selectedUnitId) || selectedLevel.units[0];
+  const startLevel = espCourse.levels[getStartLevelIndex(progress)] || espCourse.levels[0];
   const courseProgress = getCourseProgress(progress);
   const unitProgress = getUnitProgress(selectedUnit, progress);
   const unitSteps = getUnitSteps(selectedUnit);
   const activeStep = unitSteps.find((step) => step.id === activeStepId) || getFirstAvailableStep(selectedUnit, progress);
 
   useEffect(() => {
+    const selectedLevelIndex = espCourse.levels.findIndex((level) => level.id === selectedLevelId);
+    if (selectedLevelIndex < getStartLevelIndex(progress) || !isLevelUnlocked(selectedLevelIndex, progress)) {
+      setSelectedLevelId(startLevel.id);
+      setSelectedUnitId(startLevel.units[0].id);
+      setActiveStepId(getFirstAvailableStep(startLevel.units[0], progress).id);
+      return;
+    }
     if (!isStepAvailable(selectedUnit, activeStepId, progress)) {
       setActiveStepId(getFirstAvailableStep(selectedUnit, progress).id);
     }
-  }, [activeStepId, progress, selectedUnit]);
+  }, [activeStepId, progress, selectedLevelId, selectedUnit, startLevel]);
 
   const login = async (event) => {
     event.preventDefault();
@@ -179,12 +187,13 @@ export default function LearnerLms() {
           {espCourse.levels.map((level, levelIndex) => {
             const levelProgress = getLevelProgress(level, progress);
             const unlocked = isLevelUnlocked(levelIndex, progress);
+            const placedOut = levelIndex < getStartLevelIndex(progress);
             return (
               <button
                 key={level.id}
                 type="button"
                 disabled={!unlocked}
-                className={`${level.id === selectedLevel.id ? 'active' : ''} ${unlocked ? '' : 'locked'}`}
+                className={`${level.id === selectedLevel.id ? 'active' : ''} ${unlocked ? '' : 'locked'} ${placedOut ? 'placed-out' : ''}`}
                 onClick={() => {
                   if (!unlocked) return;
                   setSelectedLevelId(level.id);
@@ -194,9 +203,9 @@ export default function LearnerLms() {
               >
                 <span>
                   <strong>{level.level}</strong>
-                  <small>{unlocked ? level.cefr : `Locked until previous level is complete`}</small>
+                  <small>{placedOut ? 'Placed out by assessor' : unlocked ? level.cefr : `Locked until previous level is complete`}</small>
                 </span>
-                <em>{unlocked ? `${levelProgress}%` : 'Locked'}</em>
+                <em>{placedOut ? 'Placed out' : unlocked ? `${levelProgress}%` : 'Locked'}</em>
               </button>
             );
           })}
@@ -209,7 +218,7 @@ export default function LearnerLms() {
           <div>
             <p>Private learner portal</p>
             <h1>{espCourse.title}</h1>
-            <span>Welcome, {learner?.username || learner?.fullName || 'learner'}. {espCourse.subtitle}</span>
+            <span>Welcome, {learner?.username || learner?.fullName || 'learner'}. Starting level: {startLevel.level} ({startLevel.cefr}).</span>
           </div>
           <div className="lms-progress-orb" style={{ '--course-progress': `${courseProgress * 3.6}deg` }}>
             <strong>{courseProgress}%</strong>
@@ -664,7 +673,9 @@ function isStepComplete(step, progress) {
 }
 
 function isLevelUnlocked(levelIndex, progress) {
-  if (levelIndex === 0) return true;
+  const startIndex = getStartLevelIndex(progress);
+  if (levelIndex < startIndex) return false;
+  if (levelIndex === startIndex) return true;
   return getLevelProgress(espCourse.levels[levelIndex - 1], progress) === 100;
 }
 
@@ -674,10 +685,15 @@ function isUnitUnlocked(level, unitIndex, progress) {
 }
 
 function getCourseProgress(progress) {
-  const allUnits = espCourse.levels.flatMap((level) => level.units);
+  const allUnits = espCourse.levels.slice(getStartLevelIndex(progress)).flatMap((level) => level.units);
   const total = allUnits.reduce((sum, unit) => sum + getUnitTotalItems(unit), 0);
   const complete = allUnits.reduce((sum, unit) => sum + getUnitCompleteItems(unit, progress), 0);
   return Math.round((complete / total) * 100);
+}
+
+function getStartLevelIndex(progress) {
+  const startLevelId = progress?.placement?.startLevelId || 'beginner';
+  return Math.max(0, espCourse.levels.findIndex((level) => level.id === startLevelId));
 }
 
 function getLevelProgress(level, progress) {
