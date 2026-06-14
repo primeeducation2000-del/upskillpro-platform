@@ -36,50 +36,7 @@ export const espCourse = {
       level: 'Advanced',
       cefr: 'C1/C2',
       goal: 'Develop leadership-level communication, persuasive writing, and high-stakes workplace English.',
-      units: [
-        {
-          id: 'c1-u1',
-          title: 'Leadership Communication',
-          outcome: 'Learners can communicate expectations, feedback, and strategic priorities clearly.',
-          lessons: [
-            lesson('c1-u1-l1', 'Setting expectations', 'Frame expectations clearly and professionally.', ['The priority for this quarter is...', 'The expected standard is...', 'Success will be measured by...'], 'Write a short message setting team expectations.'),
-            lesson('c1-u1-l2', 'Giving developmental feedback', 'Balance recognition, evidence, and improvement points.', ['One strength I noticed was...', 'The area to develop is...', 'A practical next step would be...'], 'Write feedback for a colleague or team member.'),
-            lesson('c1-u1-l3', 'Influencing stakeholders', 'Use persuasive and diplomatic language.', ['The evidence suggests...', 'This approach would allow us to...', 'A key benefit would be...'], 'Write three persuasive stakeholder sentences.'),
-          ],
-          formative: quiz('c1-u1-f', [
-            q('Which phrase sets a measurable standard?', ['Success will be measured by...', 'Try your best maybe.', 'Just do it.'], 0),
-            q('Which is developmental feedback?', ['A practical next step would be...', 'You failed.', 'Not good.'], 0),
-            q('Which is persuasive?', ['The evidence suggests this would reduce delays.', 'I want it.', 'Because I said so.'], 0),
-          ]),
-          summative: summative('c1-u1-s', [
-            q('Best leadership phrase:', ['The expected standard is consistent response within 24 hours.', 'Answer quickly or else.', 'Do better.'], 0),
-            q('Which balances feedback?', ['One strength was clarity; one area to develop is evidence.', 'Bad work.', 'Fine.'], 0),
-            q('Which influences stakeholders?', ['This approach would reduce risk and improve consistency.', 'I like this.', 'This is my idea.'], 0),
-            q('Which is most strategic?', ['The priority is improving retention through clearer onboarding.', 'Onboarding good.', 'People leave sometimes.'], 0),
-          ], 'Write 180-220 words giving a team update that sets priorities, gives feedback, and persuades stakeholders.'),
-        },
-        {
-          id: 'c1-u2',
-          title: 'Advanced Professional Writing',
-          outcome: 'Learners can write clear, nuanced, and persuasive workplace texts.',
-          lessons: [
-            lesson('c1-u2-l1', 'Tone and register', 'Adjust language for formal, neutral, and supportive contexts.', ['I would appreciate your input.', 'Please find attached...', 'I understand the concern raised.'], 'Rewrite a direct message in a more diplomatic tone.'),
-            lesson('c1-u2-l2', 'Argument and evidence', 'Use claims, evidence, and implications.', ['The data indicates...', 'This suggests that...', 'The implication is...'], 'Write one claim with evidence and implication.'),
-            lesson('c1-u2-l3', 'Executive summaries', 'Condense complex information into concise summaries.', ['Key issue', 'Evidence', 'Recommendation', 'Next step'], 'Write a four-sentence executive summary.'),
-          ],
-          formative: quiz('c1-u2-f', [
-            q('Which phrase is formal?', ['Please find attached...', 'Here is the thing.', 'Look at this.'], 0),
-            q('Which phrase introduces evidence?', ['The data indicates...', 'I feel like...', 'Maybe.'], 0),
-            q('An executive summary should be...', ['concise and decision-focused', 'very long and vague', 'only informal opinion'], 0),
-          ]),
-          summative: summative('c1-u2-s', [
-            q('Which is the most diplomatic?', ['I would appreciate your input on this proposal.', 'Tell me now.', 'You need to reply.'], 0),
-            q('Which links evidence to meaning?', ['This suggests that demand is increasing.', 'Demand maybe.', 'Numbers exist.'], 0),
-            q('Which belongs in an executive summary?', ['Recommendation', 'Joke', 'Unrelated story'], 0),
-            q('Which is most precise?', ['The proposal reduces onboarding time by two weeks.', 'It makes things better.', 'It is nice.'], 0),
-          ], 'Write 200-250 words giving an opinion on whether technology has improved modern working life. Use evidence and a clear recommendation.'),
-        },
-      ],
+      units: advancedUnits(),
     },
   ],
 };
@@ -153,7 +110,7 @@ const vocabularyUnits = {
 };
 
 espCourse.levels.forEach((level) => {
-  if (!['beginner', 'elementary', 'intermediate', 'upper-intermediate'].includes(level.id)) level.units.push(vocabularyUnits[level.id]);
+  if (!['beginner', 'elementary', 'intermediate', 'upper-intermediate', 'advanced'].includes(level.id)) level.units.push(vocabularyUnits[level.id]);
 });
 
 function beginnerUnits() {
@@ -356,6 +313,196 @@ function beginnerUnits() {
       q('Choose the polite closing.', ['Have a good day.', 'Finished now.', 'Go.'], 0),
     ], 'Write 70-90 words about yourself at work. Include your role, routine, one customer phrase, one request, and one problem report.')),
   ];
+}
+
+function advancedUnits() {
+  return [
+    advancedUnit('c1-u1', 'Leadership Communication', 'Learners can communicate expectations, feedback, and strategic priorities clearly.', [
+      lesson('c1-u1-l1', 'Setting expectations', 'Frame expectations clearly and professionally.', ['The priority for this quarter is...', 'The expected standard is...', 'Success will be measured by...'], 'Write a short message setting team expectations.'),
+      lesson('c1-u1-l2', 'Giving developmental feedback', 'Balance recognition, evidence, and improvement points.', ['One strength I noticed was...', 'The area to develop is...', 'A practical next step would be...'], 'Write feedback for a colleague or team member.'),
+      lesson('c1-u1-l3', 'Influencing stakeholders', 'Use persuasive and diplomatic language.', ['The evidence suggests...', 'This approach would allow us to...', 'A key benefit would be...'], 'Write three persuasive stakeholder sentences.'),
+    ], vocabularyActivity('c1-u1-vocab', 'Leadership Vocabulary', ['priority', 'standard', 'stakeholder', 'strategic', 'measurable', 'expectation', 'influence', 'evidence', 'outcome', 'alignment'], {
+      story: [text('A strategic leader sets clear '), gap('expectation', ['expectation', 'alignment', 'outcome']), text('s and explains the expected '), gap('standard', ['standard', 'stakeholder', 'priority']), text('. The goal is team '), gap('alignment', ['measurable', 'alignment', 'influence']), text(' around shared outcomes.')],
+      match: [match('stakeholder', 'A person or group affected by a decision.'), match('measurable', 'Able to be checked using evidence or data.'), match('strategic', 'Connected to long-term goals.')],
+      writingWords: ['priority', 'stakeholder', 'evidence', 'outcome'],
+    }), quiz('c1-u1-f', [
+      q('Which phrase sets a measurable standard?', ['Success will be measured by...', 'Try your best maybe.', 'Just do it.'], 0),
+      q('Which is developmental feedback?', ['A practical next step would be...', 'You failed.', 'Not good.'], 0),
+      q('Which is persuasive?', ['The evidence suggests this would reduce delays.', 'I want it.', 'Because I said so.'], 0),
+    ]), summative('c1-u1-s', [
+      q('Best leadership phrase:', ['The expected standard is consistent response within 24 hours.', 'Answer quickly or else.', 'Do better.'], 0),
+      q('Which balances feedback?', ['One strength was clarity; one area to develop is evidence.', 'Bad work.', 'Fine.'], 0),
+      q('Which influences stakeholders?', ['This approach would reduce risk and improve consistency.', 'I like this.', 'This is my idea.'], 0),
+      q('Which is most strategic?', ['The priority is improving retention through clearer onboarding.', 'Onboarding good.', 'People leave sometimes.'], 0),
+    ], 'Write 180-220 words giving a team update that sets priorities, gives feedback, and persuades stakeholders.')),
+    advancedUnit('c1-u2', 'Advanced Professional Writing', 'Learners can write clear, nuanced, and persuasive workplace texts.', [
+      lesson('c1-u2-l1', 'Tone and register', 'Adjust language for formal, neutral, and supportive contexts.', ['I would appreciate your input.', 'Please find attached...', 'I understand the concern raised.'], 'Rewrite a direct message in a more diplomatic tone.'),
+      lesson('c1-u2-l2', 'Argument and evidence', 'Use claims, evidence, and implications.', ['The data indicates...', 'This suggests that...', 'The implication is...'], 'Write one claim with evidence and implication.'),
+      lesson('c1-u2-l3', 'Executive summaries', 'Condense complex information into concise summaries.', ['Key issue', 'Evidence', 'Recommendation', 'Next step'], 'Write a four-sentence executive summary.'),
+    ], vocabularyActivity('c1-u2-vocab', 'Professional Writing Vocabulary', ['register', 'nuanced', 'implication', 'evidence-based', 'concise', 'diplomatic', 'recommendation', 'attached', 'indicates', 'proposal'], {
+      story: [text('A strong executive summary is '), gap('concise', ['concise', 'attached', 'proposal']), text(' and evidence-based. The data '), gap('indicates', ['diplomatic', 'indicates', 'nuanced']), text(' a clear '), gap('implication', ['recommendation', 'implication', 'register']), text(' for workforce planning.')],
+      match: [match('register', 'The level of formality used in language.'), match('nuanced', 'Showing careful detail and balanced meaning.'), match('diplomatic', 'Careful and respectful, especially in difficult situations.')],
+      writingWords: ['register', 'implication', 'recommendation', 'proposal'],
+    }), quiz('c1-u2-f', [
+      q('Which phrase is formal?', ['Please find attached...', 'Here is the thing.', 'Look at this.'], 0),
+      q('Which phrase introduces evidence?', ['The data indicates...', 'I feel like...', 'Maybe.'], 0),
+      q('An executive summary should be...', ['concise and decision-focused', 'very long and vague', 'only informal opinion'], 0),
+    ]), summative('c1-u2-s', [
+      q('Which is the most diplomatic?', ['I would appreciate your input on this proposal.', 'Tell me now.', 'You need to reply.'], 0),
+      q('Which links evidence to meaning?', ['This suggests that demand is increasing.', 'Demand maybe.', 'Numbers exist.'], 0),
+      q('Which belongs in an executive summary?', ['Recommendation', 'Joke', 'Unrelated story'], 0),
+      q('Which is most precise?', ['The proposal reduces onboarding time by two weeks.', 'It makes things better.', 'It is nice.'], 0),
+    ], 'Write 200-250 words giving an opinion on whether technology has improved modern working life. Use evidence and a clear recommendation.')),
+    advancedUnit('c1-u3', 'Stakeholder Influence and Persuasion', 'Learners can influence stakeholders using evidence, benefits, and carefully framed language.', [
+      lesson('c1-u3-l1', 'Mapping stakeholder interests', 'Identify what different stakeholders need from a proposal.', ['The operations team will be concerned about...', 'Senior leaders may prioritise...', 'Learners are likely to value...'], 'Write three stakeholder interest statements.'),
+      lesson('c1-u3-l2', 'Framing benefits persuasively', 'Connect benefits to stakeholder priorities.', ['This would allow us to...', 'A key advantage is...', 'This directly supports the objective of...'], 'Write three benefit statements.'),
+      lesson('c1-u3-l3', 'Responding to resistance', 'Handle objections with balance and evidence.', ['I understand the concern; however...', 'The risk can be mitigated by...', 'A phased approach would reduce disruption.'], 'Write a response to one objection.'),
+    ], vocabularyActivity('c1-u3-vocab', 'Influence Vocabulary', ['stakeholder', 'persuasion', 'benefit', 'resistance', 'objection', 'mitigate', 'phased', 'disruption', 'advantage', 'objective'], {
+      story: [text('Effective '), gap('persuasion', ['persuasion', 'phased', 'objective']), text(' begins with stakeholder priorities. One possible '), gap('objection', ['benefit', 'objection', 'advantage']), text(' is cost, but this risk can be '), gap('mitigate', ['mitigate', 'disruption', 'resistance']), text('d through phased delivery.')],
+      match: [match('resistance', 'Reluctance or opposition to an idea.'), match('disruption', 'Interruption to normal work.'), match('objective', 'A goal or intended result.')],
+      writingWords: ['stakeholder', 'benefit', 'objection', 'mitigate'],
+    }), quiz('c1-u3-f', [
+      q('Which phrase frames stakeholder interest?', ['Senior leaders may prioritise retention.', 'Leaders are there.', 'Retention maybe.'], 0),
+      q('Which responds to resistance?', ['I understand the concern; however, the evidence suggests...', 'No, you are wrong.', 'Stop resisting.'], 0),
+      q('A phased approach means...', ['introducing something in stages', 'rejecting the idea', 'doing everything immediately'], 0),
+    ]), summative('c1-u3-s', [
+      q('Choose the strongest persuasive phrase.', ['This directly supports the objective of improving retention.', 'This is good.', 'We like it.'], 0),
+      q('Which addresses risk?', ['The risk can be mitigated by pilot delivery.', 'Risk is bad.', 'There is a risk.'], 0),
+      q('Which word means opposition?', ['resistance', 'alignment', 'outcome'], 0),
+      q('Which is balanced?', ['I understand the concern; however, the data shows clear benefits.', 'Your concern is wrong.', 'Ignore the concern.'], 0),
+    ], 'Write 180-220 words persuading stakeholders to approve a workforce training proposal. Include benefits, objection, and mitigation.')),
+    advancedUnit('c1-u4', 'Executive Summaries and Board-Level Briefs', 'Learners can summarise complex information for senior decision-makers.', [
+      lesson('c1-u4-l1', 'Selecting essential information', 'Separate essential findings from background detail.', ['The key issue is...', 'The evidence shows...', 'The decision required is...'], 'Write three executive summary opening sentences.'),
+      lesson('c1-u4-l2', 'Writing for decision-makers', 'Use concise language focused on implications and action.', ['This matters because...', 'The implication for the business is...', 'Approval is required to...'], 'Write a decision-focused paragraph.'),
+      lesson('c1-u4-l3', 'Structuring recommendations', 'Present recommendation, rationale, risk, and next step.', ['Recommendation:', 'Rationale:', 'Risk:', 'Next step:'], 'Write a four-part executive recommendation.'),
+    ], vocabularyActivity('c1-u4-vocab', 'Executive Summary Vocabulary', ['essential', 'rationale', 'implication', 'approval', 'recommendation', 'decision', 'brief', 'risk', 'option', 'priority'], {
+      story: [text('The executive '), gap('brief', ['brief', 'option', 'risk']), text(' explains the key issue and the business '), gap('implication', ['approval', 'implication', 'essential']), text('. The main '), gap('recommendation', ['recommendation', 'decision', 'priority']), text(' is to approve the pilot.')],
+      match: [match('rationale', 'The reason behind a recommendation.'), match('approval', 'Formal agreement to proceed.'), match('essential', 'Necessary or most important.')],
+      writingWords: ['rationale', 'approval', 'decision', 'priority'],
+    }), quiz('c1-u4-f', [
+      q('Which sentence is executive-summary style?', ['The key issue is delayed onboarding.', 'Lots happened.', 'This is about onboarding.'], 0),
+      q('Which phrase focuses on implication?', ['The implication for the business is increased cost.', 'Cost exists.', 'Business maybe.'], 0),
+      q('A recommendation should include...', ['rationale, risk, and next step', 'only personal opinion', 'unrelated detail'], 0),
+    ]), summative('c1-u4-s', [
+      q('Choose the strongest decision phrase.', ['Approval is required to begin the pilot in July.', 'Please say yes.', 'Pilot good.'], 0),
+      q('Which word means reason behind a decision?', ['rationale', 'register', 'alignment'], 0),
+      q('Which is concise?', ['The evidence shows a 20% reduction in onboarding time.', 'There is quite a lot of evidence and it is good.', 'Evidence nice.'], 0),
+      q('Which structure is most suitable?', ['Recommendation, rationale, risk, next step.', 'Story, joke, opinion, goodbye.', 'Maybe, perhaps, somehow.'], 0),
+    ], 'Write a 180-220 word executive summary recommending a workforce communication improvement.')),
+    advancedUnit('c1-u5', 'Change Leadership Communication', 'Learners can communicate organisational change with clarity, empathy, and credibility.', [
+      lesson('c1-u5-l1', 'Announcing strategic change', 'Explain what is changing and why it matters.', ['We are moving towards...', 'This change is designed to...', 'The strategic reason is...'], 'Write a change announcement.'),
+      lesson('c1-u5-l2', 'Addressing uncertainty', 'Acknowledge concerns while maintaining confidence.', ['I recognise that this may raise questions.', 'We will provide guidance throughout the transition.', 'The timeline will be reviewed regularly.'], 'Write a paragraph addressing uncertainty.'),
+      lesson('c1-u5-l3', 'Embedding change through communication', 'Use repeated, consistent messaging to support adoption.', ['The core message is...', 'Managers should reinforce...', 'Progress will be monitored through...'], 'Write three change communication actions.'),
+    ], vocabularyActivity('c1-u5-vocab', 'Change Leadership Vocabulary', ['transition', 'adoption', 'uncertainty', 'credibility', 'strategic', 'reinforce', 'timeline', 'guidance', 'monitor', 'consistent'], {
+      story: [text('During a workplace '), gap('transition', ['transition', 'consistent', 'monitor']), text(', leaders must address '), gap('uncertainty', ['adoption', 'uncertainty', 'timeline']), text(' and provide clear '), gap('guidance', ['credibility', 'guidance', 'reinforce']), text(' to staff.')],
+      match: [match('adoption', 'The process of accepting and using a change.'), match('credibility', 'Being trusted and believable.'), match('reinforce', 'To strengthen a message or behaviour.')],
+      writingWords: ['transition', 'strategic', 'consistent', 'monitor'],
+    }), quiz('c1-u5-f', [
+      q('Which explains strategic change?', ['This change is designed to improve consistency.', 'Things will change.', 'Change is happening.'], 0),
+      q('Which acknowledges uncertainty?', ['I recognise that this may raise questions.', 'Do not ask questions.', 'Questions are bad.'], 0),
+      q('Which supports adoption?', ['Managers should reinforce the core message.', 'Managers are busy.', 'Message maybe.'], 0),
+    ]), summative('c1-u5-s', [
+      q('Choose the strongest change phrase.', ['The strategic reason is to improve service consistency.', 'Change because yes.', 'We just want change.'], 0),
+      q('Which phrase builds trust?', ['We will provide guidance throughout the transition.', 'Trust us.', 'No details.'], 0),
+      q('Which word means accepting and using a change?', ['adoption', 'objective', 'register'], 0),
+      q('Which is suitable for leadership communication?', ['Progress will be monitored through monthly reporting.', 'We will see.', 'Maybe monthly.'], 0),
+    ], 'Write 180-220 words announcing an organisational change, addressing concerns, and explaining support for staff.')),
+    advancedUnit('c1-u6', 'High-Stakes Service Recovery', 'Learners can handle serious service failures with accountability, empathy, and resolution language.', [
+      lesson('c1-u6-l1', 'Acknowledging serious failures', 'Use language that accepts concern without overpromising.', ['We recognise the seriousness of this issue.', 'I appreciate the impact this has had.', 'We are reviewing what happened as a priority.'], 'Write three serious acknowledgement phrases.'),
+      lesson('c1-u6-l2', 'Explaining accountability and action', 'Describe responsibility, investigation, and next steps.', ['We are accountable for following this up.', 'The matter has been escalated to...', 'Corrective action will include...'], 'Write a corrective action update.'),
+      lesson('c1-u6-l3', 'Maintaining trust after failure', 'Close with transparency and practical reassurance.', ['We will update you by...', 'We are committed to preventing this from happening again.', 'Your feedback will inform our review.'], 'Write a trust-building closing.'),
+    ], vocabularyActivity('c1-u6-vocab', 'Service Recovery Vocabulary', ['accountability', 'escalated', 'corrective', 'transparent', 'reassurance', 'failure', 'impact', 'review', 'preventing', 'committed'], {
+      story: [text('After a serious service '), gap('failure', ['failure', 'review', 'committed']), text(', the team showed '), gap('accountability', ['accountability', 'reassurance', 'impact']), text(' by taking '), gap('corrective', ['transparent', 'corrective', 'escalated']), text(' action quickly.')],
+      match: [match('transparent', 'Open and honest.'), match('escalated', 'Passed to a higher level for action.'), match('reassurance', 'Words or action that reduce worry.')],
+      writingWords: ['accountability', 'impact', 'review', 'committed'],
+    }), quiz('c1-u6-f', [
+      q('Which acknowledges a serious issue?', ['We recognise the seriousness of this issue.', 'It is not serious.', 'Forget it.'], 0),
+      q('Which shows accountability?', ['We are accountable for following this up.', 'Someone else did it.', 'Not our issue.'], 0),
+      q('Which builds trust?', ['We will update you by Friday.', 'Wait for us.', 'No update.'], 0),
+    ]), summative('c1-u6-s', [
+      q('Choose the best serious service phrase.', ['I appreciate the impact this has had.', 'It happens.', 'Calm down.'], 0),
+      q('Which phrase explains escalation?', ['The matter has been escalated to senior management.', 'Management exists.', 'Escalated maybe.'], 0),
+      q('Which word means open and honest?', ['transparent', 'nuanced', 'strategic'], 0),
+      q('Which phrase explains prevention?', ['We are committed to preventing this from happening again.', 'It might not happen.', 'Maybe fixed.'], 0),
+    ], 'Write 180-220 words responding to a serious customer or patient service failure. Include acknowledgement, accountability, corrective action, and reassurance.')),
+    advancedUnit('c1-u7', 'Policy, Compliance, and Governance Language', 'Learners can explain policies, compliance issues, and governance expectations accurately.', [
+      lesson('c1-u7-l1', 'Explaining policy intent', 'Clarify why a policy exists and what it protects.', ['The purpose of this policy is...', 'This requirement safeguards...', 'The policy supports consistent practice.'], 'Write three policy-intent sentences.'),
+      lesson('c1-u7-l2', 'Communicating compliance obligations', 'Explain what must happen and why.', ['Teams are required to...', 'Compliance depends on...', 'Failure to follow this process may result in...'], 'Write three compliance obligation sentences.'),
+      lesson('c1-u7-l3', 'Writing governance updates', 'Summarise policy adherence, issues, and actions.', ['Current compliance is...', 'The main gap identified is...', 'The corrective action plan includes...'], 'Write a governance update.'),
+    ], vocabularyActivity('c1-u7-vocab', 'Governance Vocabulary', ['policy', 'governance', 'compliance', 'obligation', 'safeguard', 'adherence', 'gap', 'requirement', 'corrective', 'consistent'], {
+      story: [text('The purpose of this '), gap('policy', ['policy', 'gap', 'consistent']), text(' is to safeguard quality. Teams have a compliance '), gap('obligation', ['governance', 'obligation', 'corrective']), text('. The main '), gap('gap', ['requirement', 'gap', 'adherence']), text(' is incomplete records.')],
+      match: [match('adherence', 'Following a rule or standard.'), match('safeguard', 'To protect something.'), match('governance', 'Systems for oversight and accountability.')],
+      writingWords: ['policy', 'compliance', 'requirement', 'consistent'],
+    }), quiz('c1-u7-f', [
+      q('Which explains policy intent?', ['The purpose of this policy is to protect patient safety.', 'Policy is long.', 'Read policy.'], 0),
+      q('Which states an obligation?', ['Teams are required to update records daily.', 'Teams might update.', 'Records are useful.'], 0),
+      q('Which identifies a governance issue?', ['The main gap identified is incomplete reporting.', 'Reporting exists.', 'Gap maybe.'], 0),
+    ]), summative('c1-u7-s', [
+      q('Choose the strongest compliance phrase.', ['Compliance depends on accurate and timely records.', 'Records are good.', 'Compliance maybe.'], 0),
+      q('Which word means following rules?', ['adherence', 'transition', 'persuasion'], 0),
+      q('Which phrase explains risk of non-compliance?', ['Failure to follow this process may result in service delays.', 'Do it or else.', 'Failure bad.'], 0),
+      q('Which is governance language?', ['The corrective action plan includes weekly audit checks.', 'We will check sometimes.', 'Checks are nice.'], 0),
+    ], 'Write 180-220 words explaining a workplace policy, compliance requirement, identified gap, and corrective action.')),
+    advancedUnit('c1-u8', 'Evidence-Based Argument and Critical Thinking', 'Learners can evaluate evidence, compare options, and construct a balanced argument.', [
+      lesson('c1-u8-l1', 'Evaluating evidence quality', 'Assess relevance, reliability, and limits.', ['The evidence is relevant because...', 'A limitation of this data is...', 'This source is reliable because...'], 'Write three evidence-evaluation sentences.'),
+      lesson('c1-u8-l2', 'Comparing options critically', 'Weigh advantages, disadvantages, and trade-offs.', ['Option A offers...', 'However, it may also...', 'The trade-off is...'], 'Write a comparison of two options.'),
+      lesson('c1-u8-l3', 'Building a balanced argument', 'Present claim, evidence, counterpoint, and conclusion.', ['Although...', 'Nevertheless...', 'On balance, I would argue that...'], 'Write a balanced argument paragraph.'),
+    ], vocabularyActivity('c1-u8-vocab', 'Critical Thinking Vocabulary', ['relevant', 'reliable', 'limitation', 'trade-off', 'counterpoint', 'nevertheless', 'evaluate', 'assumption', 'balanced', 'conclusion'], {
+      story: [text('A balanced argument must '), gap('evaluate', ['evaluate', 'assumption', 'conclusion']), text(' the evidence. One '), gap('limitation', ['reliable', 'limitation', 'balanced']), text(' is the small sample size. '), gap('Nevertheless', ['Nevertheless', 'counterpoint', 'trade-off']), text(', the findings are useful.')],
+      match: [match('trade-off', 'A balance between benefits and disadvantages.'), match('assumption', 'Something accepted as true without full proof.'), match('counterpoint', 'An opposing or contrasting point.')],
+      writingWords: ['relevant', 'reliable', 'balanced', 'conclusion'],
+    }), quiz('c1-u8-f', [
+      q('Which evaluates evidence?', ['A limitation of this data is the small sample size.', 'Data is useful.', 'I like data.'], 0),
+      q('Which introduces contrast?', ['Nevertheless, the findings remain useful.', 'Also, and, then.', 'Useful findings.'], 0),
+      q('A trade-off is...', ['a balance between benefits and disadvantages', 'a simple benefit only', 'a final decision without evidence'], 0),
+    ]), summative('c1-u8-s', [
+      q('Choose the strongest evidence phrase.', ['This source is reliable because it uses verified records.', 'The source seems nice.', 'I trust it.'], 0),
+      q('Which phrase presents a counterpoint?', ['Although the approach is costly, it may reduce turnover.', 'It is costly.', 'Turnover maybe.'], 0),
+      q('Which word means relevant weakness?', ['limitation', 'alignment', 'objective'], 0),
+      q('Which conclusion is balanced?', ['On balance, the benefits outweigh the risks if implementation is phased.', 'It is definitely perfect.', 'Risks do not matter.'], 0),
+    ], 'Write 200-250 words evaluating whether technology has improved modern working life. Include evidence, counterpoint, and conclusion.')),
+    advancedUnit('c1-u9', 'Strategic Workforce Reports', 'Learners can write analytical reports about workforce performance, risk, and improvement.', [
+      lesson('c1-u9-l1', 'Defining the strategic issue', 'Frame a workforce issue in business terms.', ['The central workforce issue is...', 'This affects performance by...', 'The long-term risk is...'], 'Write a strategic issue statement.'),
+      lesson('c1-u9-l2', 'Analysing causes and consequences', 'Connect root causes to business outcomes.', ['A contributing factor is...', 'This has led to...', 'The consequence for service quality is...'], 'Write a cause-and-consequence paragraph.'),
+      lesson('c1-u9-l3', 'Recommending strategic intervention', 'Recommend a programme and evaluation approach.', ['The recommended intervention is...', 'Success should be evaluated through...', 'This would support long-term improvement by...'], 'Write a strategic recommendation.'),
+    ], vocabularyActivity('c1-u9-vocab', 'Strategic Reporting Vocabulary', ['workforce', 'intervention', 'evaluate', 'root cause', 'consequence', 'retention', 'productivity', 'indicator', 'long-term', 'performance'], {
+      story: [text('The central '), gap('workforce', ['workforce', 'indicator', 'retention']), text(' issue is low communication confidence. One root cause is limited training, and the '), gap('consequence', ['productivity', 'consequence', 'evaluate']), text(' is slower onboarding. The recommended '), gap('intervention', ['intervention', 'long-term', 'performance']), text(' is ESP training.')],
+      match: [match('indicator', 'A sign or measure of performance.'), match('retention', 'Keeping staff in the organisation.'), match('productivity', 'How much useful work is achieved.')],
+      writingWords: ['workforce', 'performance', 'retention', 'evaluate'],
+    }), quiz('c1-u9-f', [
+      q('Which frames a strategic issue?', ['The central workforce issue is slow onboarding.', 'Onboarding is work.', 'Staff are new.'], 0),
+      q('Which explains consequence?', ['This has led to reduced service consistency.', 'Consistency is good.', 'This happened.'], 0),
+      q('Which evaluates success?', ['Success should be evaluated through completion and performance data.', 'Success is nice.', 'Data exists.'], 0),
+    ]), summative('c1-u9-s', [
+      q('Choose the strongest strategic sentence.', ['This affects performance by increasing onboarding time.', 'Performance is affected.', 'Onboarding slow.'], 0),
+      q('Which phrase identifies cause?', ['A contributing factor is inconsistent induction.', 'Induction exists.', 'Factor maybe.'], 0),
+      q('Which word means planned action to improve something?', ['intervention', 'register', 'brief'], 0),
+      q('Which phrase links to long-term improvement?', ['This would support long-term improvement by improving retention.', 'Long-term good.', 'Improvement maybe.'], 0),
+    ], 'Write 200-250 words analysing a workforce communication issue and recommending a strategic training intervention.')),
+    advancedUnit('c1-u10', 'Advanced Review and Executive Communication', 'Learners combine C1/C2 leadership, evidence, policy, and strategic writing in a final task.', [
+      lesson('c1-u10-l1', 'Reviewing advanced communication functions', 'Review leadership, persuasion, policy, evidence, and strategic reporting language.', ['The evidence suggests...', 'The strategic implication is...', 'The recommended intervention is...'], 'Write ten advanced workplace phrases.'),
+      lesson('c1-u10-l2', 'Planning an executive response', 'Build an executive response using issue, evidence, recommendation, risk, and next step.', ['Issue', 'Evidence', 'Recommendation', 'Risk', 'Next step'], 'Plan a five-part executive response.'),
+      lesson('c1-u10-l3', 'Editing for authority and precision', 'Refine register, tone, evidence, and concision.', ['Is the claim supported?', 'Is the recommendation actionable?', 'Is the tone appropriate for senior stakeholders?'], 'Edit a senior-level communication paragraph.'),
+    ], vocabularyActivity('c1-u10-vocab', 'Advanced Review Vocabulary', ['executive', 'strategic', 'evidence-based', 'governance', 'intervention', 'stakeholder', 'accountability', 'recommendation', 'implementation', 'impact'], {
+      story: [text('An advanced workplace response should be '), gap('evidence-based', ['evidence-based', 'implementation', 'impact']), text(' and strategic. It should explain the '), gap('recommendation', ['recommendation', 'stakeholder', 'governance']), text(', likely '), gap('impact', ['accountability', 'impact', 'executive']), text(', and implementation plan.')],
+      match: [match('executive', 'Related to senior decision-making.'), match('implementation', 'Putting a plan into action.'), match('accountability', 'Responsibility for actions and results.')],
+      writingWords: ['strategic', 'stakeholder', 'intervention', 'implementation'],
+    }), quiz('c1-u10-f', [
+      q('Which is advanced executive language?', ['The strategic implication is increased retention risk.', 'Retention bad.', 'Risk maybe.'], 0),
+      q('Which phrase is evidence-based?', ['The evidence suggests this would reduce onboarding time.', 'I believe it helps.', 'It feels useful.'], 0),
+      q('Which phrase is actionable?', ['The next step is to pilot the programme with two departments.', 'Something should happen.', 'Maybe pilot.'], 0),
+    ]), summative('c1-u10-s', [
+      q('Choose the strongest executive phrase.', ['The recommended intervention is a phased ESP training programme.', 'Training good.', 'We should do training maybe.'], 0),
+      q('Choose the best evidence phrase.', ['Completion data indicates improved communication confidence.', 'People seem better.', 'Confidence nice.'], 0),
+      q('Choose the best risk phrase.', ['The main implementation risk is manager availability.', 'Managers busy.', 'Risk is there.'], 0),
+      q('Choose the best governance phrase.', ['Accountability should sit with the programme sponsor.', 'Sponsor does it.', 'Someone responsible.'], 0),
+      q('Choose the best closing.', ['Approval is requested to proceed with a six-week pilot.', 'Please approve.', 'Done.'], 0),
+    ], 'Write 220-260 words for an executive audience recommending a workforce communication strategy. Include issue, evidence, recommendation, risk, implementation, and expected impact.')),
+  ];
+}
+
+function advancedUnit(id, title, outcome, lessons, vocabulary, formative, summativeAssessment) {
+  return { id, title, outcome, lessons, vocabulary, formative, summative: summativeAssessment };
 }
 
 function upperIntermediateUnits() {
