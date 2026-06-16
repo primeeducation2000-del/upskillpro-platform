@@ -691,8 +691,8 @@ function ContactPage() {
   return (
     <PageShell eyebrow="Contact" title="Book a consultation with UpSkillPro." intro="Tell us about your workforce challenge and we will help shape the right ESP English and soft skills training plan.">
       <div className="contact-panel">
-        <a href="mailto:hello@upskillpro.co.uk"><Mail size={20} /> hello@upskillpro.co.uk</a>
-        <a href="tel:+440000000000"><Phone size={20} /> +44 0000 000000</a>
+        <a href="mailto:info@upskillpro.co.uk"><Mail size={20} /> info@upskillpro.co.uk</a>
+        <a href="tel:+447436830626"><Phone size={20} /> +44 7436 830626</a>
         <ActionLink path="/workforce-training-request" label="Request Training Plan" icon={ClipboardList} primary />
       </div>
     </PageShell>
