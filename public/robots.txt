@@ -1,0 +1,13 @@
+User-agent: *
+Allow: /
+Disallow: /admin
+Disallow: /admin-hub
+Disallow: /admin-analytics
+Disallow: /assessor-login
+Disallow: /assessor/
+Disallow: /learner-login
+Disallow: /learner/
+Disallow: /esol-initial-assessment
+Disallow: /confirmation
+
+Sitemap: https://upskillpro.co.uk/sitemap.xml

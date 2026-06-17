@@ -69,6 +69,8 @@ class RouteErrorBoundary extends React.Component {
 const positioning =
   'UpSkillPro delivers ESP English and Soft Skills training to improve workforce performance, communication, and customer service across hospitality, healthcare, and business sectors.';
 
+const siteUrl = 'https://upskillpro.co.uk';
+
 const navItems = [
   { label: 'Home', path: '/' },
   { label: 'About', path: '/about' },
@@ -171,6 +173,197 @@ const services = {
   'recruitment-services': ['Recruitment Services', 'Recruitment readiness, candidate communication support, and retention-aligned onboarding.'],
   consultancy: ['Consultancy', 'Workforce diagnostics, programme design, and performance improvement reporting.'],
 };
+
+const seoPages = {
+  '/': {
+    title: 'UpSkillPro | ESP English, ESOL & Soft Skills Training for Workforce Performance',
+    description: 'UpSkillPro delivers ESP English, ESOL, soft skills, customer service and workforce training for hospitality, healthcare, recruitment and business teams.',
+    keywords: 'UpSkillPro, ESP English training, ESOL courses, soft skills training, workforce training, business English, hospitality English, healthcare English',
+  },
+  '/about': {
+    title: 'About UpSkillPro | Workforce Performance Training',
+    description: 'Learn how UpSkillPro combines ESP English, ESOL, soft skills and workforce consultancy to improve communication, confidence and service performance.',
+    keywords: 'about UpSkillPro, workforce performance company, English training provider, soft skills provider',
+  },
+  '/sectors': {
+    title: 'Sector Training | Hospitality, Healthcare & Workforce English | UpSkillPro',
+    description: 'Sector-specific ESP English and soft skills training for hospitality, healthcare, recruitment and workforce development teams.',
+    keywords: 'sector training, hospitality English, healthcare English, workplace English, recruitment training',
+  },
+  '/programmes': {
+    title: 'ESP English, ESOL & Soft Skills Programmes | UpSkillPro',
+    description: 'Explore UpSkillPro programmes including ESP English, soft skills, workforce readiness, AI human skills, and recruitment retention training.',
+    keywords: 'ESP English programmes, ESOL programmes, soft skills programmes, workforce readiness programme',
+  },
+  '/services': {
+    title: 'Workforce Training Services | ESP English, ESOL, Soft Skills | UpSkillPro',
+    description: 'UpSkillPro services include ESP English training, soft skills training, AI training, recruitment services and workforce consultancy.',
+    keywords: 'workforce training services, ESP English services, ESOL training, soft skills consultancy',
+  },
+  '/workforce-training-request': {
+    title: 'Request a Workforce Training Plan | UpSkillPro',
+    description: 'Request a tailored ESP English, ESOL, soft skills or workforce training proposal for your organisation.',
+    keywords: 'workforce training request, training proposal, staff English training, corporate ESOL training',
+  },
+  '/case-studies': {
+    title: 'Workforce Training Case Studies | UpSkillPro',
+    description: 'See example outcomes from ESP English, ESOL, soft skills and workforce performance training across operational teams.',
+    keywords: 'training case studies, workforce training outcomes, communication training results',
+  },
+  '/resources': {
+    title: 'English, ESOL & Workforce Training Resources | UpSkillPro',
+    description: 'Resources for employers planning ESP English, ESOL, soft skills, communication and workforce development programmes.',
+    keywords: 'ESOL resources, ESP English resources, workforce training resources, soft skills resources',
+  },
+  '/contact': {
+    title: 'Contact UpSkillPro | ESP English, ESOL & Soft Skills Training',
+    description: 'Contact UpSkillPro to discuss ESP English, ESOL, soft skills, hospitality English, healthcare English and workforce training plans.',
+    keywords: 'contact UpSkillPro, English training provider contact, ESOL courses contact',
+  },
+};
+
+function getSeoData(path) {
+  const clean = path.replace(/\/$/, '') || '/';
+  const hidden = ['/admin', '/admin-hub', '/admin-analytics', '/learner-login', '/assessor-login', '/esol-initial-assessment'];
+
+  if (hidden.some((item) => clean === item || clean.startsWith(`${item}/`))) {
+    return {
+      title: 'Private Area | UpSkillPro',
+      description: 'Private UpSkillPro access area.',
+      canonical: `${siteUrl}${clean}`,
+      robots: 'noindex,nofollow,noarchive',
+      structuredData: [],
+    };
+  }
+
+  if (clean.startsWith('/sectors/')) {
+    const sector = sectors[clean.split('/').pop()] || sectors.hospitality;
+    return {
+      title: `${sector.title} English & Soft Skills Training | UpSkillPro`,
+      description: `${sector.title} ESP English and soft skills training for workforce communication, customer service, confidence and performance improvement.`,
+      keywords: `${sector.title} English training, ${sector.title} soft skills, ESP English, workforce communication training`,
+      canonical: `${siteUrl}${clean}`,
+      robots: 'index,follow',
+    };
+  }
+
+  if (clean.startsWith('/programmes/')) {
+    const programme = programmes[clean.split('/').pop()] || programmes['workforce-readiness-programme'];
+    return {
+      title: `${programme.title} | UpSkillPro`,
+      description: `${programme.title} for employers who need ESP English, ESOL, soft skills and workforce performance improvement.`,
+      keywords: `${programme.title}, ESP English, ESOL, soft skills, workforce training`,
+      canonical: `${siteUrl}${clean}`,
+      robots: 'index,follow',
+    };
+  }
+
+  if (clean.startsWith('/services/')) {
+    const [title, text] = services[clean.split('/').pop()] || services['esp-english-training'];
+    return {
+      title: `${title} | UpSkillPro`,
+      description: `${text} Delivered for businesses, employers and workforce teams.`,
+      keywords: `${title}, UpSkillPro, ESP English, ESOL, workforce training`,
+      canonical: `${siteUrl}${clean}`,
+      robots: 'index,follow',
+    };
+  }
+
+  const page = seoPages[clean] || seoPages['/'];
+  return {
+    ...page,
+    canonical: `${siteUrl}${clean === '/' ? '' : clean}`,
+    robots: clean === '/confirmation' || clean === '/client-portal' ? 'noindex,follow' : 'index,follow',
+  };
+}
+
+function setMetaAttribute(attribute, key, content) {
+  let element = document.head.querySelector(`meta[${attribute}="${key}"]`);
+  if (!element) {
+    element = document.createElement('meta');
+    element.setAttribute(attribute, key);
+    document.head.appendChild(element);
+  }
+  element.setAttribute('content', content);
+}
+
+function setCanonical(href) {
+  let link = document.head.querySelector('link[rel="canonical"]');
+  if (!link) {
+    link = document.createElement('link');
+    link.setAttribute('rel', 'canonical');
+    document.head.appendChild(link);
+  }
+  link.setAttribute('href', href);
+}
+
+function buildStructuredData(seo) {
+  if (seo.robots?.startsWith('noindex')) return [];
+  return [
+    {
+      '@context': 'https://schema.org',
+      '@type': 'ProfessionalService',
+      name: 'UpSkillPro',
+      url: siteUrl,
+      email: 'info@upskillpro.co.uk',
+      telephone: '+447436830626',
+      description: positioning,
+      areaServed: ['United Kingdom', 'Saudi Arabia', 'International'],
+      serviceType: ['ESP English Training', 'ESOL Courses', 'Soft Skills Training', 'Workforce Development', 'Hospitality English', 'Healthcare English'],
+      sameAs: [siteUrl],
+    },
+    {
+      '@context': 'https://schema.org',
+      '@type': 'WebSite',
+      name: 'UpSkillPro',
+      url: siteUrl,
+      potentialAction: {
+        '@type': 'SearchAction',
+        target: `${siteUrl}/?q={search_term_string}`,
+        'query-input': 'required name=search_term_string',
+      },
+    },
+    {
+      '@context': 'https://schema.org',
+      '@type': 'Course',
+      name: 'ESP English and Soft Skills Training for Workforce Performance',
+      description: seo.description,
+      provider: {
+        '@type': 'Organization',
+        name: 'UpSkillPro',
+        sameAs: siteUrl,
+      },
+      educationalLevel: 'Pre-A1 to Advanced',
+      teaches: ['ESOL', 'ESP English', 'Workplace English', 'Communication Skills', 'Customer Service', 'Teamwork'],
+    },
+  ];
+}
+
+function applySeo(path) {
+  const seo = getSeoData(path);
+  document.title = seo.title;
+  setMetaAttribute('name', 'description', seo.description);
+  setMetaAttribute('name', 'keywords', seo.keywords || seoPages['/'].keywords);
+  setMetaAttribute('name', 'robots', seo.robots || 'index,follow');
+  setMetaAttribute('property', 'og:title', seo.title);
+  setMetaAttribute('property', 'og:description', seo.description);
+  setMetaAttribute('property', 'og:type', 'website');
+  setMetaAttribute('property', 'og:url', seo.canonical);
+  setMetaAttribute('property', 'og:site_name', 'UpSkillPro');
+  setMetaAttribute('name', 'twitter:card', 'summary_large_image');
+  setMetaAttribute('name', 'twitter:title', seo.title);
+  setMetaAttribute('name', 'twitter:description', seo.description);
+  setCanonical(seo.canonical);
+
+  let script = document.head.querySelector('#upskillpro-structured-data');
+  if (!script) {
+    script = document.createElement('script');
+    script.id = 'upskillpro-structured-data';
+    script.type = 'application/ld+json';
+    document.head.appendChild(script);
+  }
+  script.textContent = JSON.stringify(seo.structuredData || buildStructuredData(seo));
+}
 
 const challenges = [
   'Poor workplace communication',
@@ -418,6 +611,10 @@ function App() {
   }, []);
 
   const page = useMemo(() => resolvePage(path), [path]);
+
+  useEffect(() => {
+    applySeo(path);
+  }, [path]);
 
   if (path.replace(/\/$/, '') === '/esol-initial-assessment') {
     return <EsolInitialAssessment />;

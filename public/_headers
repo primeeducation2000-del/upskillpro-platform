@@ -1,6 +1,14 @@
 /admin-analytics
   X-Robots-Tag: noindex, nofollow, noarchive
 
+/admin
+  X-Robots-Tag: noindex, nofollow, noarchive
+  Cache-Control: no-store
+
+/admin-hub
+  X-Robots-Tag: noindex, nofollow, noarchive
+  Cache-Control: no-store
+
 /api/admin-auth
   Cache-Control: no-store
 
