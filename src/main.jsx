@@ -17,6 +17,7 @@ import {
   Handshake,
   HeartPulse,
   Hotel,
+  Instagram,
   Mail,
   Menu,
   MonitorCheck,
@@ -1068,6 +1069,7 @@ function ContactPage() {
       <div className="contact-panel">
         <a href="mailto:info@upskillpro.co.uk"><Mail size={20} /> info@upskillpro.co.uk</a>
         <a href="tel:+447436830626"><Phone size={20} /> +44 7436 830626</a>
+        <a href="https://www.instagram.com/up_skillpro/" target="_blank" rel="noreferrer"><Instagram size={20} /> @up_skillpro</a>
         <ActionLink path="/workforce-training-request" label="Request Training Plan" icon={ClipboardList} primary />
       </div>
     </PageShell>
@@ -1451,6 +1453,7 @@ function Footer({ onNav }) {
         <a href="/workforce-training-request" onClick={(event) => onNav(event, '/workforce-training-request')}>Workforce Training Form</a>
         <a href="/client-portal/dashboard" onClick={(event) => onNav(event, '/client-portal/dashboard')}>Client Portal</a>
         <a href="/contact" onClick={(event) => onNav(event, '/contact')}>Book Consultation</a>
+        <a href="https://www.instagram.com/up_skillpro/" target="_blank" rel="noreferrer">Instagram @up_skillpro</a>
       </div>
     </footer>
   );
