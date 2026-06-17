@@ -31,6 +31,7 @@ body {
 body:has(.admin-dashboard),
 body:has(.admin-login),
 body:has(.admin-loading),
+body:has(.admin-hub),
 body:has(.lms-app),
 body:has(.lms-login) {
   background: #050814;
@@ -2425,6 +2426,225 @@ footer p {
   font-weight: 800;
 }
 
+.admin-hub {
+  min-height: 100vh;
+  padding: clamp(18px, 4vw, 46px);
+  color: #eef5ff;
+  background:
+    radial-gradient(circle at 10% 6%, rgba(28, 125, 255, 0.34), transparent 32%),
+    radial-gradient(circle at 92% 2%, rgba(147, 92, 255, 0.28), transparent 30%),
+    radial-gradient(circle at 80% 88%, rgba(11, 122, 117, 0.24), transparent 28%),
+    linear-gradient(135deg, #050814, #0a1224 54%, #0b1020);
+}
+
+.admin-hub-shell {
+  display: grid;
+  gap: 22px;
+  width: min(1380px, 100%);
+  margin: 0 auto;
+}
+
+.admin-hub-hero,
+.admin-hub-card,
+.admin-hub-strip,
+.admin-hub-note,
+.admin-hub-status {
+  border: 1px solid rgba(148, 163, 255, 0.18);
+  background: rgba(12, 20, 43, 0.68);
+  box-shadow: 0 26px 80px rgba(0, 0, 0, 0.24);
+  backdrop-filter: blur(24px);
+}
+
+.admin-hub-hero {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 280px;
+  gap: 24px;
+  align-items: stretch;
+  padding: clamp(24px, 5vw, 48px);
+  border-radius: 28px;
+  overflow: hidden;
+  position: relative;
+}
+
+.admin-hub-hero::after {
+  content: "";
+  position: absolute;
+  inset: auto -12% -46% 34%;
+  height: 260px;
+  background: linear-gradient(90deg, rgba(94, 234, 212, 0.22), rgba(147, 92, 255, 0.28));
+  filter: blur(54px);
+  pointer-events: none;
+}
+
+.admin-hub-kicker,
+.admin-hub-card p {
+  margin: 0 0 12px;
+  color: #74d9ff;
+  font-size: 0.78rem;
+  font-weight: 950;
+  text-transform: uppercase;
+}
+
+.admin-hub-hero h1 {
+  max-width: 900px;
+  margin-bottom: 16px;
+  color: #fff;
+  font-size: clamp(2.8rem, 6vw, 5.8rem);
+}
+
+.admin-hub-hero p:not(.admin-hub-kicker),
+.admin-hub-note p {
+  max-width: 760px;
+  margin: 0;
+  color: #aebfe4;
+  font-size: 1rem;
+}
+
+.admin-hub-status {
+  position: relative;
+  z-index: 2;
+  display: grid;
+  align-content: space-between;
+  gap: 16px;
+  min-height: 190px;
+  padding: 22px;
+  border-radius: 22px;
+}
+
+.admin-hub-status span,
+.admin-hub-status strong {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.admin-hub-status span {
+  color: #55f3d0;
+  font-weight: 900;
+}
+
+.admin-hub-status strong {
+  color: #fff;
+  font-size: 1.15rem;
+}
+
+.admin-hub-status button,
+.admin-hub-card a {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  min-height: 44px;
+  border: 1px solid rgba(148, 163, 255, 0.24);
+  border-radius: 12px;
+  background: linear-gradient(135deg, #1c7dff, #935cff);
+  color: #fff;
+  font: inherit;
+  font-weight: 950;
+  cursor: pointer;
+  box-shadow: 0 16px 36px rgba(83, 98, 255, 0.22);
+}
+
+.admin-hub-strip {
+  display: grid;
+  grid-template-columns: repeat(5, minmax(0, 1fr));
+  gap: 1px;
+  overflow: hidden;
+  border-radius: 18px;
+}
+
+.admin-hub-strip span {
+  min-height: 70px;
+  padding: 18px;
+  background: rgba(255, 255, 255, 0.035);
+  color: #b8c7e8;
+  font-weight: 800;
+}
+
+.admin-hub-strip strong {
+  display: block;
+  color: #55f3d0;
+}
+
+.admin-hub-grid {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 18px;
+}
+
+.admin-hub-card {
+  display: grid;
+  gap: 14px;
+  min-height: 330px;
+  padding: 22px;
+  border-radius: 24px;
+  transition: transform 180ms ease, border-color 180ms ease, background 180ms ease;
+}
+
+.admin-hub-card:hover {
+  transform: translateY(-4px);
+  border-color: rgba(85, 243, 208, 0.34);
+  background: rgba(18, 30, 62, 0.78);
+}
+
+.admin-hub-card-top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.admin-hub-icon {
+  display: grid;
+  place-items: center;
+  width: 52px;
+  height: 52px;
+  border-radius: 16px;
+  background: linear-gradient(135deg, rgba(28, 125, 255, 0.32), rgba(85, 243, 208, 0.18));
+  color: #65e7ff;
+}
+
+.admin-hub-tag {
+  padding: 8px 10px;
+  border: 1px solid rgba(85, 243, 208, 0.18);
+  border-radius: 999px;
+  background: rgba(85, 243, 208, 0.08);
+  color: #55f3d0;
+  font-size: 0.72rem;
+  font-weight: 950;
+}
+
+.admin-hub-card h2 {
+  margin: 0;
+  color: #fff;
+  font-size: 1.45rem;
+}
+
+.admin-hub-card > span {
+  color: #aebfe4;
+  line-height: 1.65;
+}
+
+.admin-hub-card a {
+  align-self: end;
+  margin-top: 10px;
+}
+
+.admin-hub-note {
+  display: flex;
+  gap: 16px;
+  align-items: flex-start;
+  padding: 22px;
+  border-radius: 20px;
+  color: #65e7ff;
+}
+
+.admin-hub-note strong {
+  display: block;
+  margin-bottom: 6px;
+  color: #fff;
+}
+
 .admin-dashboard {
   display: grid;
   grid-template-columns: 290px minmax(0, 1fr);
@@ -4471,6 +4691,15 @@ footer p {
     grid-template-columns: 1fr 1fr;
   }
 
+  .admin-hub-hero,
+  .admin-hub-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .admin-hub-strip {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
   .process-step {
     border-right: 0;
     border-bottom: 1px solid var(--line);
@@ -4651,6 +4880,28 @@ footer p {
   .portal-shell,
   .portal-stats {
     grid-template-columns: 1fr;
+  }
+
+  .admin-hub {
+    padding: 12px;
+  }
+
+  .admin-hub-hero,
+  .admin-hub-grid,
+  .admin-hub-strip {
+    grid-template-columns: 1fr;
+  }
+
+  .admin-hub-hero {
+    border-radius: 20px;
+  }
+
+  .admin-hub-hero h1 {
+    font-size: clamp(2.35rem, 13vw, 3.6rem);
+  }
+
+  .admin-hub-card {
+    min-height: 0;
   }
 
   .portal-shell aside {

@@ -225,10 +225,184 @@ const intelligenceMetrics = [
   },
 ];
 
+const adminHubTools = [
+  {
+    title: 'Analytics Dashboard',
+    path: '/admin-analytics',
+    icon: BarChart3,
+    access: 'Admin session',
+    description: 'Private traffic, page-performance tracking, live visitor activity, sources, and reporting.',
+    signal: 'Website intelligence',
+  },
+  {
+    title: 'Assessor Portal',
+    path: '/assessor-login',
+    icon: ClipboardList,
+    access: 'Assessor login',
+    description: 'Learner creation, placement, marking, evidence review, writing feedback, and pathway resets.',
+    signal: 'Training operations',
+  },
+  {
+    title: 'Learner LMS',
+    path: '/learner-login',
+    icon: BookOpenCheck,
+    access: 'Unique learner login',
+    description: 'Full ESP course pathway from Beginner to Advanced with lessons, vocabulary, assessments, and progress.',
+    signal: 'Learner experience',
+  },
+  {
+    title: 'ESOL Initial Assessment',
+    path: '/esol-initial-assessment',
+    icon: ScanLine,
+    access: 'Assessment access code',
+    description: 'Controlled CEFR placement assessment with reading score, writing evidence, and Google Sheet recording.',
+    signal: 'Placement gateway',
+  },
+];
+
 function navigate(path) {
   window.history.pushState({}, '', path);
   window.dispatchEvent(new PopStateEvent('popstate'));
   window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+function AdminAccessHub() {
+  const [session, setSession] = useState({ loading: true, ok: false });
+  const [password, setPassword] = useState('');
+  const [mfaCode, setMfaCode] = useState('');
+  const [error, setError] = useState('');
+
+  useEffect(() => {
+    document.title = 'UpSkillPro Admin Hub';
+    let robots = document.querySelector('meta[name="robots"]');
+    if (!robots) {
+      robots = document.createElement('meta');
+      robots.setAttribute('name', 'robots');
+      document.head.appendChild(robots);
+    }
+    robots.setAttribute('content', 'noindex,nofollow,noarchive');
+
+    fetch('/api/admin-auth', { credentials: 'include' })
+      .then((response) => response.json())
+      .then((data) => setSession({ loading: false, ok: data.ok, expiresAt: data.expiresAt }))
+      .catch(() => setSession({ loading: false, ok: false }));
+  }, []);
+
+  const login = async (event) => {
+    event.preventDefault();
+    setError('');
+    const response = await fetch('/api/admin-auth', {
+      method: 'POST',
+      credentials: 'include',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ password, mfaCode }),
+    });
+    const data = await response.json();
+    if (!data.ok) {
+      setError(data.error || 'Login failed.');
+      return;
+    }
+    setSession({ loading: false, ok: true, expiresAt: Date.now() + 30 * 60 * 1000 });
+    setPassword('');
+    setMfaCode('');
+  };
+
+  const logout = async () => {
+    await fetch('/api/admin-auth', {
+      method: 'POST',
+      credentials: 'include',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ action: 'logout' }),
+    }).catch(() => {});
+    setSession({ loading: false, ok: false });
+  };
+
+  if (session.loading) {
+    return <main className="admin-loading">Securing admin workspace...</main>;
+  }
+
+  if (!session.ok) {
+    return (
+      <main className="admin-login">
+        <form onSubmit={login}>
+          <span className="admin-login-mark"><ShieldCheck size={30} /></span>
+          <div>
+            <p>Private Admin Hub</p>
+            <h1>Admin access</h1>
+            <small>Sign in once to open the hidden UpskillPro systems from one private control room.</small>
+          </div>
+          {error && <div className="admin-login-error">{error}</div>}
+          <label>
+            <span>Admin password</span>
+            <input type="password" value={password} onChange={(event) => setPassword(event.target.value)} required autoComplete="current-password" />
+          </label>
+          <label>
+            <span>MFA code</span>
+            <input value={mfaCode} onChange={(event) => setMfaCode(event.target.value)} placeholder="Optional if enabled" autoComplete="one-time-code" />
+          </label>
+          <button type="submit">Open Admin Hub <ArrowRight size={18} /></button>
+          <small>Child systems keep their own access rules for assessors, learners, and assessment candidates.</small>
+        </form>
+      </main>
+    );
+  }
+
+  return (
+    <main className="admin-hub">
+      <section className="admin-hub-shell">
+        <div className="admin-hub-hero">
+          <div>
+            <p className="admin-hub-kicker">Private UpskillPro Control Room</p>
+            <h1>One roof for every hidden system.</h1>
+            <p>
+              Manage analytics, learner delivery, assessor workflows, and ESOL placement access without exposing these tools in the public website navigation.
+            </p>
+          </div>
+          <div className="admin-hub-status">
+            <span><ShieldCheck size={18} /> Admin session active</span>
+            <strong>30 min timeout</strong>
+            <button type="button" onClick={logout}>Logout</button>
+          </div>
+        </div>
+
+        <div className="admin-hub-strip" aria-label="Admin access model">
+          <span><strong>Hub</strong> admin session</span>
+          <span><strong>Analytics</strong> private dashboard</span>
+          <span><strong>Assessor</strong> staff controls</span>
+          <span><strong>LMS</strong> learner credentials</span>
+          <span><strong>Assessment</strong> candidate access codes</span>
+        </div>
+
+        <div className="admin-hub-grid">
+          {adminHubTools.map((tool) => {
+            const Icon = tool.icon;
+            return (
+              <article className="admin-hub-card" key={tool.path}>
+                <div className="admin-hub-card-top">
+                  <span className="admin-hub-icon"><Icon size={24} /></span>
+                  <span className="admin-hub-tag">{tool.access}</span>
+                </div>
+                <p>{tool.signal}</p>
+                <h2>{tool.title}</h2>
+                <span>{tool.description}</span>
+                <a href={tool.path}>Open {tool.title} <ArrowRight size={18} /></a>
+              </article>
+            );
+          })}
+        </div>
+
+        <div className="admin-hub-note">
+          <BrainCircuit size={24} />
+          <div>
+            <strong>How this is protected</strong>
+            <p>
+              This hub is hidden from public navigation and search indexing. The analytics admin session protects the launchpad, while the assessor portal, learner LMS, and ESOL assessment keep their own role-specific access controls.
+            </p>
+          </div>
+        </div>
+      </section>
+    </main>
+  );
 }
 
 function App() {
@@ -255,6 +429,10 @@ function App() {
         <AdminAnalyticsDashboard />
       </React.Suspense>
     );
+  }
+
+  if (path.replace(/\/$/, '') === '/admin' || path.replace(/\/$/, '') === '/admin-hub') {
+    return <AdminAccessHub />;
   }
 
   if (path.startsWith('/learner-login') || path.startsWith('/learner')) {
