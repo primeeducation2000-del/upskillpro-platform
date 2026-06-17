@@ -4420,6 +4420,103 @@ footer p {
   gap: 18px;
 }
 
+.initial-assessment-table-wrap {
+  overflow-x: auto;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 18px;
+  background: rgba(255, 255, 255, 0.04);
+}
+
+.initial-assessment-table {
+  width: 100%;
+  min-width: 920px;
+  border-collapse: collapse;
+}
+
+.initial-assessment-table th,
+.initial-assessment-table td {
+  padding: 15px 16px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+  color: #dbe6ff;
+  text-align: left;
+  vertical-align: top;
+}
+
+.initial-assessment-table th {
+  color: #8ff0d3;
+  font-size: 0.76rem;
+  font-weight: 950;
+  text-transform: uppercase;
+}
+
+.initial-assessment-table td strong,
+.initial-assessment-table td b {
+  display: block;
+  color: #fff;
+}
+
+.initial-assessment-table td span {
+  display: block;
+  margin-top: 4px;
+  color: #93a4c2;
+  font-size: 0.82rem;
+}
+
+.initial-assessment-table td em {
+  display: inline-flex;
+  align-items: center;
+  min-width: 46px;
+  justify-content: center;
+  padding: 6px 10px;
+  border-radius: 999px;
+  background: rgba(54, 227, 159, 0.13);
+  color: #36e39f;
+  font-style: normal;
+  font-weight: 950;
+}
+
+.initial-assessment-table button {
+  min-height: 38px;
+  padding: 8px 12px;
+  border: 1px solid rgba(99, 230, 255, 0.28);
+  border-radius: 10px;
+  background: rgba(99, 230, 255, 0.08);
+  color: #63e6ff;
+  font: inherit;
+  font-weight: 900;
+  cursor: pointer;
+}
+
+.initial-assessment-detail {
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 18px;
+  background: rgba(255, 255, 255, 0.035);
+}
+
+.initial-assessment-detail summary {
+  display: flex;
+  justify-content: space-between;
+  gap: 14px;
+  padding: 16px 18px;
+  color: #dbe6ff;
+  font-weight: 900;
+  cursor: pointer;
+}
+
+.initial-assessment-detail summary span {
+  color: #fff;
+}
+
+.initial-assessment-detail summary strong {
+  color: #8ff0d3;
+}
+
+.initial-assessment-detail .initial-assessment-card {
+  border: 0;
+  border-top: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 0 0 18px 18px;
+}
+
 .initial-assessment-card {
   display: grid;
   gap: 18px;

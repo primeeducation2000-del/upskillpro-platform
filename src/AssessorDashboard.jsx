@@ -455,13 +455,35 @@ function Kpi({ icon: Icon, label, value }) {
   return <article><Icon size={22} /><span>{label}</span><strong>{value}</strong></article>;
 }
 
+function getInitialAssessmentSummary(assessment) {
+  const responseMap = Object.fromEntries((assessment.allReadingResponses || []).map((item) => [item.id, item]));
+  const score = assessment.readingScore ?? assessment.reading_score ?? Object.values(responseMap).filter((item) => item.correct).length;
+  const cefr = assessment.estimatedCefrLevel || assessment.estimated_cefr_level || assessment.cefr || 'Not estimated';
+  const recommendation = assessment.placementRecommendation || assessment.placement_recommendation || assessment.recommendation || 'Assessor review required.';
+  const submittedAt = assessment.timestamp || assessment.created_at;
+  return {
+    id: assessment.id || assessment.email || assessment.timestamp || assessment.created_at || assessment.fullName || assessment.full_name,
+    name: assessment.fullName || assessment.full_name || 'Unnamed candidate',
+    email: assessment.email || 'No email recorded',
+    phone: assessment.phone || 'Not provided',
+    score,
+    cefr,
+    recommendation,
+    submittedAt,
+    source: assessment.source === 'google-sheet' ? 'Google Sheet' : 'D1',
+  };
+}
+
 function InitialAssessmentsPanel({ assessments }) {
+  const [expandedId, setExpandedId] = useState('');
+  const rows = assessments.map(getInitialAssessmentSummary);
+
   return (
     <section className="assessor-card initial-assessment-panel">
       <div className="assessor-card-head">
         <div>
           <h2>ESOL initial assessment results</h2>
-          <span className="assessor-muted">Review CEFR placement evidence exactly against the assessment question bank.</span>
+          <span className="assessor-muted">Start with the learner summary table, then open full evidence only when you need detailed answers.</span>
         </div>
         <FileSearch size={20} />
       </div>
@@ -473,10 +495,67 @@ function InitialAssessmentsPanel({ assessments }) {
         </div>
       )}
 
+      {!!assessments.length && (
+        <div className="initial-assessment-table-wrap">
+          <table className="initial-assessment-table">
+            <thead>
+              <tr>
+                <th>Learner</th>
+                <th>Reading Score</th>
+                <th>CEFR</th>
+                <th>Recommendation</th>
+                <th>Submitted</th>
+                <th>Evidence</th>
+              </tr>
+            </thead>
+            <tbody>
+              {rows.map((row) => (
+                <tr key={row.id}>
+                  <td>
+                    <strong>{row.name}</strong>
+                    <span>{row.email}</span>
+                  </td>
+                  <td><b>{row.score} / {readingQuestions.length}</b></td>
+                  <td><em>{row.cefr}</em></td>
+                  <td>{row.recommendation}</td>
+                  <td>
+                    {row.submittedAt ? new Date(row.submittedAt).toLocaleDateString() : 'Unknown'}
+                    <span>{row.source}</span>
+                  </td>
+                  <td>
+                    <button type="button" onClick={() => setExpandedId((current) => (current === row.id ? '' : row.id))}>
+                      {expandedId === row.id ? 'Hide review' : 'View review'}
+                    </button>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      )}
+
       <div className="initial-assessment-list">
-        {assessments.map((assessment) => (
-          <InitialAssessmentReview key={assessment.id || assessment.email || assessment.timestamp} assessment={assessment} />
-        ))}
+        {assessments.map((assessment) => {
+          const summary = getInitialAssessmentSummary(assessment);
+          const isExpanded = expandedId === summary.id;
+          return (
+            <details
+              className="initial-assessment-detail"
+              key={summary.id}
+              open={isExpanded}
+              onToggle={(event) => {
+                if (event.currentTarget.open) setExpandedId(summary.id);
+                if (!event.currentTarget.open && expandedId === summary.id) setExpandedId('');
+              }}
+            >
+              <summary>
+                <span>{summary.name}</span>
+                <strong>{summary.score} / {readingQuestions.length} | {summary.cefr}</strong>
+              </summary>
+              <InitialAssessmentReview assessment={assessment} />
+            </details>
+          );
+        })}
       </div>
     </section>
   );
@@ -484,10 +563,7 @@ function InitialAssessmentsPanel({ assessments }) {
 
 function InitialAssessmentReview({ assessment }) {
   const responseMap = Object.fromEntries((assessment.allReadingResponses || []).map((item) => [item.id, item]));
-  const score = assessment.readingScore ?? assessment.reading_score ?? Object.values(responseMap).filter((item) => item.correct).length;
-  const cefr = assessment.estimatedCefrLevel || assessment.estimated_cefr_level || assessment.cefr || 'Not estimated';
-  const recommendation = assessment.placementRecommendation || assessment.placement_recommendation || assessment.recommendation || 'Assessor review required.';
-  const submittedAt = assessment.timestamp || assessment.created_at;
+  const { score, cefr, recommendation, submittedAt } = getInitialAssessmentSummary(assessment);
 
   return (
     <article className="initial-assessment-card">
