@@ -564,6 +564,7 @@ function InitialAssessmentsPanel({ assessments }) {
 function InitialAssessmentReview({ assessment }) {
   const responseMap = Object.fromEntries((assessment.allReadingResponses || []).map((item) => [item.id, item]));
   const { score, cefr, recommendation, submittedAt } = getInitialAssessmentSummary(assessment);
+  const feedback = buildPlacementFeedback(assessment, responseMap, { score, cefr, recommendation });
 
   return (
     <article className="initial-assessment-card">
@@ -590,6 +591,8 @@ function InitialAssessmentReview({ assessment }) {
         <span>Placement recommendation</span>
         <strong>{recommendation}</strong>
       </div>
+
+      <PlacementFeedbackCard feedback={feedback} />
 
       {(assessment.finalCefrRecommendation || assessment.writingFeedback || assessment.aiMarkingStatus) && (
         <div className="initial-recommendation sheet-writing-feedback">
@@ -633,6 +636,151 @@ function InitialAssessmentReview({ assessment }) {
       </div>
     </article>
   );
+}
+
+function PlacementFeedbackCard({ feedback }) {
+  return (
+    <section className="placement-feedback-card">
+      <div className="placement-feedback-hero">
+        <div>
+          <span>Placement feedback card</span>
+          <h4>{feedback.title}</h4>
+          <p>{feedback.summary}</p>
+        </div>
+        <div className="placement-level-badge">
+          <strong>{feedback.cefr}</strong>
+          <span>{feedback.startLevel}</span>
+        </div>
+      </div>
+
+      <div className="placement-feedback-grid">
+        <div>
+          <span>What the learner did well</span>
+          <ul>
+            {feedback.strengths.map((item) => <li key={item}>{item}</li>)}
+          </ul>
+        </div>
+        <div>
+          <span>Development areas</span>
+          <ul>
+            {feedback.development.map((item) => <li key={item}>{item}</li>)}
+          </ul>
+        </div>
+        <div>
+          <span>Recommended next step</span>
+          <p>{feedback.nextStep}</p>
+        </div>
+      </div>
+
+      <div className="placement-band-list" aria-label="CEFR band performance">
+        {feedback.bands.map((band) => (
+          <div key={band.label}>
+            <div>
+              <strong>{band.label}</strong>
+              <span>{band.correct}/{band.total} correct | {band.status}</span>
+            </div>
+            <b>{band.percent}%</b>
+          </div>
+        ))}
+      </div>
+
+      <blockquote className="placement-assessor-script">
+        <strong>Assessor explanation</strong>
+        {feedback.assessorScript}
+      </blockquote>
+    </section>
+  );
+}
+
+function buildPlacementFeedback(assessment, responseMap, summary) {
+  const name = assessment.fullName || assessment.full_name || 'the learner';
+  const firstName = String(name).split(' ')[0] || 'The learner';
+  const scorePercent = Math.round((Number(summary.score || 0) / readingQuestions.length) * 100);
+  const bands = buildBandPerformance(responseMap);
+  const secureBands = bands.filter((band) => band.percent >= 75).map((band) => band.label);
+  const developingBands = bands.filter((band) => band.percent >= 40 && band.percent < 75).map((band) => band.label);
+  const supportBands = bands.filter((band) => band.percent < 40).map((band) => band.label);
+  const writingTasks = [
+    assessment.writingTask1 || assessment.writing_task_1,
+    assessment.writingTask2 || assessment.writing_task_2,
+    assessment.writingTask3 || assessment.writing_task_3,
+  ];
+  const submittedWriting = writingTasks.filter((task) => String(task || '').trim()).length;
+  const writingWords = writingTasks.reduce((total, task) => total + countWords(task), 0);
+  const startLevel = getPlacementStartLevel(summary.cefr);
+
+  const strengths = [
+    secureBands.length
+      ? `Reading evidence is strongest at ${secureBands.join(', ')} level${secureBands.length === 1 ? '' : 's'}.`
+      : 'The learner attempted the full reading assessment, giving useful placement evidence.',
+    scorePercent >= 70
+      ? 'The reading score shows strong understanding of workplace and general English texts.'
+      : 'The responses show some useful understanding, but accuracy is not yet consistent across the paper.',
+    submittedWriting
+      ? `Writing evidence was submitted for ${submittedWriting} task${submittedWriting === 1 ? '' : 's'}, giving the assessor extra evidence beyond the reading score.`
+      : 'The reading result can be used as the first placement guide, but writing evidence should still be collected or reviewed.',
+  ];
+
+  const development = [
+    supportBands.length
+      ? `Needs support with ${supportBands.join(', ')} level question types before moving higher.`
+      : developingBands.length
+        ? `Should consolidate ${developingBands.join(', ')} skills so performance is secure, not just partial.`
+        : 'Should be stretched with more complex professional texts, explanations, and independent writing.',
+    submittedWriting
+      ? `Writing should be marked separately for grammar control, organisation, vocabulary range, and task achievement. Current writing evidence is approximately ${writingWords} words in total.`
+      : 'Writing has not provided enough evidence yet, so the final level should be confirmed through an assessor-marked writing task.',
+  ];
+
+  const nextStep = `Place ${firstName} on ${startLevel}. Use the first two sessions to confirm writing accuracy, speaking confidence, and workplace vocabulary before deciding whether to accelerate progression.`;
+
+  return {
+    title: `${name} - placement outcome`,
+    cefr: summary.cefr,
+    startLevel,
+    summary: `${firstName} scored ${summary.score}/${readingQuestions.length} (${scorePercent}%). The estimated level is ${summary.cefr}, based mainly on reading performance and supported by the submitted writing evidence.`,
+    strengths,
+    development,
+    nextStep,
+    bands,
+    assessorScript: `${firstName}'s result suggests ${summary.cefr} as the current working level. This means the learner can be placed on ${startLevel}, while the assessor checks writing and speaking before making a final course decision. The recommendation is not just a number: it shows which CEFR bands are secure and which skills need targeted support next.`,
+  };
+}
+
+function buildBandPerformance(responseMap) {
+  const groups = [
+    { label: 'Pre-A1/A1', levels: ['Pre-A1/A1', 'A1'] },
+    { label: 'A2', levels: ['A2'] },
+    { label: 'B1', levels: ['B1'] },
+    { label: 'B2', levels: ['B2'] },
+    { label: 'C1/C2', levels: ['C1', 'C2'] },
+  ];
+
+  return groups.map((group) => {
+    const questions = readingQuestions.filter((question) => group.levels.includes(question.level));
+    const correct = questions.filter((question) => Boolean(responseMap[question.id]?.correct)).length;
+    const percent = questions.length ? Math.round((correct / questions.length) * 100) : 0;
+    let status = 'Needs support';
+    if (percent >= 80) status = 'Strong';
+    else if (percent >= 60) status = 'Developing';
+    else if (percent >= 40) status = 'Emerging';
+    return { label: group.label, correct, total: questions.length, percent, status };
+  });
+}
+
+function getPlacementStartLevel(cefr) {
+  const level = String(cefr || '').toUpperCase();
+  if (level === 'C2') return 'Advanced / specialist ESP pathway';
+  if (level === 'C1') return 'Advanced Professional English';
+  if (level === 'B2') return 'Upper-Intermediate ESP English';
+  if (level === 'B1') return 'Intermediate Workplace English';
+  if (level === 'A2') return 'Elementary Workplace English';
+  if (level === 'A1') return 'Beginner ESP English';
+  return 'Starter / Pre-entry ESOL support';
+}
+
+function countWords(value) {
+  return String(value || '').trim().split(/\s+/).filter(Boolean).length;
 }
 
 function InitialQuestionReview({ question, index, response }) {
