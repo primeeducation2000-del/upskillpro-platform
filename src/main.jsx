@@ -175,6 +175,53 @@ const services = {
   consultancy: ['Consultancy', 'Workforce diagnostics, programme design, and performance improvement reporting.'],
 };
 
+const resources = {
+  'what-is-esp-english': {
+    title: 'What Is ESP English?',
+    intro: 'English for Specific Purposes focuses on the language people need for a particular job, sector, task, or professional situation.',
+    description: 'Learn what ESP English means, how it differs from general English, and how job-specific language training supports workplace performance.',
+    sections: [
+      ['ESP English explained', ['ESP stands for English for Specific Purposes.', 'Lessons focus on real communication from a defined job or sector.', 'Vocabulary, listening, speaking, reading, and writing are taught through relevant workplace situations.']],
+      ['ESP compared with general English', ['General English builds broad everyday ability.', 'ESP English targets specific conversations, documents, vocabulary, and communication standards.', 'A learner can study general English and ESP together, but ESP makes learning immediately relevant to work.']],
+      ['Examples of ESP training', ['Hospitality English for reception, reservations, guest service, and complaints.', 'Healthcare English for patient communication, appointments, reception, and support.', 'Workplace English for instructions, teamwork, meetings, customer service, and professional writing.']],
+      ['Who benefits', ['Employees who need confidence in English at work.', 'Employers experiencing communication or onboarding challenges.', 'Jobseekers preparing for interviews and workplace expectations.', 'Teams that need consistent professional language and customer service.']],
+    ],
+  },
+  'hospitality-english-phrases': {
+    title: 'Hospitality English Phrases for Work',
+    intro: 'Hospitality staff need clear, polite English for welcoming guests, confirming information, solving problems, and protecting the guest experience.',
+    description: 'Practise useful hospitality English phrases for hotel reception, reservations, guest service, restaurants, and complaint handling.',
+    sections: [
+      ['Welcoming guests', ['Good morning. Welcome to the hotel. How can I help you?', 'May I have your name and booking reference, please?', 'Let me confirm your reservation details.']],
+      ['Providing information', ['Breakfast is served from 7:00 until 10:00.', 'The lift is on your right, next to reception.', 'I will arrange that for you now.']],
+      ['Handling a complaint', ['I am sorry you have experienced this problem.', 'Thank you for letting us know.', 'Let me check what we can do to resolve this quickly.']],
+      ['Training focus', ['Polite tone and clear pronunciation.', 'Listening, clarification, and checking understanding.', 'Service recovery and confident professional responses.', 'Role-play based on real hotel and restaurant situations.']],
+    ],
+  },
+  'healthcare-communication-english': {
+    title: 'Healthcare Communication English',
+    intro: 'Clear healthcare English helps reception, administration, and support staff communicate accurately while showing empathy and professionalism.',
+    description: 'Explore practical healthcare English for patient communication, reception, appointments, clarification, and professional support.',
+    sections: [
+      ['Checking patient information', ['Can I confirm your full name and date of birth?', 'Could you spell your surname for me, please?', 'Do you have your appointment letter or reference number?']],
+      ['Appointments and waiting', ['Please take a seat. A member of the team will call you shortly.', 'Your appointment is scheduled for 10:30.', 'If you need to change the appointment, please contact reception.']],
+      ['Supporting understanding', ['Would you like me to repeat that more slowly?', 'Do you need an interpreter or any additional support?', 'Let me check that I have understood you correctly.']],
+      ['Training focus', ['Accuracy when confirming information.', 'Professional, calm, and empathetic tone.', 'Clarification without causing embarrassment.', 'Communication practice based on healthcare scenarios.']],
+    ],
+  },
+  'workplace-soft-skills': {
+    title: 'Workplace Soft Skills Guide',
+    intro: 'Soft skills shape how people communicate, cooperate, solve problems, serve customers, and respond under pressure.',
+    description: 'Understand the communication, teamwork, customer service, professional behaviour, and conflict-handling skills employers value.',
+    sections: [
+      ['Communication', ['Listen actively before responding.', 'Use clear language and check understanding.', 'Adapt tone and detail to the person and situation.']],
+      ['Teamwork', ['Share information reliably.', 'Ask for help early when needed.', 'Respect roles, deadlines, and different perspectives.']],
+      ['Customer service', ['Remain calm and professional.', 'Show empathy before offering a solution.', 'Take ownership or explain the correct next step.']],
+      ['Conflict and feedback', ['Focus on the issue rather than the person.', 'Use specific examples and constructive language.', 'Agree an action and confirm what happens next.']],
+    ],
+  },
+};
+
 const seoPages = {
   '/': {
     title: 'UpSkillPro | ESP English, ESOL & Soft Skills Training for Workforce Performance',
@@ -213,7 +260,7 @@ const seoPages = {
   },
   '/resources': {
     title: 'English, ESOL & Workforce Training Resources | UpSkillPro',
-    description: 'Resources for employers planning ESP English, ESOL, soft skills, communication and workforce development programmes.',
+    description: 'Practical guides covering ESP English, hospitality English, healthcare communication, workplace English and soft skills.',
     keywords: 'ESOL resources, ESP English resources, workforce training resources, soft skills resources',
   },
   '/contact': {
@@ -270,6 +317,20 @@ function getSeoData(path) {
     };
   }
 
+  if (clean.startsWith('/resources/')) {
+    const resource = resources[clean.split('/').pop()];
+    if (resource) {
+      return {
+        title: `${resource.title} | UpSkillPro`,
+        description: resource.description,
+        keywords: `${resource.title}, ESP English, English for work, ESOL, workplace communication, UpSkillPro`,
+        canonical: `${siteUrl}${clean}`,
+        robots: 'index,follow',
+        pageType: 'Article',
+      };
+    }
+  }
+
   const page = seoPages[clean] || seoPages['/'];
   return {
     ...page,
@@ -300,44 +361,89 @@ function setCanonical(href) {
 
 function buildStructuredData(seo) {
   if (seo.robots?.startsWith('noindex')) return [];
-  return [
+  const path = new URL(seo.canonical).pathname;
+  const schemas = [
     {
       '@context': 'https://schema.org',
-      '@type': 'ProfessionalService',
+      '@type': ['Organization', 'EducationalOrganization'],
+      '@id': `${siteUrl}/#organization`,
       name: 'UpSkillPro',
       url: siteUrl,
+      logo: `${siteUrl}/assets/upskillpro-logo.png`,
       email: 'info@upskillpro.co.uk',
       telephone: '+447436830626',
       description: positioning,
       areaServed: ['United Kingdom', 'Saudi Arabia', 'International'],
-      serviceType: ['ESP English Training', 'ESOL Courses', 'Soft Skills Training', 'Workforce Development', 'Hospitality English', 'Healthcare English'],
-      sameAs: [siteUrl],
+      knowsAbout: ['ESP English', 'ESOL', 'Workplace English', 'Soft Skills', 'Hospitality English', 'Healthcare English', 'Workforce Development'],
+      sameAs: ['https://www.instagram.com/up_skillpro/'],
     },
     {
       '@context': 'https://schema.org',
       '@type': 'WebSite',
+      '@id': `${siteUrl}/#website`,
       name: 'UpSkillPro',
       url: siteUrl,
-      potentialAction: {
-        '@type': 'SearchAction',
-        target: `${siteUrl}/?q={search_term_string}`,
-        'query-input': 'required name=search_term_string',
-      },
     },
-    {
+  ];
+
+  if (path.startsWith('/programmes/') || path.startsWith('/sectors/')) {
+    schemas.push({
       '@context': 'https://schema.org',
       '@type': 'Course',
-      name: 'ESP English and Soft Skills Training for Workforce Performance',
+      name: seo.title.replace(' | UpSkillPro', ''),
       description: seo.description,
       provider: {
-        '@type': 'Organization',
+        '@id': `${siteUrl}/#organization`,
         name: 'UpSkillPro',
-        sameAs: siteUrl,
       },
       educationalLevel: 'Pre-A1 to Advanced',
       teaches: ['ESOL', 'ESP English', 'Workplace English', 'Communication Skills', 'Customer Service', 'Teamwork'],
-    },
-  ];
+    });
+  }
+
+  if (path.startsWith('/services/')) {
+    schemas.push({
+      '@context': 'https://schema.org',
+      '@type': 'Service',
+      name: seo.title.replace(' | UpSkillPro', ''),
+      description: seo.description,
+      provider: { '@id': `${siteUrl}/#organization` },
+      areaServed: ['United Kingdom', 'Saudi Arabia', 'International'],
+    });
+  }
+
+  if (seo.pageType === 'Article') {
+    schemas.push({
+      '@context': 'https://schema.org',
+      '@type': 'Article',
+      headline: seo.title.replace(' | UpSkillPro', ''),
+      description: seo.description,
+      mainEntityOfPage: seo.canonical,
+      author: { '@id': `${siteUrl}/#organization` },
+      publisher: { '@id': `${siteUrl}/#organization` },
+      datePublished: '2026-06-25',
+      dateModified: '2026-06-25',
+    });
+  }
+
+  if (path !== '/') {
+    const segments = path.split('/').filter(Boolean);
+    schemas.push({
+      '@context': 'https://schema.org',
+      '@type': 'BreadcrumbList',
+      itemListElement: [
+        { '@type': 'ListItem', position: 1, name: 'Home', item: `${siteUrl}/` },
+        ...segments.map((segment, index) => ({
+          '@type': 'ListItem',
+          position: index + 2,
+          name: segment.split('-').map((word) => word.charAt(0).toUpperCase() + word.slice(1)).join(' '),
+          item: `${siteUrl}/${segments.slice(0, index + 1).join('/')}`,
+        })),
+      ],
+    });
+  }
+
+  return schemas;
 }
 
 function applySeo(path) {
@@ -351,9 +457,12 @@ function applySeo(path) {
   setMetaAttribute('property', 'og:type', 'website');
   setMetaAttribute('property', 'og:url', seo.canonical);
   setMetaAttribute('property', 'og:site_name', 'UpSkillPro');
+  setMetaAttribute('property', 'og:image', `${siteUrl}/assets/hero-future-training-men.png`);
+  setMetaAttribute('property', 'og:image:alt', 'UpSkillPro professional English and workforce training');
   setMetaAttribute('name', 'twitter:card', 'summary_large_image');
   setMetaAttribute('name', 'twitter:title', seo.title);
   setMetaAttribute('name', 'twitter:description', seo.description);
+  setMetaAttribute('name', 'twitter:image', `${siteUrl}/assets/hero-future-training-men.png`);
   setCanonical(seo.canonical);
 
   let script = document.head.querySelector('#upskillpro-structured-data');
@@ -724,6 +833,7 @@ function resolvePage(path) {
   if (clean === '/confirmation') return <ConfirmationPage />;
   if (clean === '/case-studies') return <CaseStudiesPage />;
   if (clean === '/resources') return <ResourcesPage />;
+  if (clean.startsWith('/resources/')) return <ResourceDetail resourceKey={clean.split('/').pop()} />;
   if (clean === '/contact') return <ContactPage />;
   if (clean.startsWith('/client-portal')) return <ClientPortalPage />;
   return <NotFoundPage />;
@@ -1049,15 +1159,33 @@ function CaseStudiesPage() {
 
 function ResourcesPage() {
   return (
-    <PageShell eyebrow="Resources" title="Training materials and employer guidance." intro="A light LMS-ready resource area for PDFs, videos, guides, and sector materials.">
+    <PageShell eyebrow="Resources" title="Practical English for work and soft skills guidance." intro="Clear, useful guidance for learners, employers, and teams developing English, communication, and workplace confidence.">
       <div className="card-grid">
-        {['Hospitality English checklist', 'Healthcare communication scenarios', 'Soft skills manager guide', 'AI workplace prompt guide'].map((title) => (
-          <article className="info-card" key={title}>
-            <BookOpenCheck size={26} />
-            <h3>{title}</h3>
-            <p>Resource placeholder for downloadable PDFs, short videos, and training support materials.</p>
-          </article>
+        {Object.entries(resources).map(([key, resource]) => (
+          <FeatureCard
+            key={key}
+            icon={BookOpenCheck}
+            title={resource.title}
+            text={resource.description}
+            path={`/resources/${key}`}
+          />
         ))}
+      </div>
+    </PageShell>
+  );
+}
+
+function ResourceDetail({ resourceKey }) {
+  const resource = resources[resourceKey] || resources['what-is-esp-english'];
+  return (
+    <PageShell eyebrow="English for work resource" title={resource.title} intro={resource.intro}>
+      <DetailGrid blocks={resource.sections} />
+      <div className="cta-band">
+        <div>
+          <h2>Turn guidance into practical training.</h2>
+          <p>UpSkillPro can assess learner needs and build an ESP English or soft skills programme around real workplace communication.</p>
+        </div>
+        <ActionLink path="/workforce-training-request" label="Request Training Plan" icon={ClipboardList} primary />
       </div>
     </PageShell>
   );
@@ -1450,6 +1578,10 @@ function Footer({ onNav }) {
         <p>{positioning}</p>
       </div>
       <div className="footer-links">
+        <a href="/resources/what-is-esp-english" onClick={(event) => onNav(event, '/resources/what-is-esp-english')}>What is ESP English?</a>
+        <a href="/resources/hospitality-english-phrases" onClick={(event) => onNav(event, '/resources/hospitality-english-phrases')}>Hospitality English</a>
+        <a href="/resources/healthcare-communication-english" onClick={(event) => onNav(event, '/resources/healthcare-communication-english')}>Healthcare English</a>
+        <a href="/resources/workplace-soft-skills" onClick={(event) => onNav(event, '/resources/workplace-soft-skills')}>Soft Skills Guide</a>
         <a href="/workforce-training-request" onClick={(event) => onNav(event, '/workforce-training-request')}>Workforce Training Form</a>
         <a href="/client-portal/dashboard" onClick={(event) => onNav(event, '/client-portal/dashboard')}>Client Portal</a>
         <a href="/contact" onClick={(event) => onNav(event, '/contact')}>Book Consultation</a>

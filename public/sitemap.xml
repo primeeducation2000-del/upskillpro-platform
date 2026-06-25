@@ -2,133 +2,157 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   <url>
     <loc>https://upskillpro.co.uk/</loc>
-    <lastmod>2026-06-17</lastmod>
+    <lastmod>2026-06-25</lastmod>
     <changefreq>weekly</changefreq>
     <priority>1.0</priority>
   </url>
   <url>
     <loc>https://upskillpro.co.uk/about</loc>
-    <lastmod>2026-06-17</lastmod>
+    <lastmod>2026-06-25</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
     <loc>https://upskillpro.co.uk/sectors</loc>
-    <lastmod>2026-06-17</lastmod>
+    <lastmod>2026-06-25</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.9</priority>
   </url>
   <url>
     <loc>https://upskillpro.co.uk/sectors/hospitality</loc>
-    <lastmod>2026-06-17</lastmod>
+    <lastmod>2026-06-25</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.9</priority>
   </url>
   <url>
     <loc>https://upskillpro.co.uk/sectors/healthcare</loc>
-    <lastmod>2026-06-17</lastmod>
+    <lastmod>2026-06-25</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.9</priority>
   </url>
   <url>
     <loc>https://upskillpro.co.uk/sectors/workforce</loc>
-    <lastmod>2026-06-17</lastmod>
+    <lastmod>2026-06-25</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.9</priority>
   </url>
   <url>
     <loc>https://upskillpro.co.uk/programmes</loc>
-    <lastmod>2026-06-17</lastmod>
+    <lastmod>2026-06-25</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.9</priority>
   </url>
   <url>
     <loc>https://upskillpro.co.uk/programmes/esp-english-programmes</loc>
-    <lastmod>2026-06-17</lastmod>
+    <lastmod>2026-06-25</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.9</priority>
   </url>
   <url>
     <loc>https://upskillpro.co.uk/programmes/soft-skills-programmes</loc>
-    <lastmod>2026-06-17</lastmod>
+    <lastmod>2026-06-25</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.85</priority>
   </url>
   <url>
     <loc>https://upskillpro.co.uk/programmes/workforce-readiness-programme</loc>
-    <lastmod>2026-06-17</lastmod>
+    <lastmod>2026-06-25</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.85</priority>
   </url>
   <url>
     <loc>https://upskillpro.co.uk/programmes/ai-human-skills-programme</loc>
-    <lastmod>2026-06-17</lastmod>
+    <lastmod>2026-06-25</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
     <loc>https://upskillpro.co.uk/programmes/recruitment-retention-programme</loc>
-    <lastmod>2026-06-17</lastmod>
+    <lastmod>2026-06-25</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
     <loc>https://upskillpro.co.uk/services</loc>
-    <lastmod>2026-06-17</lastmod>
+    <lastmod>2026-06-25</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
     <loc>https://upskillpro.co.uk/services/esp-english-training</loc>
-    <lastmod>2026-06-17</lastmod>
+    <lastmod>2026-06-25</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.85</priority>
   </url>
   <url>
     <loc>https://upskillpro.co.uk/services/soft-skills-training</loc>
-    <lastmod>2026-06-17</lastmod>
+    <lastmod>2026-06-25</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.85</priority>
   </url>
   <url>
     <loc>https://upskillpro.co.uk/services/ai-training</loc>
-    <lastmod>2026-06-17</lastmod>
+    <lastmod>2026-06-25</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.75</priority>
   </url>
   <url>
     <loc>https://upskillpro.co.uk/services/recruitment-services</loc>
-    <lastmod>2026-06-17</lastmod>
+    <lastmod>2026-06-25</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.75</priority>
   </url>
   <url>
     <loc>https://upskillpro.co.uk/services/consultancy</loc>
-    <lastmod>2026-06-17</lastmod>
+    <lastmod>2026-06-25</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.75</priority>
   </url>
   <url>
     <loc>https://upskillpro.co.uk/workforce-training-request</loc>
-    <lastmod>2026-06-17</lastmod>
+    <lastmod>2026-06-25</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.85</priority>
   </url>
   <url>
     <loc>https://upskillpro.co.uk/case-studies</loc>
-    <lastmod>2026-06-17</lastmod>
+    <lastmod>2026-06-25</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
   </url>
   <url>
     <loc>https://upskillpro.co.uk/resources</loc>
-    <lastmod>2026-06-17</lastmod>
+    <lastmod>2026-06-25</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.85</priority>
+  </url>
+  <url>
+    <loc>https://upskillpro.co.uk/resources/what-is-esp-english</loc>
+    <lastmod>2026-06-25</lastmod>
     <changefreq>monthly</changefreq>
-    <priority>0.7</priority>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://upskillpro.co.uk/resources/hospitality-english-phrases</loc>
+    <lastmod>2026-06-25</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://upskillpro.co.uk/resources/healthcare-communication-english</loc>
+    <lastmod>2026-06-25</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://upskillpro.co.uk/resources/workplace-soft-skills</loc>
+    <lastmod>2026-06-25</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
   </url>
   <url>
     <loc>https://upskillpro.co.uk/contact</loc>
-    <lastmod>2026-06-17</lastmod>
+    <lastmod>2026-06-25</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
   </url>
