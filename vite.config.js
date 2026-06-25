@@ -51,7 +51,7 @@ function prerenderPublicRoutes() {
       const template = await readFile(resolve(dist, 'index.html'), 'utf8');
 
       await Promise.all(seoRoutes.map(async ([route, title, description, points]) => {
-        const canonical = `${siteUrl}${route === '/' ? '/' : route}`;
+        const canonical = `${siteUrl}${route === '/' ? '/' : `${route}/`}`;
         const structuredData = {
           '@context': 'https://schema.org',
           '@graph': [

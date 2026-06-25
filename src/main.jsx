@@ -71,6 +71,7 @@ const positioning =
   'UpSkillPro delivers ESP English and Soft Skills training to improve workforce performance, communication, and customer service across hospitality, healthcare, and business sectors.';
 
 const siteUrl = 'https://upskillpro.co.uk';
+const canonicalForPath = (path) => `${siteUrl}${path === '/' ? '/' : `${path.replace(/\/$/, '')}/`}`;
 
 const navItems = [
   { label: 'Home', path: '/' },
@@ -278,7 +279,7 @@ function getSeoData(path) {
     return {
       title: 'Private Area | UpSkillPro',
       description: 'Private UpSkillPro access area.',
-      canonical: `${siteUrl}${clean}`,
+      canonical: canonicalForPath(clean),
       robots: 'noindex,nofollow,noarchive',
       structuredData: [],
     };
@@ -290,7 +291,7 @@ function getSeoData(path) {
       title: `${sector.title} English & Soft Skills Training | UpSkillPro`,
       description: `${sector.title} ESP English and soft skills training for workforce communication, customer service, confidence and performance improvement.`,
       keywords: `${sector.title} English training, ${sector.title} soft skills, ESP English, workforce communication training`,
-      canonical: `${siteUrl}${clean}`,
+      canonical: canonicalForPath(clean),
       robots: 'index,follow',
     };
   }
@@ -301,7 +302,7 @@ function getSeoData(path) {
       title: `${programme.title} | UpSkillPro`,
       description: `${programme.title} for employers who need ESP English, ESOL, soft skills and workforce performance improvement.`,
       keywords: `${programme.title}, ESP English, ESOL, soft skills, workforce training`,
-      canonical: `${siteUrl}${clean}`,
+      canonical: canonicalForPath(clean),
       robots: 'index,follow',
     };
   }
@@ -312,7 +313,7 @@ function getSeoData(path) {
       title: `${title} | UpSkillPro`,
       description: `${text} Delivered for businesses, employers and workforce teams.`,
       keywords: `${title}, UpSkillPro, ESP English, ESOL, workforce training`,
-      canonical: `${siteUrl}${clean}`,
+      canonical: canonicalForPath(clean),
       robots: 'index,follow',
     };
   }
@@ -324,7 +325,7 @@ function getSeoData(path) {
         title: `${resource.title} | UpSkillPro`,
         description: resource.description,
         keywords: `${resource.title}, ESP English, English for work, ESOL, workplace communication, UpSkillPro`,
-        canonical: `${siteUrl}${clean}`,
+        canonical: canonicalForPath(clean),
         robots: 'index,follow',
         pageType: 'Article',
       };
@@ -334,7 +335,7 @@ function getSeoData(path) {
   const page = seoPages[clean] || seoPages['/'];
   return {
     ...page,
-    canonical: `${siteUrl}${clean === '/' ? '' : clean}`,
+    canonical: canonicalForPath(clean),
     robots: clean === '/confirmation' || clean === '/client-portal' ? 'noindex,follow' : 'index,follow',
   };
 }
