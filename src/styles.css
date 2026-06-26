@@ -1075,6 +1075,30 @@ p {
   font-size: 1.12rem;
 }
 
+.page-hero.academy-page-hero {
+  padding-top: clamp(44px, 5vw, 70px);
+  padding-bottom: clamp(38px, 4vw, 58px);
+  background: linear-gradient(135deg, #edf7f5, #ffffff 68%);
+}
+
+.page-hero .academy-page-title {
+  max-width: none;
+  margin-bottom: 18px;
+  color: var(--teal);
+  font-size: clamp(2.35rem, 4.4vw, 4.35rem);
+  line-height: 1;
+  text-transform: uppercase;
+}
+
+.page-hero.academy-page-hero p {
+  max-width: 900px;
+  margin-bottom: 0;
+}
+
+.section.academy-page-content {
+  padding-top: clamp(28px, 3vw, 42px);
+}
+
 .sector-academy-gateway,
 .academy-next-step-card {
   display: grid;

@@ -1428,9 +1428,9 @@ const hospitalityHierarchy = [
 function HospitalityAcademyPage() {
   return (
     <PageShell
-      eyebrow="Hospitality Academy"
       title="Hospitality Academy"
       intro="A sector-specific training academy for hospitality English, guest service, front office, food and beverage, supervision, and future regulated qualifications."
+      variant="academy"
     >
       <AcademyBreadcrumbs items={hospitalityHierarchy} />
       <nav className="academy-section-nav" aria-label="Hospitality Academy sections">
@@ -1885,15 +1885,22 @@ function Section({ eyebrow, title, children }) {
   );
 }
 
-function PageShell({ eyebrow, title, intro, children }) {
+function PageShell({ eyebrow, title, intro, children, variant = '' }) {
+  const isAcademy = variant === 'academy';
   return (
     <>
-      <section className="page-hero">
-        <p className="eyebrow">{eyebrow}</p>
-        <h1>{title}</h1>
+      <section className={`page-hero ${isAcademy ? 'academy-page-hero' : ''}`}>
+        {isAcademy ? (
+          <h1 className="academy-page-title">{title}</h1>
+        ) : (
+          <>
+            <p className="eyebrow">{eyebrow}</p>
+            <h1>{title}</h1>
+          </>
+        )}
         <p>{intro}</p>
       </section>
-      <section className="section">{children}</section>
+      <section className={`section ${isAcademy ? 'academy-page-content' : ''}`}>{children}</section>
     </>
   );
 }
