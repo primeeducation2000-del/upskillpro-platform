@@ -20,9 +20,39 @@
   </url>
   <url>
     <loc>https://upskillpro.co.uk/sectors/hospitality/</loc>
-    <lastmod>2026-06-25</lastmod>
+    <lastmod>2026-06-26</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.9</priority>
+  </url>
+  <url>
+    <loc>https://upskillpro.co.uk/sectors/hospitality/hospitality-academy/</loc>
+    <lastmod>2026-06-26</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.95</priority>
+  </url>
+  <url>
+    <loc>https://upskillpro.co.uk/sectors/hospitality/hospitality-academy/courses/</loc>
+    <lastmod>2026-06-26</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.92</priority>
+  </url>
+  <url>
+    <loc>https://upskillpro.co.uk/sectors/hospitality/hospitality-academy/courses/hospitality-management-diploma/</loc>
+    <lastmod>2026-06-26</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.95</priority>
+  </url>
+  <url>
+    <loc>https://upskillpro.co.uk/sectors/hospitality/hospitality-academy/courses/hospitality-management-diploma/modules/</loc>
+    <lastmod>2026-06-26</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.85</priority>
+  </url>
+  <url>
+    <loc>https://upskillpro.co.uk/sectors/hospitality/hospitality-academy/courses/hospitality-management-diploma/modules/lessons/</loc>
+    <lastmod>2026-06-26</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
   </url>
   <url>
     <loc>https://upskillpro.co.uk/sectors/healthcare/</loc>

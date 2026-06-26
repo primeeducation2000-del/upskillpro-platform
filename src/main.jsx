@@ -244,6 +244,11 @@ const seoPages = {
     description: 'Explore UpSkillPro programmes including ESP English, soft skills, workforce readiness, AI human skills, and recruitment retention training.',
     keywords: 'ESP English programmes, ESOL programmes, soft skills programmes, workforce readiness programme',
   },
+  '/hospitality-management-guest-service-excellence-diploma': {
+    title: 'Hospitality Management & Guest Service Excellence Diploma | UpSkillPro',
+    description: 'Instructor-led hospitality training for hotels, restaurants, resorts and hospitality teams. Download the workbook, trainer guide, slide deck, assessments and certificates.',
+    keywords: 'Hospitality Training UK, Hotel Staff Training, Hospitality Management Diploma, Customer Service for Hotels, Hotel Reception Training, Hotel Customer Service, Hospitality Courses, UpskillPro Hospitality',
+  },
   '/services': {
     title: 'Workforce Training Services | ESP English, ESOL, Soft Skills | UpSkillPro',
     description: 'UpSkillPro services include ESP English training, soft skills training, AI training, recruitment services and workforce consultancy.',
@@ -282,6 +287,56 @@ function getSeoData(path) {
       canonical: canonicalForPath(clean),
       robots: 'noindex,nofollow,noarchive',
       structuredData: [],
+    };
+  }
+
+  if (clean === '/sectors/hospitality/hospitality-academy') {
+    return {
+      title: 'Hospitality Academy | UpSkillPro',
+      description: 'Hospitality Academy structure for hospitality English, guest service, front office, food and beverage, supervision, assessment evidence and future qualifications.',
+      keywords: 'Hospitality Academy, hospitality courses, hospitality English, guest service training, hospitality qualifications',
+      canonical: canonicalForPath(clean),
+      robots: 'index,follow',
+    };
+  }
+
+  if (clean === '/sectors/hospitality/hospitality-academy/courses') {
+    return {
+      title: 'Hospitality Courses & Qualifications | UpSkillPro',
+      description: 'Explore Hospitality Academy courses and qualification pathways including Hospitality English, customer service, front office and Hospitality Management Diploma.',
+      keywords: 'hospitality courses, hospitality qualifications, hospitality management diploma, hotel training courses',
+      canonical: canonicalForPath(clean),
+      robots: 'index,follow',
+    };
+  }
+
+  if (clean === '/sectors/hospitality/hospitality-academy/courses/hospitality-management-diploma' || clean === '/hospitality-management-guest-service-excellence-diploma') {
+    return {
+      title: 'Hospitality Management Diploma | UpSkillPro',
+      description: 'Hospitality Management and Guest Service Excellence Diploma pathway with modules, lessons, trainer guide, learner workbook, assessments and certificates.',
+      keywords: 'hospitality management diploma, guest service training, hospitality academy, hotel management training',
+      canonical: canonicalForPath('/sectors/hospitality/hospitality-academy/courses/hospitality-management-diploma'),
+      robots: 'index,follow',
+    };
+  }
+
+  if (clean === '/sectors/hospitality/hospitality-academy/courses/hospitality-management-diploma/modules') {
+    return {
+      title: 'Hospitality Management Diploma Modules | UpSkillPro',
+      description: 'Module structure for the Hospitality Management Diploma, covering hospitality introduction, front office, guest communication, complaints, housekeeping, F&B and supervision.',
+      keywords: 'hospitality diploma modules, hotel training modules, guest service modules, hospitality assessment evidence',
+      canonical: canonicalForPath(clean),
+      robots: 'index,follow',
+    };
+  }
+
+  if (clean === '/sectors/hospitality/hospitality-academy/courses/hospitality-management-diploma/modules/lessons') {
+    return {
+      title: 'Introduction to Hospitality Lessons | UpSkillPro',
+      description: 'Lesson-level structure for the Introduction to Hospitality module, including sector overview, guest experience, departments, knowledge check and practical evidence.',
+      keywords: 'hospitality lessons, introduction to hospitality, hospitality training lessons, guest experience lessons',
+      canonical: canonicalForPath(clean),
+      robots: 'index,follow',
     };
   }
 
@@ -387,7 +442,7 @@ function buildStructuredData(seo) {
     },
   ];
 
-  if (path.startsWith('/programmes/') || path.startsWith('/sectors/')) {
+  if (path.startsWith('/programmes/') || path.startsWith('/sectors/') || path === '/hospitality-management-guest-service-excellence-diploma/') {
     schemas.push({
       '@context': 'https://schema.org',
       '@type': 'Course',
@@ -397,8 +452,10 @@ function buildStructuredData(seo) {
         '@id': `${siteUrl}/#organization`,
         name: 'UpSkillPro',
       },
-      educationalLevel: 'Pre-A1 to Advanced',
-      teaches: ['ESOL', 'ESP English', 'Workplace English', 'Communication Skills', 'Customer Service', 'Teamwork'],
+      educationalLevel: path === '/hospitality-management-guest-service-excellence-diploma/' ? 'Professional development' : 'Pre-A1 to Advanced',
+      teaches: path === '/hospitality-management-guest-service-excellence-diploma/'
+        ? ['Hospitality management', 'Guest service excellence', 'Hotel reception', 'Service recovery', 'Housekeeping standards', 'Food and beverage service', 'Teamwork']
+        : ['ESOL', 'ESP English', 'Workplace English', 'Communication Skills', 'Customer Service', 'Teamwork'],
     });
   }
 
@@ -825,9 +882,15 @@ function resolvePage(path) {
   if (clean === '/') return <HomePage />;
   if (clean === '/about') return <AboutPage />;
   if (clean === '/sectors') return <SectorsIndex />;
+  if (clean === '/sectors/hospitality/hospitality-academy') return <HospitalityAcademyPage />;
+  if (clean === '/sectors/hospitality/hospitality-academy/courses') return <HospitalityAcademyCoursesPage />;
+  if (clean === '/sectors/hospitality/hospitality-academy/courses/hospitality-management-diploma') return <HospitalityDiplomaPage />;
+  if (clean === '/sectors/hospitality/hospitality-academy/courses/hospitality-management-diploma/modules') return <HospitalityModulesPage />;
+  if (clean === '/sectors/hospitality/hospitality-academy/courses/hospitality-management-diploma/modules/lessons') return <HospitalityLessonsPage />;
   if (clean.startsWith('/sectors/')) return <SectorPage sectorKey={clean.split('/').pop()} />;
   if (clean === '/programmes') return <ProgrammesIndex />;
   if (clean.startsWith('/programmes/')) return <ProgrammePage programmeKey={clean.split('/').pop()} />;
+  if (clean === '/hospitality-management-guest-service-excellence-diploma') return <HospitalityDiplomaPage />;
   if (clean === '/services') return <ServicesPage />;
   if (clean.startsWith('/services/')) return <ServiceDetail serviceKey={clean.split('/').pop()} />;
   if (clean === '/workforce-training-request') return <TrainingRequestPage />;
@@ -838,6 +901,248 @@ function resolvePage(path) {
   if (clean === '/contact') return <ContactPage />;
   if (clean.startsWith('/client-portal')) return <ClientPortalPage />;
   return <NotFoundPage />;
+}
+
+const hospitalityDownloads = [
+  ['Learner Workbook PDF', '/downloads/hospitality-academy/upskillpro-hospitality-module-1-learner-workbook.pdf', 'Module 1 workbook with activities, notes, reflections, glossary, and action plan.'],
+  ['Learner Workbook Word', '/downloads/hospitality-academy/upskillpro-hospitality-module-1-learner-workbook.docx', 'Editable A4 workbook for future course expansion.'],
+  ['Trainer Guide PDF', '/downloads/hospitality-academy/upskillpro-hospitality-module-1-trainer-guide.pdf', 'Delivery notes, timings, facilitation prompts, misconceptions, and answer guide.'],
+  ['Trainer Guide Word', '/downloads/hospitality-academy/upskillpro-hospitality-module-1-trainer-guide.docx', 'Editable trainer manual for instructor-led delivery.'],
+  ['PowerPoint Deck', '/downloads/hospitality-academy/upskillpro-hospitality-diploma-slide-deck-320-slides.pptx', '320-slide instructor deck with speaker notes and interactive training prompts.'],
+  ['Assessment Pack PDF', '/downloads/hospitality-academy/upskillpro-hospitality-module-1-assessment-pack.pdf', 'Observation checklist, practical assessment, final exam, answer guide, and rubric.'],
+  ['Assessment Pack Word', '/downloads/hospitality-academy/upskillpro-hospitality-module-1-assessment-pack.docx', 'Editable assessment templates for centres and employers.'],
+  ['Attendance Certificate', '/downloads/hospitality-academy/upskillpro-certificate-attendance.pdf', 'Printable certificate of attendance.'],
+  ['Achievement Certificate', '/downloads/hospitality-academy/upskillpro-certificate-achievement.pdf', 'Printable certificate of achievement.'],
+  ['Editable Certificates', '/downloads/hospitality-academy/upskillpro-certificate-achievement-editable.docx', 'Word certificate template for learner names, dates, and trainer signatures.'],
+];
+
+const hospitalityCourses = [
+  'Hospitality Management & Guest Service Excellence Diploma',
+  'Front Office Excellence',
+  'Housekeeping Operations',
+  'Food & Beverage Service',
+  'Hotel Supervisory Skills',
+  'Hospitality English',
+  'Complaint Handling & Service Recovery',
+  'Luxury Guest Experience',
+  'Leadership in Hospitality',
+];
+
+const hospitalityModules = [
+  ['01', 'Introduction to Hospitality', 'Sectors, classifications, guest expectations, departments, teamwork, and professional behaviour.'],
+  ['02', 'Front Office Excellence', 'Reception, reservations, check-in, upselling, local knowledge, and arrival standards.'],
+  ['03', 'Guest Communication', 'Service language, tone, listening, clarification, cultural awareness, and hospitality English.'],
+  ['04', 'Complaint Handling', 'Service recovery, escalation, empathy, documentation, and follow-up.'],
+  ['05', 'Housekeeping Operations', 'Room standards, inspections, amenities, safety, maintenance reporting, and guest privacy.'],
+  ['06', 'Food & Beverage Service', 'Restaurant sequence, menu knowledge, allergens, table service, and guest confidence.'],
+  ['07', 'Supervisory Skills', 'Briefings, handovers, coaching, quality checks, and operational leadership.'],
+  ['08', 'Luxury Guest Experience', 'Personalisation, discretion, anticipation, emotional intelligence, and brand standards.'],
+];
+
+const hospitalityFaqs = [
+  ['Is this an online course?', 'No. It is designed as instructor-led corporate training with downloadable materials, trainer notes, practical assessments, and workplace activities.'],
+  ['Can the diploma be delivered onsite?', 'Yes. UpskillPro can deliver onsite, online, or hybrid cohorts for hotels, restaurants, resorts, and hospitality businesses.'],
+  ['Who should attend?', 'Front office, housekeeping, food and beverage, concierge, supervisors, new starters, and staff moving into guest-facing roles.'],
+  ['Can the content be customised?', 'Yes. The academy structure is reusable, so modules can be adapted for a property, brand standard, department, or learner English level.'],
+];
+
+function HospitalityDiplomaPage() {
+  return (
+    <>
+      <section className="hospitality-hero">
+        <div className="hospitality-hero-content">
+          <p className="eyebrow">UpskillPro Hospitality Academy</p>
+          <h1>Train Your Hospitality Teams to Deliver Exceptional Guest Experiences</h1>
+          <p className="hero-copy">Instructor-led hospitality training developed by UpskillPro for hotels, restaurants, resorts and hospitality businesses.</p>
+          <div className="button-row">
+            <ActionLink path="/contact" label="Book Training" icon={CalendarCheck} primary />
+            <a className="secondary-button" href="/downloads/hospitality-academy/upskillpro-hospitality-module-1-learner-workbook.pdf"><FileText size={18} /> Download Brochure</a>
+            <ActionLink path="/workforce-training-request" label="Request a Quote" icon={ClipboardList} variant="accent" />
+          </div>
+        </div>
+        <div className="hospitality-hero-panel" aria-label="Hospitality training highlights">
+          <span><Star size={18} /> Premium training package</span>
+          <strong>Workbook + trainer guide + 320-slide deck + assessments</strong>
+          <small>Built as a multi-course academy from day one.</small>
+        </div>
+      </section>
+
+      <section className="hospitality-proof">
+        {[
+          ['9', 'academy pathways'],
+          ['320', 'trainer slides'],
+          ['25+', 'workbook pages'],
+          ['100%', 'workplace-focused'],
+        ].map(([value, label]) => (
+          <div key={label}>
+            <strong>{value}</strong>
+            <span>{label}</span>
+          </div>
+        ))}
+      </section>
+
+      <section className="section academy-context-section">
+        <AcademyBreadcrumbs items={[...hospitalityHierarchy, { label: 'Courses', path: '/sectors/hospitality/hospitality-academy/courses' }, { label: 'Hospitality Management Diploma', path: '/sectors/hospitality/hospitality-academy/courses/hospitality-management-diploma' }]} />
+        <div className="academy-next-step-card">
+          <div>
+            <p className="eyebrow">Course hierarchy</p>
+            <h2>Hospitality Sector → Hospitality Academy → Courses → Diploma → Modules → Lessons</h2>
+            <p>This page now sits inside the sector academy model, while keeping the existing standalone diploma page available for direct marketing links.</p>
+          </div>
+          <ActionLink path="/sectors/hospitality/hospitality-academy/courses/hospitality-management-diploma/modules" label="View Modules" icon={ArrowRight} primary />
+        </div>
+      </section>
+
+      <section className="section hospitality-section">
+        <div className="section-heading">
+          <p className="eyebrow">Why Choose UpskillPro</p>
+          <h2>A practical academy for service quality, communication, and operational consistency.</h2>
+          <p>Hospitality teams need more than generic customer service. The programme combines hotel standards, realistic scenarios, service recovery, department collaboration, and confidence-building communication practice.</p>
+        </div>
+        <div className="three-grid">
+          {[
+            [Hotel, 'Hotel-specific design', 'Examples and activities are grounded in reception, concierge, housekeeping, F&B, and guest service moments.'],
+            [Users, 'Instructor-led delivery', 'Trainer notes, timings, discussion questions, and observation rubrics support confident live facilitation.'],
+            [BarChart3, 'Corporate-ready evidence', 'Knowledge checks, practical assessments, certificates, and action plans help employers track outcomes.'],
+          ].map(([Icon, title, text]) => (
+            <FeatureCard key={title} icon={Icon} title={title} text={text} />
+          ))}
+        </div>
+      </section>
+
+      <section className="hospitality-band">
+        <div>
+          <p className="eyebrow">Course Overview</p>
+          <h2>Hospitality Management & Guest Service Excellence Diploma</h2>
+          <p>Module 1 is complete and ready to deliver. The page is structured as a full academy, so future hospitality courses can share the same design system, downloads, enquiry flow, and reusable course components.</p>
+        </div>
+        <div className="academy-list">
+          {hospitalityCourses.map((course) => <span key={course}><CheckCircle2 size={16} /> {course}</span>)}
+        </div>
+      </section>
+
+      <section className="section hospitality-section">
+        <div className="section-heading">
+          <p className="eyebrow">Modules</p>
+          <h2>A scalable training pathway for frontline staff and supervisors.</h2>
+        </div>
+        <div className="hospitality-module-grid">
+          {hospitalityModules.map(([number, title, text]) => (
+            <article key={number}>
+              <span>{number}</span>
+              <h3>{title}</h3>
+              <p>{text}</p>
+              {number === '01' && (
+                <ActionLink
+                  path="/sectors/hospitality/hospitality-academy/courses/hospitality-management-diploma/modules/lessons"
+                  label="View Lessons"
+                  icon={ArrowRight}
+                />
+              )}
+            </article>
+          ))}
+        </div>
+      </section>
+
+      <section className="section hospitality-split">
+        <div>
+          <p className="eyebrow">Who Should Attend</p>
+          <h2>Designed for staff who shape the guest journey.</h2>
+          <ul>
+            <li>Hotel reception, reservations, concierge, and guest relations teams</li>
+            <li>Housekeeping, food and beverage, restaurant, and events staff</li>
+            <li>New starters, supervisors, team leaders, and service recovery champions</li>
+            <li>Hospitality businesses needing consistent service language and brand standards</li>
+          </ul>
+        </div>
+        <div>
+          <p className="eyebrow">Learning Outcomes</p>
+          <h2>By the end, learners can act with more confidence and consistency.</h2>
+          <ul>
+            <li>Explain hospitality sectors, hotel types, departments, and classifications</li>
+            <li>Map the guest journey and recognise moments that shape satisfaction</li>
+            <li>Use professional behaviour, tone, and ownership under pressure</li>
+            <li>Apply service recovery, escalation, and teamwork standards</li>
+          </ul>
+        </div>
+      </section>
+
+      <section className="hospitality-delivery">
+        <div className="section-heading">
+          <p className="eyebrow">Duration and Delivery</p>
+          <h2>Flexible corporate training for operational teams.</h2>
+        </div>
+        <div className="process">
+          {['Needs analysis', 'Instructor-led session', 'Scenario practice', 'Assessment', 'Action plan'].map((step, index) => (
+            <div className="process-step" key={step}>
+              <span>0{index + 1}</span>
+              <p>{step}</p>
+            </div>
+          ))}
+        </div>
+      </section>
+
+      <section className="section hospitality-section">
+        <div className="section-heading">
+          <p className="eyebrow">Downloads</p>
+          <h2>Commercial training assets generated for immediate review.</h2>
+        </div>
+        <div className="download-grid">
+          {hospitalityDownloads.map(([title, href, text]) => (
+            <a href={href} className="download-card" key={href}>
+              <FileText size={24} />
+              <strong>{title}</strong>
+              <span>{text}</span>
+            </a>
+          ))}
+        </div>
+      </section>
+
+      <section className="hospitality-testimonials">
+        {[
+          ['General Manager, Business Hotel', 'The structure feels like a premium in-house academy, not a generic customer-service workshop.'],
+          ['Front Office Trainer', 'The scenarios give learners language, judgement, and confidence they can use on shift immediately.'],
+          ['Hospitality Group HR Lead', 'A strong base for standardising guest service expectations across multiple properties.'],
+        ].map(([name, quote]) => (
+          <blockquote key={name}>
+            <Star size={22} />
+            <p>{quote}</p>
+            <cite>{name}</cite>
+          </blockquote>
+        ))}
+      </section>
+
+      <section className="section hospitality-section">
+        <div className="section-heading">
+          <p className="eyebrow">Frequently Asked Questions</p>
+          <h2>Common questions from hospitality employers.</h2>
+        </div>
+        <div className="faq-list">
+          {hospitalityFaqs.map(([question, answer]) => (
+            <details key={question}>
+              <summary>{question}</summary>
+              <p>{answer}</p>
+            </details>
+          ))}
+        </div>
+      </section>
+
+      <section className="hospitality-contact" id="quote">
+        <div>
+          <p className="eyebrow">Corporate Training</p>
+          <h2>Build a tailored hospitality academy for your team.</h2>
+          <p>Use the form to start a conversation about group size, departments, delivery model, assessment requirements, and custom branding.</p>
+        </div>
+        <form className="lead-form hospitality-mini-form" onSubmit={(event) => { event.preventDefault(); navigate('/workforce-training-request'); }}>
+          <Input label="Company name" required onChange={() => {}} />
+          <Input label="Email" type="email" required onChange={() => {}} />
+          <Select label="Delivery method" required options={['Onsite', 'Online', 'Hybrid']} onChange={() => {}} />
+          <Select label="Team size" required options={['1-15', '16-50', '51-150', '150+']} onChange={() => {}} />
+          <button className="primary-button" type="submit"><Send size={18} /> Request a Quote</button>
+        </form>
+      </section>
+    </>
+  );
 }
 
 function HomePage() {
@@ -959,6 +1264,7 @@ function SectorsIndex() {
 
 function SectorPage({ sectorKey }) {
   const sector = sectors[sectorKey] || sectors.hospitality;
+  const isHospitality = sectorKey === 'hospitality';
   return (
     <PageShell eyebrow="Sector training" title={`${sector.title} workforce training`} intro={sector.subtitle}>
       <DetailGrid
@@ -971,7 +1277,169 @@ function SectorPage({ sectorKey }) {
           ['Outcomes', sector.outcomes],
         ]}
       />
+      {isHospitality && <HospitalityAcademyGateway />}
       <CTASection />
+    </PageShell>
+  );
+}
+
+function HospitalityAcademyGateway() {
+  return (
+    <section className="sector-academy-gateway">
+      <div>
+        <p className="eyebrow">Hospitality Academy</p>
+        <h2>Sector-specific academy structure for courses, qualifications, modules, lessons, and assessment evidence.</h2>
+        <p>
+          The Hospitality Academy is the first sector academy skeleton. It organises hospitality training into a clear awarding-body-ready pathway from sector needs through to courses, modules, lessons, assessment, and learner evidence.
+        </p>
+      </div>
+      <div className="academy-pathway">
+        {[
+          ['1', 'Hospitality Sector', '/sectors/hospitality'],
+          ['2', 'Hospitality Academy', '/sectors/hospitality/hospitality-academy'],
+          ['3', 'Courses', '/sectors/hospitality/hospitality-academy/courses'],
+          ['4', 'Hospitality Management Diploma', '/sectors/hospitality/hospitality-academy/courses/hospitality-management-diploma'],
+          ['5', 'Modules', '/sectors/hospitality/hospitality-academy/courses/hospitality-management-diploma/modules'],
+          ['6', 'Lessons', '/sectors/hospitality/hospitality-academy/courses/hospitality-management-diploma/modules/lessons'],
+        ].map(([number, label, path]) => (
+          <a key={path} href={path} onClick={(event) => { event.preventDefault(); navigate(path); }}>
+            <span>{number}</span>
+            <strong>{label}</strong>
+          </a>
+        ))}
+      </div>
+    </section>
+  );
+}
+
+function AcademyBreadcrumbs({ items }) {
+  return (
+    <nav className="academy-breadcrumbs" aria-label="Academy hierarchy">
+      {items.map((item, index) => (
+        <React.Fragment key={item.path}>
+          <a href={item.path} onClick={(event) => { event.preventDefault(); navigate(item.path); }}>{item.label}</a>
+          {index < items.length - 1 && <span>/</span>}
+        </React.Fragment>
+      ))}
+    </nav>
+  );
+}
+
+const hospitalityHierarchy = [
+  { label: 'Sectors', path: '/sectors' },
+  { label: 'Hospitality', path: '/sectors/hospitality' },
+  { label: 'Hospitality Academy', path: '/sectors/hospitality/hospitality-academy' },
+];
+
+function HospitalityAcademyPage() {
+  return (
+    <PageShell
+      eyebrow="Hospitality Academy"
+      title="Hospitality Academy"
+      intro="A sector-specific training academy for hospitality English, guest service, front office, food and beverage, supervision, and future regulated qualifications."
+    >
+      <AcademyBreadcrumbs items={hospitalityHierarchy} />
+      <div className="academy-overview-grid">
+        <article className="academy-overview-panel">
+          <h2>Academy purpose</h2>
+          <p>The academy gives hospitality employers and learners a structured route from sector challenges into course pathways, assessment evidence, certificates, and future awarding-body qualifications.</p>
+          <ActionLink path="/sectors/hospitality/hospitality-academy/courses" label="View Courses" icon={ArrowRight} primary />
+        </article>
+        <DetailGrid
+          blocks={[
+            ['Academy pathways', ['Hospitality English', 'Customer Service', 'Front Office Skills', 'Food & Beverage Service', 'Hospitality Management Diploma']],
+            ['Awarding-body readiness', ['Course aims', 'Modules and lessons', 'Assessment methods', 'Learner evidence', 'Internal quality assurance planning']],
+          ]}
+        />
+      </div>
+    </PageShell>
+  );
+}
+
+function HospitalityAcademyCoursesPage() {
+  return (
+    <PageShell
+      eyebrow="Hospitality Academy Courses"
+      title="Hospitality Courses & Qualifications"
+      intro="A catalogue-ready view of hospitality academy courses, including short professional courses and the flagship Hospitality Management Diploma pathway."
+    >
+      <AcademyBreadcrumbs items={[...hospitalityHierarchy, { label: 'Courses', path: '/sectors/hospitality/hospitality-academy/courses' }]} />
+      <div className="card-grid">
+        {hospitalityCourses.map((course, index) => (
+          <article className="info-card" key={course}>
+            <BookOpenCheck size={26} />
+            <h3>{course}</h3>
+            <p>{index === 0 ? 'Flagship diploma pathway with modules, lessons, assessment pack, trainer guide, workbook, and certificates.' : 'Planned hospitality academy course ready to be populated with outcomes, modules, lessons, and assessment evidence.'}</p>
+            {index === 0 && (
+              <ActionLink
+                path="/sectors/hospitality/hospitality-academy/courses/hospitality-management-diploma"
+                label="Open Diploma"
+                icon={ArrowRight}
+              />
+            )}
+          </article>
+        ))}
+      </div>
+    </PageShell>
+  );
+}
+
+function HospitalityModulesPage() {
+  return (
+    <PageShell
+      eyebrow="Hospitality Management Diploma"
+      title="Diploma Modules"
+      intro="The module skeleton shows how the hospitality diploma can scale into teachable units, assessment evidence, and future awarding-body mapping."
+    >
+      <AcademyBreadcrumbs items={[...hospitalityHierarchy, { label: 'Courses', path: '/sectors/hospitality/hospitality-academy/courses' }, { label: 'Hospitality Management Diploma', path: '/sectors/hospitality/hospitality-academy/courses/hospitality-management-diploma' }, { label: 'Modules', path: '/sectors/hospitality/hospitality-academy/courses/hospitality-management-diploma/modules' }]} />
+      <div className="hospitality-module-grid">
+        {hospitalityModules.map(([number, title, text]) => (
+          <article key={number}>
+            <span>{number}</span>
+            <h3>{title}</h3>
+            <p>{text}</p>
+            {number === '01' && (
+              <ActionLink
+                path="/sectors/hospitality/hospitality-academy/courses/hospitality-management-diploma/modules/lessons"
+                label="View Lessons"
+                icon={ArrowRight}
+              />
+            )}
+          </article>
+        ))}
+      </div>
+    </PageShell>
+  );
+}
+
+function HospitalityLessonsPage() {
+  const lessons = [
+    ['1.1', 'Welcome to Hospitality', 'Sector purpose, service mindset, professionalism, and guest expectations.'],
+    ['1.2', 'Hospitality Sectors and Settings', 'Hotels, restaurants, resorts, events, front office, housekeeping, food and beverage.'],
+    ['1.3', 'Guest Experience Basics', 'Moments of truth, tone, body language, first impressions, and consistency.'],
+    ['1.4', 'Departments and Teamwork', 'How front office, housekeeping, F&B, maintenance, and management work together.'],
+    ['1.5', 'Module 1 Knowledge Check', 'Short formative assessment to confirm core understanding before progression.'],
+    ['1.6', 'Practical Evidence Task', 'Learner demonstrates professional communication and reflects on workplace application.'],
+  ];
+
+  return (
+    <PageShell
+      eyebrow="Module 1 Lessons"
+      title="Introduction to Hospitality Lessons"
+      intro="A lesson-level skeleton showing how each module can become teachable content inside the future LMS, with assessment and evidence attached."
+    >
+      <AcademyBreadcrumbs items={[...hospitalityHierarchy, { label: 'Courses', path: '/sectors/hospitality/hospitality-academy/courses' }, { label: 'Diploma', path: '/sectors/hospitality/hospitality-academy/courses/hospitality-management-diploma' }, { label: 'Modules', path: '/sectors/hospitality/hospitality-academy/courses/hospitality-management-diploma/modules' }, { label: 'Lessons', path: '/sectors/hospitality/hospitality-academy/courses/hospitality-management-diploma/modules/lessons' }]} />
+      <div className="lesson-roadmap">
+        {lessons.map(([number, title, text]) => (
+          <article key={number}>
+            <span>{number}</span>
+            <div>
+              <h3>{title}</h3>
+              <p>{text}</p>
+            </div>
+          </article>
+        ))}
+      </div>
     </PageShell>
   );
 }

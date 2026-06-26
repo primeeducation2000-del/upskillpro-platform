@@ -1,0 +1,11 @@
+public\downloads\hospitality-academy\upskillpro-hospitality-module-1-learner-workbook.docx
+public\downloads\hospitality-academy\upskillpro-hospitality-module-1-trainer-guide.docx
+public\downloads\hospitality-academy\upskillpro-hospitality-module-1-assessment-pack.docx
+public\downloads\hospitality-academy\upskillpro-certificate-attendance-editable.docx
+public\downloads\hospitality-academy\upskillpro-certificate-achievement-editable.docx
+public\downloads\hospitality-academy\upskillpro-hospitality-module-1-learner-workbook.pdf
+public\downloads\hospitality-academy\upskillpro-hospitality-module-1-trainer-guide.pdf
+public\downloads\hospitality-academy\upskillpro-hospitality-module-1-assessment-pack.pdf
+public\downloads\hospitality-academy\upskillpro-certificate-attendance.pdf
+public\downloads\hospitality-academy\upskillpro-certificate-achievement.pdf
+public\downloads\hospitality-academy\upskillpro-hospitality-diploma-slide-deck-320-slides.pptx
