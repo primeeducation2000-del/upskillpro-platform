@@ -1900,7 +1900,7 @@ function PageShell({ eyebrow, title, intro, children, variant = '' }) {
         )}
         <p>{intro}</p>
       </section>
-      <section className={`section ${isAcademy ? 'academy-page-content' : ''}`}>{children}</section>
+      <section className={`section page-content ${isAcademy ? 'academy-page-content' : ''}`}>{children}</section>
     </>
   );
 }
