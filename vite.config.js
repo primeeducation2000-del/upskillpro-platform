@@ -17,6 +17,7 @@ const seoRoutes = [
   ['/sectors/hospitality/hospitality-academy/courses/hospitality-management-diploma/modules/lessons', 'Introduction to Hospitality Lessons | UpSkillPro', 'Lesson-level structure for the Introduction to Hospitality module, including sector overview, guest experience, departments, knowledge check and practical evidence.', ['Welcome to hospitality', 'Guest experience basics', 'Departments and teamwork', 'Practical evidence task']],
   ['/sectors/healthcare', 'Healthcare English Training | UpSkillPro', 'Healthcare English for patient communication, reception, administration, appointments and professional workplace interaction.', ['Patient-facing English', 'Reception and appointment language', 'Empathy and professional tone', 'Clear workplace communication']],
   ['/sectors/workforce', 'Workplace English & Workforce Readiness | UpSkillPro', 'Workplace English, interview communication, onboarding and soft skills training for employees, employers and recruitment teams.', ['Interview English', 'Workplace instructions', 'Team communication', 'Recruitment and retention support']],
+  ['/courses', 'Courses & Learning Pathways | UpSkillPro', 'Explore UpSkillPro sector academies, hospitality courses, ESP English, soft skills and workforce learning pathways.', ['Sector academies', 'Hospitality courses and qualifications', 'ESP English pathways', 'Soft skills and workforce readiness']],
   ['/programmes', 'English & Soft Skills Programmes | UpSkillPro', 'ESP English, ESOL, workforce readiness, soft skills and AI human skills programmes from beginner to advanced.', ['ESP English programmes', 'Soft skills programmes', 'Workforce readiness', 'Recruitment and retention']],
   ['/programmes/esp-english-programmes', 'ESP English Programmes | UpSkillPro', 'English for Specific Purposes programmes covering hospitality, healthcare and workplace communication.', ['Job-specific English', 'Role-play and real scenarios', 'Vocabulary and communication practice', 'Assessment and progression']],
   ['/programmes/soft-skills-programmes', 'Soft Skills Training Programmes | UpSkillPro', 'Communication, teamwork, customer service, conflict handling and leadership basics for workplace performance.', ['Communication confidence', 'Customer service', 'Teamwork', 'Conflict management']],
@@ -92,7 +93,7 @@ function prerenderPublicRoutes() {
         };
         const content = `
           <main class="seo-prerender">
-            <header><a href="/">UpSkillPro</a><nav><a href="/programmes">Programmes</a><a href="/sectors">Sectors</a><a href="/resources">Resources</a><a href="/contact">Contact</a></nav></header>
+            <header><a href="/">UpSkillPro</a><nav><a href="/sectors">Sectors</a><a href="/courses">Courses</a><a href="/services">Services</a><a href="/resources">Resources</a><a href="/contact">Contact</a></nav></header>
             <article>
               <p>ESP English | ESOL | Soft Skills</p>
               <h1>${escapeHtml(title.replace(' | UpSkillPro', '').replace('UpSkillPro | ', ''))}</h1>

@@ -90,21 +90,21 @@ footer strong {
   margin-top: 2px;
 }
 
-nav {
+.site-header nav {
   display: flex;
   align-items: center;
   gap: 8px;
   font-size: 0.92rem;
 }
 
-nav a {
+.site-header nav a {
   padding: 10px 12px;
   border-radius: 8px;
   color: #31404b;
   transition: background 160ms ease, color 160ms ease;
 }
 
-nav a:hover,
+.site-header nav a:hover,
 .nav-cta {
   background: #edf5f3;
 }
@@ -1175,6 +1175,349 @@ p {
   border-radius: 8px;
   background: #fff;
   box-shadow: var(--tight-shadow);
+}
+
+.section-intro {
+  max-width: 760px;
+  margin: -10px 0 28px;
+  color: var(--muted);
+  font-size: 1.06rem;
+}
+
+.academy-directory {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 18px;
+}
+
+.academy-directory-card {
+  --academy-accent: var(--teal);
+  position: relative;
+  display: flex;
+  min-width: 0;
+  min-height: 430px;
+  flex-direction: column;
+  gap: 14px;
+  padding: 26px;
+  overflow: hidden;
+  border: 1px solid var(--line);
+  border-top: 4px solid var(--academy-accent);
+  border-radius: 8px;
+  background: linear-gradient(160deg, #fff 68%, color-mix(in srgb, var(--academy-accent) 8%, white));
+  box-shadow: var(--tight-shadow);
+}
+
+.academy-directory-card.healthcare {
+  --academy-accent: #138ca0;
+}
+
+.academy-directory-card.workforce {
+  --academy-accent: #c77a22;
+}
+
+.academy-card-heading {
+  display: flex;
+  justify-content: space-between;
+  gap: 14px;
+  align-items: center;
+  color: var(--academy-accent);
+}
+
+.academy-card-heading span,
+.academy-status {
+  display: inline-flex;
+  width: fit-content;
+  padding: 7px 10px;
+  border: 1px solid color-mix(in srgb, var(--academy-accent, var(--teal)) 28%, white);
+  border-radius: 999px;
+  background: color-mix(in srgb, var(--academy-accent, var(--teal)) 9%, white);
+  color: var(--academy-accent, var(--teal));
+  font-size: 0.75rem;
+  font-weight: 900;
+  text-transform: uppercase;
+}
+
+.academy-directory-card h3 {
+  color: var(--navy);
+  font-size: 1.55rem;
+}
+
+.academy-directory-card p {
+  color: var(--muted);
+}
+
+.academy-directory-card ul {
+  display: grid;
+  gap: 0;
+  margin: 2px 0 8px;
+  padding: 0;
+  list-style: none;
+}
+
+.academy-directory-card li {
+  padding: 10px 0;
+  border-bottom: 1px solid var(--line);
+  color: var(--ink);
+  font-weight: 800;
+}
+
+.academy-directory-card .secondary-button {
+  margin-top: auto;
+}
+
+.sector-structure-note {
+  display: grid;
+  grid-template-columns: minmax(240px, 0.7fr) minmax(0, 1.3fr);
+  gap: clamp(24px, 5vw, 64px);
+  margin-top: 28px;
+  padding: clamp(26px, 4vw, 42px);
+  border-radius: 8px;
+  background: var(--navy);
+  color: #fff;
+}
+
+.sector-structure-note h2 {
+  color: #fff;
+}
+
+.sector-structure-note ol {
+  display: grid;
+  gap: 0;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.sector-structure-note li {
+  display: grid;
+  grid-template-columns: 52px 1fr;
+  gap: 14px;
+  align-items: center;
+  padding: 14px 0;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.15);
+}
+
+.sector-structure-note li span {
+  color: var(--aqua);
+  font-weight: 950;
+}
+
+.sector-academy-header {
+  --academy-accent: var(--teal);
+  display: grid;
+  grid-template-columns: minmax(0, 1.25fr) minmax(220px, 0.75fr) auto;
+  gap: clamp(22px, 4vw, 44px);
+  align-items: center;
+  margin-bottom: 28px;
+  padding: clamp(26px, 4vw, 40px);
+  border: 1px solid color-mix(in srgb, var(--academy-accent) 25%, white);
+  border-left: 5px solid var(--academy-accent);
+  border-radius: 8px;
+  background: linear-gradient(120deg, #fff, color-mix(in srgb, var(--academy-accent) 7%, white));
+}
+
+.sector-academy-header.healthcare {
+  --academy-accent: #138ca0;
+}
+
+.sector-academy-header.workforce {
+  --academy-accent: #c77a22;
+}
+
+.sector-academy-header h2 {
+  margin-top: 12px;
+  color: var(--navy);
+}
+
+.sector-academy-header p {
+  color: var(--muted);
+}
+
+.sector-academy-header > div:nth-child(2) {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 8px 14px;
+}
+
+.sector-academy-header > div:nth-child(2) span {
+  grid-column: 1 / -1;
+  color: var(--academy-accent);
+  font-size: 0.76rem;
+  font-weight: 900;
+  text-transform: uppercase;
+}
+
+.sector-academy-header > div:nth-child(2) strong {
+  font-size: 0.9rem;
+}
+
+.academy-section-nav {
+  position: sticky;
+  z-index: 5;
+  top: 78px;
+  display: flex;
+  gap: 6px;
+  margin-bottom: 22px;
+  padding: 8px;
+  overflow-x: auto;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background: rgba(255, 255, 255, 0.95);
+  box-shadow: var(--tight-shadow);
+}
+
+.academy-section-nav a {
+  flex: 0 0 auto;
+  padding: 10px 14px;
+  border-radius: 6px;
+  color: var(--ink);
+  font-size: 0.88rem;
+  font-weight: 850;
+  text-decoration: none;
+}
+
+.academy-section-nav a:hover {
+  background: #e9f6f4;
+  color: var(--teal);
+}
+
+.academy-lead {
+  display: grid;
+  grid-template-columns: minmax(0, 1.15fr) minmax(300px, 0.85fr);
+  gap: clamp(28px, 5vw, 68px);
+  align-items: center;
+  padding: clamp(30px, 5vw, 58px);
+  border-radius: 8px;
+  background: linear-gradient(125deg, #092f37, #0d5960);
+  color: #fff;
+}
+
+.academy-lead h2 {
+  max-width: 760px;
+  color: #fff;
+}
+
+.academy-lead > div > p:not(.eyebrow) {
+  max-width: 700px;
+  color: rgba(255, 255, 255, 0.78);
+}
+
+.academy-progression {
+  display: grid;
+  gap: 0;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.academy-progression li {
+  display: grid;
+  grid-template-columns: 46px 1fr;
+  gap: 12px;
+  align-items: center;
+  padding: 13px 0;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.15);
+}
+
+.academy-progression span {
+  color: var(--aqua);
+  font-weight: 950;
+}
+
+.academy-sections-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 18px;
+  margin-top: 18px;
+}
+
+.academy-sections-grid article {
+  display: flex;
+  min-height: 310px;
+  flex-direction: column;
+  align-items: flex-start;
+  padding: 28px;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background: #fff;
+  box-shadow: var(--tight-shadow);
+}
+
+.academy-sections-grid article > svg {
+  margin-bottom: 22px;
+  color: var(--teal);
+}
+
+.academy-sections-grid article h3 {
+  color: var(--navy);
+  font-size: 1.35rem;
+}
+
+.academy-sections-grid article p:not(.eyebrow) {
+  color: var(--muted);
+}
+
+.academy-sections-grid .secondary-button {
+  margin-top: auto;
+}
+
+.academy-downloads {
+  display: grid;
+  grid-template-columns: minmax(0, 0.85fr) minmax(320px, 1.15fr);
+  gap: clamp(24px, 5vw, 60px);
+  margin-top: 18px;
+  padding: clamp(28px, 4vw, 44px);
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background: #f3f7f7;
+}
+
+.academy-downloads h2 {
+  color: var(--navy);
+}
+
+.academy-downloads > div:last-child {
+  display: grid;
+  gap: 8px;
+}
+
+.academy-downloads a {
+  display: grid;
+  grid-template-columns: 24px 1fr 20px;
+  gap: 12px;
+  align-items: center;
+  padding: 14px 16px;
+  border: 1px solid var(--line);
+  border-radius: 6px;
+  background: #fff;
+  color: var(--ink);
+  font-weight: 850;
+  text-decoration: none;
+}
+
+.academy-downloads a:hover {
+  border-color: var(--teal);
+  color: var(--teal);
+}
+
+.pathway-catalogue {
+  margin-top: clamp(44px, 7vw, 84px);
+}
+
+.legacy-programme-note {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr) auto;
+  gap: 16px;
+  align-items: center;
+  margin-bottom: 24px;
+  padding: 18px;
+  border: 1px solid rgba(11, 127, 120, 0.2);
+  border-radius: 8px;
+  background: #edf7f5;
+}
+
+.legacy-programme-note span {
+  color: var(--muted);
 }
 
 .academy-context-section {
@@ -5338,7 +5681,7 @@ footer p {
 }
 
 @media (max-width: 1040px) {
-  nav {
+  .site-header nav {
     position: absolute;
     top: 75px;
     left: 0;
@@ -5349,7 +5692,7 @@ footer p {
     border-bottom: 1px solid var(--line);
   }
 
-  nav.open {
+  .site-header nav.open {
     display: grid;
   }
 
@@ -5373,11 +5716,23 @@ footer p {
   .sector-academy-gateway,
   .academy-next-step-card,
   .academy-overview-grid,
+  .sector-academy-header,
+  .academy-lead,
+  .academy-downloads,
   .process,
   .portal-preview,
   .cta-band,
   .two-column {
     grid-template-columns: 1fr 1fr;
+  }
+
+  .academy-directory {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .academy-directory-card:last-child {
+    grid-column: 1 / -1;
+    min-height: 0;
   }
 
   .hospitality-module-grid,
@@ -5548,7 +5903,7 @@ footer p {
     display: none;
   }
 
-  nav {
+  .site-header nav {
     top: 69px;
   }
 
@@ -5584,6 +5939,12 @@ footer p {
   .sector-academy-gateway,
   .academy-next-step-card,
   .academy-overview-grid,
+  .academy-directory,
+  .sector-structure-note,
+  .sector-academy-header,
+  .academy-lead,
+  .academy-sections-grid,
+  .academy-downloads,
   .process,
   .portal-preview,
   .cta-band,
@@ -5592,6 +5953,22 @@ footer p {
   .checkbox-grid,
   .portal-shell,
   .portal-stats {
+    grid-template-columns: 1fr;
+  }
+
+  .academy-directory-card:last-child {
+    grid-column: auto;
+  }
+
+  .academy-directory-card {
+    min-height: 0;
+  }
+
+  .sector-academy-header > div:nth-child(2) {
+    grid-template-columns: 1fr;
+  }
+
+  .legacy-programme-note {
     grid-template-columns: 1fr;
   }
 

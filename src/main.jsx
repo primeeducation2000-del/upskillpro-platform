@@ -77,9 +77,8 @@ const navItems = [
   { label: 'Home', path: '/' },
   { label: 'About', path: '/about' },
   { label: 'Sectors', path: '/sectors' },
-  { label: 'Programmes', path: '/programmes' },
+  { label: 'Courses', path: '/courses' },
   { label: 'Services', path: '/services' },
-  { label: 'Case Studies', path: '/case-studies' },
   { label: 'Resources', path: '/resources' },
   { label: 'Contact', path: '/contact' },
 ];
@@ -117,6 +116,33 @@ const sectors = {
     solutions: ['Workforce readiness cohorts', 'Interview and onboarding support', 'Retention-focused development plans', 'Employer reporting'],
     programmes: ['Workforce Readiness Programme', 'Recruitment & Retention Programme', 'ESP English Programme', 'Soft Skills Programme'],
     outcomes: ['Stronger candidate readiness', 'Faster onboarding', 'Improved retention', 'Better team performance'],
+  },
+};
+
+const academyProfiles = {
+  hospitality: {
+    title: 'Hospitality Academy',
+    status: 'Academy open',
+    summary: 'Hospitality English, guest service, front office, food and beverage, supervision, and management development.',
+    path: '/sectors/hospitality/hospitality-academy',
+    pathways: ['Hospitality Management Diploma', 'Hospitality English', 'Guest Service', 'Front Office'],
+    tone: 'hospitality',
+  },
+  healthcare: {
+    title: 'Healthcare Academy',
+    status: 'Academy framework',
+    summary: 'Patient communication, healthcare English, reception, administration, empathy, and professional communication.',
+    path: '/sectors/healthcare',
+    pathways: ['Healthcare English', 'Patient Communication', 'Care Communication', 'Reception Skills'],
+    tone: 'healthcare',
+  },
+  workforce: {
+    title: 'Business & Workforce Academy',
+    status: 'Academy framework',
+    summary: 'Workplace English, leadership, workforce readiness, AI and human skills, onboarding, and retention.',
+    path: '/sectors/workforce',
+    pathways: ['Workplace English', 'Leadership', 'AI + Human Skills', 'Workforce Readiness'],
+    tone: 'workforce',
   },
 };
 
@@ -238,6 +264,11 @@ const seoPages = {
     title: 'Sector Training | Hospitality, Healthcare & Workforce English | UpSkillPro',
     description: 'Sector-specific ESP English and soft skills training for hospitality, healthcare, recruitment and workforce development teams.',
     keywords: 'sector training, hospitality English, healthcare English, workplace English, recruitment training',
+  },
+  '/courses': {
+    title: 'Courses & Learning Pathways | UpSkillPro',
+    description: 'Explore UpSkillPro sector academies, professional courses, ESP English, soft skills and workforce learning pathways.',
+    keywords: 'UpSkillPro courses, sector academies, hospitality courses, ESP English courses, soft skills courses, workforce training pathways',
   },
   '/programmes': {
     title: 'ESP English, ESOL & Soft Skills Programmes | UpSkillPro',
@@ -888,6 +919,7 @@ function resolvePage(path) {
   if (clean === '/sectors/hospitality/hospitality-academy/courses/hospitality-management-diploma/modules') return <HospitalityModulesPage />;
   if (clean === '/sectors/hospitality/hospitality-academy/courses/hospitality-management-diploma/modules/lessons') return <HospitalityLessonsPage />;
   if (clean.startsWith('/sectors/')) return <SectorPage sectorKey={clean.split('/').pop()} />;
+  if (clean === '/courses') return <CoursesIndex />;
   if (clean === '/programmes') return <ProgrammesIndex />;
   if (clean.startsWith('/programmes/')) return <ProgrammePage programmeKey={clean.split('/').pop()} />;
   if (clean === '/hospitality-management-guest-service-excellence-diploma') return <HospitalityDiplomaPage />;
@@ -986,7 +1018,7 @@ function HospitalityDiplomaPage() {
         <div className="academy-next-step-card">
           <div>
             <p className="eyebrow">Course hierarchy</p>
-            <h2>Hospitality Sector → Hospitality Academy → Courses → Diploma → Modules → Lessons</h2>
+            <h2>Hospitality Sector / Hospitality Academy / Courses / Diploma / Modules / Lessons</h2>
             <p>This page now sits inside the sector academy model, while keeping the existing standalone diploma page available for direct marketing links.</p>
           </div>
           <ActionLink path="/sectors/hospitality/hospitality-academy/courses/hospitality-management-diploma/modules" label="View Modules" icon={ArrowRight} primary />
@@ -1203,6 +1235,11 @@ function HomePage() {
           ))}
         </div>
       </Section>
+      <AcademyDirectory
+        eyebrow="Sector academies"
+        title="Enter through your industry. Progress through a structured academy."
+        intro="Each academy brings courses, qualification pathways, employer training, resources, and future LMS delivery into one clear sector home."
+      />
       <IntelligenceDashboard />
       <Section eyebrow="What we solve" title="Practical training for the barriers that slow teams down.">
         <div className="challenge-grid">
@@ -1252,11 +1289,19 @@ function AboutPage() {
 
 function SectorsIndex() {
   return (
-    <PageShell eyebrow="Sectors" title="Sector-specific ESP and soft skills training." intro="Each sector has different communication pressure points, so UpSkillPro designs practical training around real workplace scenarios.">
-      <div className="three-grid">
-        {Object.entries(sectors).map(([key, sector]) => (
-          <FeatureCard key={key} icon={sector.icon} title={sector.title} text={sector.subtitle} path={`/sectors/${key}`} />
-        ))}
+    <PageShell eyebrow="Sectors" title="Choose your sector. Enter its academy." intro="Employers can begin with their industry, then move into relevant courses, qualification pathways, resources, and corporate training.">
+      <AcademyDirectory embedded />
+      <div className="sector-structure-note">
+        <div>
+          <p className="eyebrow">How the structure works</p>
+          <h2>Sector to academy to learning.</h2>
+        </div>
+        <ol>
+          <li><span>01</span><strong>Choose a sector</strong></li>
+          <li><span>02</span><strong>Enter its academy</strong></li>
+          <li><span>03</span><strong>Select a course or qualification</strong></li>
+          <li><span>04</span><strong>Progress through modules and lessons</strong></li>
+        </ol>
       </div>
     </PageShell>
   );
@@ -1265,8 +1310,10 @@ function SectorsIndex() {
 function SectorPage({ sectorKey }) {
   const sector = sectors[sectorKey] || sectors.hospitality;
   const isHospitality = sectorKey === 'hospitality';
+  const academy = academyProfiles[sectorKey] || academyProfiles.hospitality;
   return (
-    <PageShell eyebrow="Sector training" title={`${sector.title} workforce training`} intro={sector.subtitle}>
+    <PageShell eyebrow={`${academy.title} sector`} title={`${sector.title} workforce training`} intro={sector.subtitle}>
+      <SectorAcademyHeader academy={academy} isHospitality={isHospitality} />
       <DetailGrid
         blocks={[
           ['Industry Challenges', sector.challenges],
@@ -1280,6 +1327,53 @@ function SectorPage({ sectorKey }) {
       {isHospitality && <HospitalityAcademyGateway />}
       <CTASection />
     </PageShell>
+  );
+}
+
+function AcademyDirectory({ eyebrow = '', title = '', intro = '', embedded = false }) {
+  const content = (
+    <div className="academy-directory">
+      {Object.entries(academyProfiles).map(([key, academy]) => {
+        const Icon = sectors[key].icon;
+        return (
+          <article className={`academy-directory-card ${academy.tone}`} key={key}>
+            <div className="academy-card-heading">
+              <Icon size={28} />
+              <span>{academy.status}</span>
+            </div>
+            <h3>{academy.title}</h3>
+            <p>{academy.summary}</p>
+            <ul>{academy.pathways.map((pathway) => <li key={pathway}>{pathway}</li>)}</ul>
+            <ActionLink path={academy.path} label={key === 'hospitality' ? 'Open Academy' : 'View Sector Framework'} icon={ArrowRight} />
+          </article>
+        );
+      })}
+    </div>
+  );
+
+  if (embedded) return content;
+  return <Section eyebrow={eyebrow} title={title}><p className="section-intro">{intro}</p>{content}</Section>;
+}
+
+function SectorAcademyHeader({ academy, isHospitality }) {
+  return (
+    <section className={`sector-academy-header ${academy.tone}`}>
+      <div>
+        <span className="academy-status">{academy.status}</span>
+        <h2>{academy.title}</h2>
+        <p>{academy.summary}</p>
+      </div>
+      <div>
+        <span>Academy areas</span>
+        <strong>Overview</strong>
+        <strong>Courses</strong>
+        <strong>Qualifications</strong>
+        <strong>Resources</strong>
+        <strong>Corporate Training</strong>
+        <strong>Downloads</strong>
+      </div>
+      <ActionLink path={isHospitality ? academy.path : '/courses'} label={isHospitality ? 'Enter Hospitality Academy' : 'Explore Available Pathways'} icon={ArrowRight} primary />
+    </section>
   );
 }
 
@@ -1339,19 +1433,89 @@ function HospitalityAcademyPage() {
       intro="A sector-specific training academy for hospitality English, guest service, front office, food and beverage, supervision, and future regulated qualifications."
     >
       <AcademyBreadcrumbs items={hospitalityHierarchy} />
-      <div className="academy-overview-grid">
-        <article className="academy-overview-panel">
-          <h2>Academy purpose</h2>
-          <p>The academy gives hospitality employers and learners a structured route from sector challenges into course pathways, assessment evidence, certificates, and future awarding-body qualifications.</p>
-          <ActionLink path="/sectors/hospitality/hospitality-academy/courses" label="View Courses" icon={ArrowRight} primary />
+      <nav className="academy-section-nav" aria-label="Hospitality Academy sections">
+        {['Overview', 'Courses', 'Qualifications', 'Resources', 'Corporate Training', 'Downloads'].map((label) => (
+          <a key={label} href={`#${label.toLowerCase().replace(' ', '-')}`}>{label}</a>
+        ))}
+      </nav>
+      <section className="academy-lead" id="overview">
+        <div>
+          <p className="eyebrow">Academy overview</p>
+          <h2>A complete sector home for employers, learners, and future qualification delivery.</h2>
+          <p>The academy connects hospitality needs to structured learning, assessment evidence, learner resources, employer delivery, and quality-assurance planning.</p>
+          <div className="button-row">
+            <ActionLink path="/sectors/hospitality/hospitality-academy/courses" label="Explore Courses" icon={ArrowRight} primary />
+            <ActionLink path="/workforce-training-request" label="Corporate Training" icon={BriefcaseBusiness} />
+          </div>
+        </div>
+        <ol className="academy-progression" aria-label="Academy learning hierarchy">
+          {['Sector', 'Academy', 'Course or qualification', 'Modules', 'Lessons', 'Assessment and evidence'].map((item, index) => (
+            <li key={item}><span>{String(index + 1).padStart(2, '0')}</span><strong>{item}</strong></li>
+          ))}
+        </ol>
+      </section>
+      <div className="academy-sections-grid">
+        <article id="courses">
+          <BookOpenCheck size={28} />
+          <p className="eyebrow">Courses</p>
+          <h3>Professional hospitality learning</h3>
+          <p>Short courses, role-specific English, guest service, front office, supervision, and management pathways.</p>
+          <ActionLink path="/sectors/hospitality/hospitality-academy/courses" label="View Course Catalogue" icon={ArrowRight} />
         </article>
-        <DetailGrid
-          blocks={[
-            ['Academy pathways', ['Hospitality English', 'Customer Service', 'Front Office Skills', 'Food & Beverage Service', 'Hospitality Management Diploma']],
-            ['Awarding-body readiness', ['Course aims', 'Modules and lessons', 'Assessment methods', 'Learner evidence', 'Internal quality assurance planning']],
-          ]}
-        />
+        <article id="qualifications">
+          <ShieldCheck size={28} />
+          <p className="eyebrow">Qualifications</p>
+          <h3>Qualification-ready structure</h3>
+          <p>Course aims, units, learning outcomes, assessment methods, learner evidence, and internal quality-assurance planning.</p>
+          <ActionLink path="/sectors/hospitality/hospitality-academy/courses/hospitality-management-diploma" label="View Diploma Pathway" icon={ArrowRight} />
+        </article>
+        <article id="resources">
+          <FileText size={28} />
+          <p className="eyebrow">Resources</p>
+          <h3>Sector knowledge and language</h3>
+          <p>Hospitality English guidance, workplace phrases, learner workbooks, practical activities, and employer resources.</p>
+          <ActionLink path="/resources/hospitality-english-phrases" label="Open Hospitality Resources" icon={ArrowRight} />
+        </article>
+        <article id="corporate-training">
+          <BriefcaseBusiness size={28} />
+          <p className="eyebrow">Corporate Training</p>
+          <h3>Academies built around your operation</h3>
+          <p>Onsite, online, or hybrid training aligned to departments, standards, service priorities, and reporting needs.</p>
+          <ActionLink path="/workforce-training-request" label="Request a Training Plan" icon={ArrowRight} />
+        </article>
       </div>
+      <section className="academy-downloads" id="downloads">
+        <div>
+          <p className="eyebrow">Downloads</p>
+          <h2>Review the academy's learning and assessment materials.</h2>
+          <p>These materials demonstrate how the academy can support consistent delivery, assessment, learner evidence, and centre review.</p>
+        </div>
+        <div>
+          {hospitalityDownloads.slice(0, 4).map(([title, href]) => (
+            <a href={href} key={href}><FileText size={20} /><span>{title}</span><ArrowRight size={18} /></a>
+          ))}
+        </div>
+      </section>
+    </PageShell>
+  );
+}
+
+function CoursesIndex() {
+  return (
+    <PageShell eyebrow="Courses & pathways" title="Find learning by sector or by skill." intro="Employers can begin with a sector academy. Learners and training teams can also explore reusable learning pathways that work across industries.">
+      <AcademyDirectory embedded />
+      <section className="pathway-catalogue">
+        <div className="section-heading">
+          <p className="eyebrow">Cross-sector pathways</p>
+          <h2>Learning themes used across the academies.</h2>
+          <p>These established programme pages remain available and now act as reusable pathways within the relevant sector academies.</p>
+        </div>
+        <div className="card-grid">
+          {Object.entries(programmes).map(([key, programme]) => (
+            <FeatureCard key={key} icon={Target} title={programme.title} text={programme.problem} path={`/programmes/${key}`} />
+          ))}
+        </div>
+      </section>
     </PageShell>
   );
 }
@@ -1446,7 +1610,8 @@ function HospitalityLessonsPage() {
 
 function ProgrammesIndex() {
   return (
-    <PageShell eyebrow="Programmes" title="ESP English, soft skills, and workforce development programmes." intro="Programmes can be delivered onsite, online, or hybrid, with reporting for employers and practical materials for teams.">
+    <PageShell eyebrow="Learning pathways" title="ESP English, soft skills, and workforce development pathways." intro="These established pathways are retained and can be used across the sector academies, delivered onsite, online, or hybrid.">
+      <div className="legacy-programme-note"><strong>Looking for the full catalogue?</strong><span>Browse by sector academy or compare every learning pathway in one place.</span><ActionLink path="/courses" label="View Courses" icon={ArrowRight} /></div>
       <div className="card-grid">
         {Object.entries(programmes).map(([key, programme]) => (
           <FeatureCard key={key} icon={Target} title={programme.title} text={programme.problem} path={`/programmes/${key}`} />
@@ -2047,6 +2212,9 @@ function Footer({ onNav }) {
         <p>{positioning}</p>
       </div>
       <div className="footer-links">
+        <a href="/sectors" onClick={(event) => onNav(event, '/sectors')}>Sector Academies</a>
+        <a href="/courses" onClick={(event) => onNav(event, '/courses')}>Courses & Pathways</a>
+        <a href="/case-studies" onClick={(event) => onNav(event, '/case-studies')}>Case Studies</a>
         <a href="/resources/what-is-esp-english" onClick={(event) => onNav(event, '/resources/what-is-esp-english')}>What is ESP English?</a>
         <a href="/resources/hospitality-english-phrases" onClick={(event) => onNav(event, '/resources/hospitality-english-phrases')}>Hospitality English</a>
         <a href="/resources/healthcare-communication-english" onClick={(event) => onNav(event, '/resources/healthcare-communication-english')}>Healthcare English</a>
