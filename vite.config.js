@@ -37,6 +37,7 @@ const seoRoutes = [
   ['/resources/hospitality-english-phrases', 'Hospitality English Phrases for Work | UpSkillPro', 'Useful English phrases for hotel reception, reservations, guest service, restaurants and complaint handling.', ['Welcoming guests', 'Confirming bookings', 'Giving information', 'Handling complaints']],
   ['/resources/healthcare-communication-english', 'Healthcare Communication English | UpSkillPro', 'Practical English for healthcare reception, patient communication, appointments and professional support.', ['Checking patient details', 'Explaining appointments', 'Offering support', 'Professional tone']],
   ['/resources/workplace-soft-skills', 'Workplace Soft Skills Guide | UpSkillPro', 'Understand the communication, teamwork, customer service and conflict-handling skills employers value.', ['Clear communication', 'Teamwork', 'Customer service', 'Professional behaviour']],
+  ['/quality-standards', 'Quality Assurance & Training Standards | UpSkillPro', 'Review UpSkillPro quality assurance, assessment, learner support, internal quality assurance and qualification-readiness framework.', ['Quality governance', 'Assessment integrity', 'Internal quality assurance', 'Learner support and protection']],
   ['/contact', 'Contact UpSkillPro | English & Soft Skills Training', 'Contact UpSkillPro about ESP English, ESOL, workplace communication, soft skills and workforce training.', ['Email UpSkillPro', 'Call UpSkillPro', 'Request a training plan', 'Follow UpSkillPro on Instagram']],
 ];
 

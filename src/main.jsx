@@ -305,6 +305,11 @@ const seoPages = {
     description: 'Contact UpSkillPro to discuss ESP English, ESOL, soft skills, hospitality English, healthcare English and workforce training plans.',
     keywords: 'contact UpSkillPro, English training provider contact, ESOL courses contact',
   },
+  '/quality-standards': {
+    title: 'Quality Assurance & Training Standards | UpSkillPro',
+    description: 'Review UpSkillPro quality assurance, assessment, learner support, internal quality assurance and qualification-readiness framework.',
+    keywords: 'UpSkillPro quality assurance, training standards, assessment quality, internal quality assurance, learner support',
+  },
 };
 
 function getSeoData(path) {
@@ -652,6 +657,17 @@ const adminHubTools = [
   },
 ];
 
+const centreReadinessItems = [
+  ['Platform and learner journey', 'Established', 'ready', 'Sector academy structure, controlled learner access, progression, assessment, and reporting are demonstrated.'],
+  ['Assessment infrastructure', 'Established', 'ready', 'Initial assessment, formative and summative evidence, assessor review, feedback, and reset controls are available.'],
+  ['Qualification specification', 'In progress', 'progress', 'Confirm total qualification time, guided learning hours, credits, unit outcomes, assessment criteria, and entry requirements.'],
+  ['Assessment and IQA strategy', 'In progress', 'progress', 'Formalise sampling, standardisation, assessor decisions, internal verification, feedback, and record retention.'],
+  ['Policy suite', 'Draft required', 'required', 'Approve safeguarding, equality, complaints, appeals, malpractice, reasonable adjustments, data, accessibility, and health and safety policies.'],
+  ['Staff competence records', 'Evidence required', 'required', 'Collect current CVs, certificates, occupational competence, CPD, assessor credentials, and IQA credentials.'],
+  ['Centre resources and delivery', 'Evidence required', 'required', 'Document premises, online delivery controls, learner support, invigilation, accessibility, contingency, and secure storage.'],
+  ['Awarding-body mapping', 'Awaiting selection', 'waiting', 'Map every requirement to the selected awarding body application and centre approval checklist.'],
+];
+
 function navigate(path) {
   window.history.pushState({}, '', path);
   window.dispatchEvent(new PopStateEvent('popstate'));
@@ -782,6 +798,25 @@ function AdminAccessHub() {
             );
           })}
         </div>
+
+        <section className="admin-quality-readiness">
+          <div className="admin-quality-heading">
+            <div>
+              <p className="admin-hub-kicker">Centre approval preparation</p>
+              <h2>Awarding-body readiness register</h2>
+              <span>Operational evidence and documents to complete before a formal centre application.</span>
+            </div>
+            <a href="/quality-standards">View public quality framework <ArrowRight size={18} /></a>
+          </div>
+          <div className="admin-quality-list">
+            {centreReadinessItems.map(([area, status, tone, evidence]) => (
+              <article key={area}>
+                <div><strong>{area}</strong><span>{evidence}</span></div>
+                <b className={tone}>{status}</b>
+              </article>
+            ))}
+          </div>
+        </section>
 
         <div className="admin-hub-note">
           <BrainCircuit size={24} />
@@ -931,6 +966,7 @@ function resolvePage(path) {
   if (clean === '/resources') return <ResourcesPage />;
   if (clean.startsWith('/resources/')) return <ResourceDetail resourceKey={clean.split('/').pop()} />;
   if (clean === '/contact') return <ContactPage />;
+  if (clean === '/quality-standards') return <QualityStandardsPage />;
   if (clean.startsWith('/client-portal')) return <ClientPortalPage />;
   return <NotFoundPage />;
 }
@@ -1496,6 +1532,14 @@ function HospitalityAcademyPage() {
           ))}
         </div>
       </section>
+      <section className="academy-quality-link">
+        <ShieldCheck size={28} />
+        <div>
+          <p className="eyebrow">Quality & standards</p>
+          <h2>See how the academy supports assessment integrity and qualification readiness.</h2>
+        </div>
+        <ActionLink path="/quality-standards" label="View Quality Framework" icon={ArrowRight} />
+      </section>
     </PageShell>
   );
 }
@@ -1834,6 +1878,70 @@ function ContactPage() {
         <a href="https://www.instagram.com/up_skillpro/" target="_blank" rel="noreferrer"><Instagram size={20} /> @up_skillpro</a>
         <ActionLink path="/workforce-training-request" label="Request Training Plan" icon={ClipboardList} primary />
       </div>
+    </PageShell>
+  );
+}
+
+function QualityStandardsPage() {
+  const standards = [
+    [ShieldCheck, 'Quality governance', 'Defined responsibilities, controlled documents, review cycles, risk monitoring, and evidence-led improvement.'],
+    [ClipboardList, 'Assessment integrity', 'Assessment decisions supported by clear criteria, retained evidence, assessor feedback, and auditable learner records.'],
+    [CheckCircle2, 'Internal quality assurance', 'Planned sampling, standardisation, feedback, corrective action, and monitoring of assessment consistency.'],
+    [Users, 'Learner support and protection', 'Fair access, safeguarding, reasonable adjustments, complaints, appeals, wellbeing, and clear learner information.'],
+    [MonitorCheck, 'Secure digital delivery', 'Role-based access, progress records, submission evidence, assessor oversight, and controlled administrative systems.'],
+    [FileText, 'Qualification readiness', 'Course aims, units, learning outcomes, assessment criteria, resources, staff competence, and centre evidence organised for future mapping.'],
+  ];
+
+  const policies = [
+    'Safeguarding and learner welfare',
+    'Equality, diversity and inclusion',
+    'Complaints and appeals',
+    'Malpractice and maladministration',
+    'Reasonable adjustments and special consideration',
+    'Data protection and records retention',
+    'Accessibility and inclusive learning',
+    'Health, safety and risk management',
+    'Conflicts of interest',
+    'Assessment and internal quality assurance',
+  ];
+
+  return (
+    <PageShell eyebrow="Quality & standards" title="Quality designed into the learner journey." intro="UpSkillPro is developing a documented quality-management framework to support consistent training, reliable assessment, learner protection, and future awarding-body delivery.">
+      <section className="quality-assurance-lead">
+        <div>
+          <p className="eyebrow">Quality commitment</p>
+          <h2>Evidence, consistency, and learner outcomes.</h2>
+          <p>Quality is treated as an operational system spanning course design, staff competence, delivery, assessment, internal quality assurance, learner support, records, and continuous improvement.</p>
+        </div>
+        <div className="quality-cycle" aria-label="Quality assurance cycle">
+          {['Plan', 'Deliver', 'Assess', 'Verify', 'Improve'].map((step, index) => <span key={step}><b>{String(index + 1).padStart(2, '0')}</b>{step}</span>)}
+        </div>
+      </section>
+
+      <div className="quality-standard-grid">
+        {standards.map(([Icon, title, text]) => (
+          <article key={title}><Icon size={26} /><h3>{title}</h3><p>{text}</p></article>
+        ))}
+      </div>
+
+      <section className="policy-register">
+        <div>
+          <p className="eyebrow">Policy framework</p>
+          <h2>Core controls being formalised for centre approval.</h2>
+          <p>The complete controlled policies will include ownership, approval dates, review cycles, version control, responsibilities, reporting routes, and retained evidence.</p>
+        </div>
+        <div className="policy-list">
+          {policies.map((policy, index) => <span key={policy}><b>{String(index + 1).padStart(2, '0')}</b>{policy}</span>)}
+        </div>
+      </section>
+
+      <section className="quality-transparency">
+        <ShieldCheck size={28} />
+        <div>
+          <h2>Transparent qualification status</h2>
+          <p>UpSkillPro does not describe a programme as regulated, accredited, or awarding-body approved unless that status has been formally confirmed. Current academy structures demonstrate readiness for future mapping and approval.</p>
+        </div>
+      </section>
     </PageShell>
   );
 }
@@ -2222,6 +2330,7 @@ function Footer({ onNav }) {
         <a href="/sectors" onClick={(event) => onNav(event, '/sectors')}>Sector Academies</a>
         <a href="/courses" onClick={(event) => onNav(event, '/courses')}>Courses & Pathways</a>
         <a href="/case-studies" onClick={(event) => onNav(event, '/case-studies')}>Case Studies</a>
+        <a href="/quality-standards" onClick={(event) => onNav(event, '/quality-standards')}>Quality & Standards</a>
         <a href="/resources/what-is-esp-english" onClick={(event) => onNav(event, '/resources/what-is-esp-english')}>What is ESP English?</a>
         <a href="/resources/hospitality-english-phrases" onClick={(event) => onNav(event, '/resources/hospitality-english-phrases')}>Hospitality English</a>
         <a href="/resources/healthcare-communication-english" onClick={(event) => onNav(event, '/resources/healthcare-communication-english')}>Healthcare English</a>
