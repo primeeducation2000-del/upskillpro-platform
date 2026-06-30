@@ -5,6 +5,22 @@ import { dirname, resolve } from 'node:path';
 
 const siteUrl = 'https://upskillpro.co.uk';
 
+const faqByRoute = {
+  '/resources/esol-courses-and-levels': [
+    ['What does ESOL stand for?', 'ESOL stands for English for Speakers of Other Languages.'],
+    ['How is an ESOL level selected?', 'Initial assessment evidence, learner goals, and prior experience are used to recommend an appropriate starting level.'],
+    ['What English levels does UpSkillPro use?', 'UpSkillPro uses the CEFR scale from Pre-A1 through A1, A2, B1, B2, C1, and C2.'],
+  ],
+  '/resources/hospitality-english-phrases': [
+    ['What is hospitality English?', 'Hospitality English is job-specific English for hotels, restaurants, reception, reservations, guest services, housekeeping, and food and beverage teams.'],
+    ['What does hospitality English training cover?', 'Training can cover welcoming guests, confirming bookings, providing information, complaint handling, service recovery, and professional tone.'],
+  ],
+  '/resources/healthcare-communication-english': [
+    ['What is healthcare English?', 'Healthcare English is role-specific language for clear professional communication in healthcare, care, reception, administration, and patient-facing settings.'],
+    ['Does healthcare English replace clinical training?', 'No. It develops communication and language skills and does not replace clinical qualifications, professional registration, or medical training.'],
+  ],
+};
+
 const seoRoutes = [
   ['/', 'UpSkillPro | ESP English, ESOL & Soft Skills Training', 'ESP English, ESOL, workplace communication and soft skills training for learners, employers and workforce teams.', ['ESP English and soft skills training', 'Hospitality, healthcare and workplace English', 'Initial assessment and CEFR placement', 'Online, onsite and hybrid workforce training']],
   ['/about', 'About UpSkillPro | English & Workforce Training', 'UpSkillPro combines English for Specific Purposes, ESOL, communication and soft skills training for real workplace performance.', ['Practical workplace learning', 'Sector-specific training', 'Learner assessment and progression', 'Employer-focused delivery']],
@@ -137,6 +153,17 @@ function prerenderPublicRoutes() {
             publisher: { '@id': `${siteUrl}/#organization` },
             dateModified: '2026-06-30',
           });
+
+          if (faqByRoute[route]) {
+            structuredData['@graph'].push({
+              '@type': 'FAQPage',
+              mainEntity: faqByRoute[route].map(([question, answer]) => ({
+                '@type': 'Question',
+                name: question,
+                acceptedAnswer: { '@type': 'Answer', text: answer },
+              })),
+            });
+          }
         }
         const content = `
           <main class="seo-prerender">
@@ -156,6 +183,8 @@ function prerenderPublicRoutes() {
           .replace(/<meta\s+property="og:title"[\s\S]*?\/>/, `<meta property="og:title" content="${escapeHtml(title)}" />`)
           .replace(/<meta\s+property="og:description"[\s\S]*?\/>/, `<meta property="og:description" content="${escapeHtml(description)}" />`)
           .replace(/<meta\s+property="og:url"[\s\S]*?\/>/, `<meta property="og:url" content="${canonical}" />`)
+          .replace(/<meta\s+name="twitter:title"[\s\S]*?\/>/, `<meta name="twitter:title" content="${escapeHtml(title)}" />`)
+          .replace(/<meta\s+name="twitter:description"[\s\S]*?\/>/, `<meta name="twitter:description" content="${escapeHtml(description)}" />`)
           .replace(/<link\s+rel="canonical"[\s\S]*?\/>/, `<link rel="canonical" href="${canonical}" />`)
           .replace(/<script\s+type="application\/ld\+json"\s+id="upskillpro-structured-data">[\s\S]*?<\/script>/, `<script type="application/ld+json" id="upskillpro-structured-data">${JSON.stringify(structuredData)}</script>`)
           .replace('<div id="root"></div>', `<div id="root">${content}</div>`);
