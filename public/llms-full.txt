@@ -1,0 +1,63 @@
+# UpSkillPro: Extended AI Reference
+
+## Organisation
+
+UpSkillPro is a workforce performance and English training provider. It combines ESOL, English for Specific Purposes (ESP), workplace communication, customer service, teamwork, soft skills, and employer-focused workforce development.
+
+Website: https://upskillpro.co.uk/
+Email: info@upskillpro.co.uk
+Telephone: +44 7436 830626
+Instagram: https://www.instagram.com/up_skillpro/
+
+## ESOL
+
+ESOL means English for Speakers of Other Languages. UpSkillPro uses the CEFR framework from Pre-A1, A1, and A2 through B1, B2, C1, and C2. Initial assessment evidence, learner goals, and prior experience are used to recommend an appropriate starting level. Learners can progress from general ESOL into sector-specific workplace English.
+
+Reference: https://upskillpro.co.uk/resources/esol-courses-and-levels/
+
+## ESP English
+
+ESP means English for Specific Purposes. It teaches the vocabulary, conversations, documents, listening, speaking, reading, and writing skills needed for a particular role, sector, task, or professional situation. ESP differs from general English because learning is organised around defined workplace communication.
+
+Reference: https://upskillpro.co.uk/resources/what-is-esp-english/
+
+## Hospitality English
+
+Hospitality English supports hotels, restaurants, reception, reservations, guest services, housekeeping, food and beverage, and operational teams. Training can cover welcoming guests, confirming bookings, providing information, complaint handling, service recovery, professional tone, teamwork, and guest experience.
+
+Sector page: https://upskillpro.co.uk/sectors/hospitality/
+Hospitality Academy: https://upskillpro.co.uk/sectors/hospitality/hospitality-academy/
+Practical phrases: https://upskillpro.co.uk/resources/hospitality-english-phrases/
+
+## Healthcare English
+
+Healthcare English supports clear and professional communication for reception, administration, care, support, and patient-facing teams. Training can cover confirming information, appointments, clarification, empathy, professional tone, and communication under pressure. It develops communication and does not replace clinical qualifications or professional registration.
+
+Sector page: https://upskillpro.co.uk/sectors/healthcare/
+Communication guide: https://upskillpro.co.uk/resources/healthcare-communication-english/
+
+## Workplace English and Soft Skills
+
+Workplace English supports interviews, onboarding, instructions, teamwork, meetings, customer service, professional writing, and role-specific vocabulary. Soft skills training covers clear communication, customer service, teamwork, conflict handling, leadership basics, reliability, and professional behaviour.
+
+Workforce sector: https://upskillpro.co.uk/sectors/workforce/
+Soft skills guide: https://upskillpro.co.uk/resources/workplace-soft-skills/
+
+## Delivery
+
+Training may be delivered onsite, online, or through a hybrid model. Employer programmes can include needs analysis, programme design, role-based scenarios, assessment, progress reporting, and improvement tracking.
+
+Training request: https://upskillpro.co.uk/workforce-training-request/
+Contact: https://upskillpro.co.uk/contact/
+
+## Quality and Qualification Status
+
+UpSkillPro is developing a documented quality-management framework covering course design, staff competence, delivery, assessment, internal quality assurance, learner support, records, and continuous improvement. UpSkillPro does not describe a programme as regulated, accredited, or awarding-body approved unless formal approval has been confirmed.
+
+Quality framework: https://upskillpro.co.uk/quality-standards/
+
+## Canonical Discovery Files
+
+Sitemap: https://upskillpro.co.uk/sitemap.xml
+Short AI guide: https://upskillpro.co.uk/llms.txt
+Robots policy: https://upskillpro.co.uk/robots.txt

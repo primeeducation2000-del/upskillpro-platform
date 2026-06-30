@@ -203,6 +203,23 @@ const services = {
 };
 
 const resources = {
+  'esol-courses-and-levels': {
+    title: 'ESOL Courses and English Levels',
+    intro: 'ESOL courses help adults develop the speaking, listening, reading, and writing skills needed for everyday life, further learning, and employment.',
+    description: 'Understand ESOL courses, CEFR English levels from Pre-A1 to C2, initial assessment, course placement, and progression into workplace English.',
+    sections: [
+      ['What ESOL means', ['ESOL means English for Speakers of Other Languages.', 'Courses develop speaking, listening, reading, and writing through practical communication.', 'Training can support everyday English, employability, further study, and workplace progression.']],
+      ['English levels', ['Pre-A1 and A1 build essential words, phrases, and basic communication.', 'A2 develops routine communication for life and work.', 'B1 and B2 develop independent, confident communication.', 'C1 and C2 develop advanced accuracy, fluency, and professional communication.']],
+      ['Assessment and placement', ['An initial assessment identifies current reading and writing evidence.', 'Results are considered alongside learner goals and previous experience.', 'The recommended starting level should challenge the learner without leaving essential gaps.']],
+      ['Progression routes', ['General ESOL can lead into ESP English for a particular sector.', 'Hospitality English supports guest-facing and operational roles.', 'Healthcare English supports reception, administration, care, and patient communication.', 'Workplace English develops communication, customer service, teamwork, and professional confidence.']],
+    ],
+    faqs: [
+      ['What does ESOL stand for?', 'ESOL stands for English for Speakers of Other Languages.'],
+      ['How is an ESOL level selected?', 'A provider uses initial assessment evidence, learner goals, and prior experience to recommend an appropriate starting level.'],
+      ['What English levels does UpSkillPro use?', 'UpSkillPro uses the CEFR scale from Pre-A1, A1, and A2 through B1, B2, C1, and C2.'],
+      ['Can ESOL lead to workplace English?', 'Yes. Learners can progress from general ESOL into sector-specific English for hospitality, healthcare, business, and other workplace settings.'],
+    ],
+  },
   'what-is-esp-english': {
     title: 'What Is ESP English?',
     intro: 'English for Specific Purposes focuses on the language people need for a particular job, sector, task, or professional situation.',
@@ -212,6 +229,11 @@ const resources = {
       ['ESP compared with general English', ['General English builds broad everyday ability.', 'ESP English targets specific conversations, documents, vocabulary, and communication standards.', 'A learner can study general English and ESP together, but ESP makes learning immediately relevant to work.']],
       ['Examples of ESP training', ['Hospitality English for reception, reservations, guest service, and complaints.', 'Healthcare English for patient communication, appointments, reception, and support.', 'Workplace English for instructions, teamwork, meetings, customer service, and professional writing.']],
       ['Who benefits', ['Employees who need confidence in English at work.', 'Employers experiencing communication or onboarding challenges.', 'Jobseekers preparing for interviews and workplace expectations.', 'Teams that need consistent professional language and customer service.']],
+    ],
+    faqs: [
+      ['What is ESP English?', 'ESP means English for Specific Purposes: English taught around the communication required in a particular job, sector, or professional task.'],
+      ['How is ESP different from general English?', 'General English develops broad language ability, while ESP focuses on role-specific vocabulary, documents, conversations, and communication standards.'],
+      ['Who is ESP English for?', 'ESP is suitable for learners and employees who need English for a defined workplace, role, sector, or professional goal.'],
     ],
   },
   'hospitality-english-phrases': {
@@ -224,6 +246,11 @@ const resources = {
       ['Handling a complaint', ['I am sorry you have experienced this problem.', 'Thank you for letting us know.', 'Let me check what we can do to resolve this quickly.']],
       ['Training focus', ['Polite tone and clear pronunciation.', 'Listening, clarification, and checking understanding.', 'Service recovery and confident professional responses.', 'Role-play based on real hotel and restaurant situations.']],
     ],
+    faqs: [
+      ['What is hospitality English?', 'Hospitality English is job-specific English for hotels, restaurants, reception, reservations, guest service, housekeeping, and food and beverage teams.'],
+      ['What does hospitality English training cover?', 'Training can cover welcoming guests, confirming bookings, providing information, complaint handling, service recovery, and professional tone.'],
+      ['Can hospitality English be delivered to employers?', 'Yes. UpSkillPro can design onsite, online, or hybrid training around departments, job roles, and service standards.'],
+    ],
   },
   'healthcare-communication-english': {
     title: 'Healthcare Communication English',
@@ -234,6 +261,11 @@ const resources = {
       ['Appointments and waiting', ['Please take a seat. A member of the team will call you shortly.', 'Your appointment is scheduled for 10:30.', 'If you need to change the appointment, please contact reception.']],
       ['Supporting understanding', ['Would you like me to repeat that more slowly?', 'Do you need an interpreter or any additional support?', 'Let me check that I have understood you correctly.']],
       ['Training focus', ['Accuracy when confirming information.', 'Professional, calm, and empathetic tone.', 'Clarification without causing embarrassment.', 'Communication practice based on healthcare scenarios.']],
+    ],
+    faqs: [
+      ['What is healthcare English?', 'Healthcare English is role-specific language for clear, professional communication in healthcare, care, reception, administration, and patient-facing settings.'],
+      ['Who can benefit from healthcare English?', 'Receptionists, administrators, care staff, support workers, and other teams who communicate with patients or colleagues can benefit.'],
+      ['Does healthcare English replace clinical training?', 'No. It develops communication skills and language; it does not replace clinical qualifications, professional registration, or medical training.'],
     ],
   },
   'workplace-soft-skills': {
@@ -478,7 +510,34 @@ function buildStructuredData(seo) {
     },
   ];
 
-  if (path.startsWith('/programmes/') || path.startsWith('/sectors/') || path === '/hospitality-management-guest-service-excellence-diploma/') {
+  if (path === '/courses/') {
+    const courseItems = [
+      ['ESP English Programmes', '/programmes/esp-english-programmes', 'Job-specific English for work and professional settings.'],
+      ['Soft Skills Programmes', '/programmes/soft-skills-programmes', 'Communication, teamwork, service, and conflict skills.'],
+      ['Workforce Readiness Programme', '/programmes/workforce-readiness-programme', 'English and workplace preparation for employment.'],
+      ['AI + Human Skills Programme', '/programmes/ai-human-skills-programme', 'AI productivity combined with communication and judgement.'],
+      ['Hospitality Management Diploma', '/sectors/hospitality/hospitality-academy/courses/hospitality-management-diploma', 'Hospitality management and guest service development.'],
+    ];
+    schemas.push({
+      '@context': 'https://schema.org',
+      '@type': 'ItemList',
+      name: 'UpSkillPro Courses and Learning Pathways',
+      itemListElement: courseItems.map(([name, url, description], index) => ({
+        '@type': 'ListItem',
+        position: index + 1,
+        url: `${siteUrl}${url}`,
+        item: {
+          '@type': 'Course',
+          name,
+          description,
+          provider: { '@id': `${siteUrl}/#organization`, name: 'UpSkillPro' },
+        },
+      })),
+    });
+  }
+
+  const hospitalityDiplomaPath = '/sectors/hospitality/hospitality-academy/courses/hospitality-management-diploma/';
+  if (path.startsWith('/programmes/') || path === hospitalityDiplomaPath || path === '/hospitality-management-guest-service-excellence-diploma/') {
     schemas.push({
       '@context': 'https://schema.org',
       '@type': 'Course',
@@ -488,10 +547,21 @@ function buildStructuredData(seo) {
         '@id': `${siteUrl}/#organization`,
         name: 'UpSkillPro',
       },
-      educationalLevel: path === '/hospitality-management-guest-service-excellence-diploma/' ? 'Professional development' : 'Pre-A1 to Advanced',
-      teaches: path === '/hospitality-management-guest-service-excellence-diploma/'
+      educationalLevel: path === hospitalityDiplomaPath || path === '/hospitality-management-guest-service-excellence-diploma/' ? 'Professional development' : 'Pre-A1 to Advanced',
+      teaches: path === hospitalityDiplomaPath || path === '/hospitality-management-guest-service-excellence-diploma/'
         ? ['Hospitality management', 'Guest service excellence', 'Hotel reception', 'Service recovery', 'Housekeeping standards', 'Food and beverage service', 'Teamwork']
         : ['ESOL', 'ESP English', 'Workplace English', 'Communication Skills', 'Customer Service', 'Teamwork'],
+    });
+  }
+
+  if (['/sectors/hospitality/', '/sectors/healthcare/', '/sectors/workforce/'].includes(path)) {
+    schemas.push({
+      '@context': 'https://schema.org',
+      '@type': 'Service',
+      name: seo.title.replace(' | UpSkillPro', ''),
+      description: seo.description,
+      provider: { '@id': `${siteUrl}/#organization` },
+      areaServed: ['United Kingdom', 'Saudi Arabia', 'International'],
     });
   }
 
@@ -516,8 +586,21 @@ function buildStructuredData(seo) {
       author: { '@id': `${siteUrl}/#organization` },
       publisher: { '@id': `${siteUrl}/#organization` },
       datePublished: '2026-06-25',
-      dateModified: '2026-06-25',
+      dateModified: '2026-06-30',
     });
+
+    const resource = resources[path.split('/').filter(Boolean).pop()];
+    if (resource?.faqs?.length) {
+      schemas.push({
+        '@context': 'https://schema.org',
+        '@type': 'FAQPage',
+        mainEntity: resource.faqs.map(([question, answer]) => ({
+          '@type': 'Question',
+          name: question,
+          acceptedAnswer: { '@type': 'Answer', text: answer },
+        })),
+      });
+    }
   }
 
   if (path !== '/') {
@@ -1858,6 +1941,19 @@ function ResourceDetail({ resourceKey }) {
   return (
     <PageShell eyebrow="English for work resource" title={resource.title} intro={resource.intro}>
       <DetailGrid blocks={resource.sections} />
+      {resource.faqs?.length > 0 && (
+        <section className="resource-faq-section">
+          <div className="section-heading">
+            <p className="eyebrow">Frequently asked questions</p>
+            <h2>Clear answers about {resource.title.toLowerCase()}.</h2>
+          </div>
+          <div className="faq-list">
+            {resource.faqs.map(([question, answer]) => (
+              <details key={question}><summary>{question}</summary><p>{answer}</p></details>
+            ))}
+          </div>
+        </section>
+      )}
       <div className="cta-band">
         <div>
           <h2>Turn guidance into practical training.</h2>
@@ -2330,6 +2426,7 @@ function Footer({ onNav }) {
         <a href="/sectors" onClick={(event) => onNav(event, '/sectors')}>Sector Academies</a>
         <a href="/courses" onClick={(event) => onNav(event, '/courses')}>Courses & Pathways</a>
         <a href="/case-studies" onClick={(event) => onNav(event, '/case-studies')}>Case Studies</a>
+        <a href="/resources/esol-courses-and-levels" onClick={(event) => onNav(event, '/resources/esol-courses-and-levels')}>ESOL Courses & Levels</a>
         <a href="/quality-standards" onClick={(event) => onNav(event, '/quality-standards')}>Quality & Standards</a>
         <a href="/resources/what-is-esp-english" onClick={(event) => onNav(event, '/resources/what-is-esp-english')}>What is ESP English?</a>
         <a href="/resources/hospitality-english-phrases" onClick={(event) => onNav(event, '/resources/hospitality-english-phrases')}>Hospitality English</a>

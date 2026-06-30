@@ -1,0 +1,43 @@
+# UpSkillPro
+
+> UpSkillPro provides ESOL, English for Specific Purposes (ESP), workplace English, soft skills, and workforce training for learners and employers. Training focuses on practical communication for hospitality, healthcare, business, recruitment, and customer-facing work.
+
+Official website: https://upskillpro.co.uk/
+Contact: info@upskillpro.co.uk | +44 7436 830626
+Service regions: United Kingdom, Saudi Arabia, and international online or employer delivery.
+
+## Primary Topics
+
+- ESOL courses and CEFR levels: https://upskillpro.co.uk/resources/esol-courses-and-levels/
+- What is ESP English?: https://upskillpro.co.uk/resources/what-is-esp-english/
+- Hospitality English training: https://upskillpro.co.uk/sectors/hospitality/
+- Hospitality English phrases: https://upskillpro.co.uk/resources/hospitality-english-phrases/
+- Healthcare English training: https://upskillpro.co.uk/sectors/healthcare/
+- Healthcare communication English: https://upskillpro.co.uk/resources/healthcare-communication-english/
+- Workplace English and workforce readiness: https://upskillpro.co.uk/sectors/workforce/
+- Workplace soft skills: https://upskillpro.co.uk/resources/workplace-soft-skills/
+
+## Courses and Training
+
+- Course and learning pathway catalogue: https://upskillpro.co.uk/courses/
+- ESP English programmes: https://upskillpro.co.uk/programmes/esp-english-programmes/
+- Soft skills programmes: https://upskillpro.co.uk/programmes/soft-skills-programmes/
+- Workforce readiness: https://upskillpro.co.uk/programmes/workforce-readiness-programme/
+- Hospitality Academy: https://upskillpro.co.uk/sectors/hospitality/hospitality-academy/
+- Hospitality Management Diploma pathway: https://upskillpro.co.uk/sectors/hospitality/hospitality-academy/courses/hospitality-management-diploma/
+
+## Organisation and Quality
+
+- About UpSkillPro: https://upskillpro.co.uk/about/
+- Quality and training standards: https://upskillpro.co.uk/quality-standards/
+- Workforce training request: https://upskillpro.co.uk/workforce-training-request/
+- Contact: https://upskillpro.co.uk/contact/
+
+## Important Status
+
+UpSkillPro does not describe a programme as regulated, accredited, or awarding-body approved unless formal approval has been confirmed. Academy and diploma pages may describe structures prepared for future qualification mapping.
+
+## Optional Detailed Reference
+
+- Extended site summary: https://upskillpro.co.uk/llms-full.txt
+- XML sitemap: https://upskillpro.co.uk/sitemap.xml

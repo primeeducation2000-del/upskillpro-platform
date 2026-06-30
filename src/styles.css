@@ -1579,6 +1579,10 @@ p {
   color: var(--muted);
 }
 
+.resource-faq-section {
+  margin-top: clamp(36px, 6vw, 72px);
+}
+
 .quality-assurance-lead {
   display: grid;
   grid-template-columns: minmax(0, 1.1fr) minmax(320px, 0.9fr);

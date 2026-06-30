@@ -33,6 +33,7 @@ const seoRoutes = [
   ['/workforce-training-request', 'Request a Workforce Training Plan | UpSkillPro', 'Request a tailored English, soft skills or workforce development proposal for your organisation.', ['Company and staff needs', 'Communication challenges', 'Delivery preferences', 'Tailored proposal']],
   ['/case-studies', 'English & Workforce Training Outcomes | UpSkillPro', 'Explore how role-specific English and soft skills training can improve communication, confidence and service performance.', ['Hospitality outcomes', 'Healthcare communication', 'Workforce readiness', 'Measurable improvement']],
   ['/resources', 'English for Work & Soft Skills Resources | UpSkillPro', 'Practical guidance about ESP English, workplace communication, healthcare English, hospitality English and soft skills.', ['What is ESP English?', 'Hospitality English phrases', 'Healthcare communication', 'Workplace soft skills']],
+  ['/resources/esol-courses-and-levels', 'ESOL Courses & English Levels | UpSkillPro', 'Understand ESOL courses, CEFR levels from Pre-A1 to C2, initial assessment, course placement and progression into workplace English.', ['What ESOL means', 'CEFR English levels', 'Initial assessment and placement', 'Progression into workplace English']],
   ['/resources/what-is-esp-english', 'What Is ESP English? | UpSkillPro', 'Learn how English for Specific Purposes teaches the language learners need for a particular job, sector or workplace situation.', ['Meaning of ESP English', 'ESP compared with general English', 'Workplace examples', 'Who ESP training helps']],
   ['/resources/hospitality-english-phrases', 'Hospitality English Phrases for Work | UpSkillPro', 'Useful English phrases for hotel reception, reservations, guest service, restaurants and complaint handling.', ['Welcoming guests', 'Confirming bookings', 'Giving information', 'Handling complaints']],
   ['/resources/healthcare-communication-english', 'Healthcare Communication English | UpSkillPro', 'Practical English for healthcare reception, patient communication, appointments and professional support.', ['Checking patient details', 'Explaining appointments', 'Offering support', 'Professional tone']],
@@ -92,6 +93,51 @@ function prerenderPublicRoutes() {
             },
           ],
         };
+
+        if (route === '/courses') {
+          const courseItems = [
+            ['ESP English Programmes', '/programmes/esp-english-programmes', 'Job-specific English for work and professional settings.'],
+            ['Soft Skills Programmes', '/programmes/soft-skills-programmes', 'Communication, teamwork, service, and conflict skills.'],
+            ['Workforce Readiness Programme', '/programmes/workforce-readiness-programme', 'English and workplace preparation for employment.'],
+            ['Hospitality Management Diploma', '/sectors/hospitality/hospitality-academy/courses/hospitality-management-diploma', 'Hospitality management and guest service development.'],
+          ];
+          structuredData['@graph'].push({
+            '@type': 'ItemList',
+            name: 'UpSkillPro Courses and Learning Pathways',
+            itemListElement: courseItems.map(([name, url, courseDescription], index) => ({
+              '@type': 'ListItem',
+              position: index + 1,
+              url: `${siteUrl}${url}`,
+              item: {
+                '@type': 'Course',
+                name,
+                description: courseDescription,
+                provider: { '@id': `${siteUrl}/#organization`, name: 'UpSkillPro' },
+              },
+            })),
+          });
+        }
+
+        if (route.startsWith('/programmes/') || route === '/sectors/hospitality/hospitality-academy/courses/hospitality-management-diploma') {
+          structuredData['@graph'].push({
+            '@type': 'Course',
+            name: title.replace(' | UpSkillPro', ''),
+            description,
+            provider: { '@id': `${siteUrl}/#organization`, name: 'UpSkillPro' },
+          });
+        }
+
+        if (route.startsWith('/resources/')) {
+          structuredData['@graph'].push({
+            '@type': 'Article',
+            headline: title.replace(' | UpSkillPro', ''),
+            description,
+            mainEntityOfPage: canonical,
+            author: { '@id': `${siteUrl}/#organization` },
+            publisher: { '@id': `${siteUrl}/#organization` },
+            dateModified: '2026-06-30',
+          });
+        }
         const content = `
           <main class="seo-prerender">
             <header><a href="/">UpSkillPro</a><nav><a href="/sectors">Sectors</a><a href="/courses">Courses</a><a href="/services">Services</a><a href="/resources">Resources</a><a href="/contact">Contact</a></nav></header>
