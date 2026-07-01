@@ -334,18 +334,18 @@ p {
 
 .quick-esp-check {
   position: absolute;
-  right: clamp(22px, 5vw, 90px);
-  top: clamp(150px, 20vw, 215px);
+  right: clamp(28px, 5vw, 82px);
+  top: clamp(132px, 15vw, 172px);
   z-index: 3;
-  width: min(390px, 34vw);
-  padding: 18px;
-  border: 1px solid rgba(255, 255, 255, 0.28);
-  border-radius: 10px;
+  width: min(372px, 32vw);
+  padding: 17px;
+  border: 1px solid rgba(210, 255, 248, 0.36);
+  border-radius: 8px;
   background:
-    linear-gradient(145deg, rgba(255, 255, 255, 0.2), rgba(8, 43, 51, 0.42)),
-    rgba(10, 40, 49, 0.62);
-  backdrop-filter: blur(18px);
-  box-shadow: 0 30px 70px rgba(0, 0, 0, 0.28);
+    linear-gradient(145deg, rgba(224, 255, 250, 0.22), rgba(31, 80, 86, 0.24)),
+    rgba(16, 55, 62, 0.58);
+  backdrop-filter: blur(22px) saturate(125%);
+  box-shadow: 0 24px 54px rgba(0, 18, 24, 0.25);
   color: #fff;
 }
 
@@ -373,8 +373,8 @@ p {
 }
 
 .quick-esp-check-header span {
-  color: #c9fff8;
-  font-size: 0.76rem;
+  color: #bafff4;
+  font-size: 0.72rem;
   font-weight: 900;
   text-transform: uppercase;
 }
@@ -383,8 +383,8 @@ p {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  min-width: 48px;
-  min-height: 34px;
+  min-width: 46px;
+  min-height: 30px;
   padding: 4px 10px;
   border-radius: 999px;
   background: rgba(255, 190, 92, 0.18);
@@ -394,11 +394,11 @@ p {
 }
 
 .quick-esp-progress {
-  height: 7px;
+  height: 5px;
   overflow: hidden;
   border-radius: 999px;
   background: rgba(255, 255, 255, 0.18);
-  margin-bottom: 15px;
+  margin-bottom: 13px;
 }
 
 .quick-esp-progress span {
@@ -410,7 +410,7 @@ p {
 }
 
 .quick-esp-kicker {
-  margin: 0 0 7px;
+  margin: 0 0 5px;
   color: rgba(255, 255, 255, 0.68);
   font-size: 0.78rem;
   font-weight: 800;
@@ -419,7 +419,7 @@ p {
 
 .quick-esp-question h3,
 .quick-esp-result h3 {
-  margin: 0 0 14px;
+  margin: 0 0 12px;
   color: #fff;
   font-size: clamp(1rem, 1.25vw, 1.24rem);
   line-height: 1.25;
@@ -432,7 +432,7 @@ p {
 
 .quick-esp-options {
   display: grid;
-  gap: 8px;
+  gap: 7px;
 }
 
 .quick-esp-options button,
@@ -442,9 +442,9 @@ p {
   align-items: center;
   justify-content: center;
   width: 100%;
-  min-height: 42px;
-  padding: 10px 12px;
-  border-radius: 8px;
+  min-height: 39px;
+  padding: 9px 12px;
+  border-radius: 6px;
   border: 1px solid rgba(255, 255, 255, 0.18);
   background: rgba(255, 255, 255, 0.1);
   color: #fff;
@@ -452,6 +452,12 @@ p {
   text-align: left;
   cursor: pointer;
   transition: transform 160ms ease, border-color 160ms ease, background 160ms ease;
+}
+
+@media (max-width: 1500px) and (min-width: 1041px) {
+  .hero-panel {
+    display: none;
+  }
 }
 
 .quick-esp-options button {
