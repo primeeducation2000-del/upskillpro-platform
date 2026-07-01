@@ -73,6 +73,315 @@ const positioning =
 const siteUrl = 'https://upskillpro.co.uk';
 const canonicalForPath = (path) => `${siteUrl}${path === '/' ? '/' : `${path.replace(/\/$/, '')}/`}`;
 
+const hospitalityQuickCheckQuestions = [
+  {
+    prompt: 'A guest arrives at reception. What is the best greeting?',
+    options: ['What do you want?', 'Good morning, how may I help you?', 'Wait there, please.'],
+    answer: 'Good morning, how may I help you?',
+    skill: 'Guest greeting',
+  },
+  {
+    prompt: 'A guest says: "I have a reservation." What should you ask next?',
+    options: ['What is your name, please?', 'Why are you here?', 'Give me your bag.'],
+    answer: 'What is your name, please?',
+    skill: 'Reception language',
+  },
+  {
+    prompt: 'Which sentence is most polite when a guest is waiting?',
+    options: ['Sit down.', 'You must wait.', 'Please take a seat while I check that for you.'],
+    answer: 'Please take a seat while I check that for you.',
+    skill: 'Polite service',
+  },
+  {
+    prompt: 'A guest asks for the Wi-Fi password. What is the best reply?',
+    options: ['It is printed on your room card.', 'No Wi-Fi.', 'I do not know anything.'],
+    answer: 'It is printed on your room card.',
+    skill: 'Hotel information',
+  },
+  {
+    prompt: 'Which phrase is best for handling a complaint?',
+    options: ['That is not my problem.', 'I am sorry to hear that. Let me help you.', 'You are wrong.'],
+    answer: 'I am sorry to hear that. Let me help you.',
+    skill: 'Complaint handling',
+  },
+  {
+    prompt: 'A guest asks, "What time is check-out?" Choose the clearest answer.',
+    options: ['Checkout is 11 a.m.', 'Later maybe.', 'You go tomorrow.'],
+    answer: 'Checkout is 11 a.m.',
+    skill: 'Clear information',
+  },
+  {
+    prompt: 'Which sentence is suitable for restaurant service?',
+    options: ['Are you ready to order?', 'Eat now.', 'Tell food quickly.'],
+    answer: 'Are you ready to order?',
+    skill: 'Restaurant English',
+  },
+  {
+    prompt: 'A guest asks for a towel. What should housekeeping say?',
+    options: ['I will bring one to your room shortly.', 'Find it yourself.', 'No towel today.'],
+    answer: 'I will bring one to your room shortly.',
+    skill: 'Housekeeping English',
+  },
+  {
+    prompt: 'Which word means a room has already been booked?',
+    options: ['Reserved', 'Broken', 'Empty'],
+    answer: 'Reserved',
+    skill: 'Hotel vocabulary',
+  },
+  {
+    prompt: 'A guest says the air conditioning is not working. What is the best response?',
+    options: ['I will report this to maintenance immediately.', 'Open window only.', 'Not my job.'],
+    answer: 'I will report this to maintenance immediately.',
+    skill: 'Maintenance requests',
+  },
+  {
+    prompt: 'Which phrase is best when offering help with luggage?',
+    options: ['Can I assist you with your luggage?', 'Carry this.', 'You have too much.'],
+    answer: 'Can I assist you with your luggage?',
+    skill: 'Concierge service',
+  },
+  {
+    prompt: 'A guest asks for directions to the lift. Choose the best answer.',
+    options: ['The lift is on your left, next to reception.', 'Somewhere there.', 'Go and look.'],
+    answer: 'The lift is on your left, next to reception.',
+    skill: 'Giving directions',
+  },
+  {
+    prompt: 'Which sentence confirms a booking politely?',
+    options: ['Your booking is confirmed.', 'Maybe you booked.', 'I think room yes.'],
+    answer: 'Your booking is confirmed.',
+    skill: 'Booking confirmation',
+  },
+  {
+    prompt: 'A guest asks for late check-out. What should you say first?',
+    options: ['Let me check availability for you.', 'No, go now.', 'That costs money only.'],
+    answer: 'Let me check availability for you.',
+    skill: 'Guest requests',
+  },
+  {
+    prompt: 'Which sentence is best for apologising professionally?',
+    options: ['I apologise for the inconvenience.', 'Bad thing happened.', 'You complain too much.'],
+    answer: 'I apologise for the inconvenience.',
+    skill: 'Professional apology',
+  },
+  {
+    prompt: 'A guest asks, "Is breakfast included?" Choose the best answer.',
+    options: ['Yes, breakfast is included in your booking.', 'Food is morning.', 'Ask another person.'],
+    answer: 'Yes, breakfast is included in your booking.',
+    skill: 'Guest information',
+  },
+  {
+    prompt: 'Which phrase is suitable when ending a guest conversation?',
+    options: ['Have a pleasant stay.', 'Go now.', 'Finished.'],
+    answer: 'Have a pleasant stay.',
+    skill: 'Service closure',
+  },
+  {
+    prompt: 'A guest cannot find their room. What is the best response?',
+    options: ['I can show you the way.', 'Read the number.', 'Not difficult.'],
+    answer: 'I can show you the way.',
+    skill: 'Guest support',
+  },
+  {
+    prompt: 'Which sentence is best for taking a food order?',
+    options: ['Would you like anything to drink?', 'Drink?', 'You need water.'],
+    answer: 'Would you like anything to drink?',
+    skill: 'Food and beverage',
+  },
+  {
+    prompt: 'What does "available" mean in hotel English?',
+    options: ['Ready or free to use', 'Very expensive', 'Not allowed'],
+    answer: 'Ready or free to use',
+    skill: 'Core vocabulary',
+  },
+  {
+    prompt: 'A guest asks for an invoice. Which response is best?',
+    options: ['Certainly, I can prepare your invoice now.', 'Why?', 'No paper.'],
+    answer: 'Certainly, I can prepare your invoice now.',
+    skill: 'Payment language',
+  },
+  {
+    prompt: 'Which sentence gives a clear instruction to staff?',
+    options: ['Please clean room 214 before 2 p.m.', 'Clean there later.', 'Do rooms.'],
+    answer: 'Please clean room 214 before 2 p.m.',
+    skill: 'Workplace instructions',
+  },
+  {
+    prompt: 'A guest says, "The room is noisy." What should staff say?',
+    options: ['I am sorry. I will see what options are available.', 'Sleep anyway.', 'Noise is normal.'],
+    answer: 'I am sorry. I will see what options are available.',
+    skill: 'Service recovery',
+  },
+  {
+    prompt: 'Which phrase is best for checking understanding?',
+    options: ['Just to confirm, you would like a twin room?', 'You said room?', 'Say again fast.'],
+    answer: 'Just to confirm, you would like a twin room?',
+    skill: 'Clarifying information',
+  },
+  {
+    prompt: 'A guest asks for a wake-up call. Choose the correct reply.',
+    options: ['Of course. What time would you like the wake-up call?', 'Wake yourself.', 'Morning call maybe.'],
+    answer: 'Of course. What time would you like the wake-up call?',
+    skill: 'Guest services',
+  },
+  {
+    prompt: 'Which phrase is suitable when transferring a phone call?',
+    options: ['Please hold while I transfer your call.', 'Wait phone.', 'I move you.'],
+    answer: 'Please hold while I transfer your call.',
+    skill: 'Telephone English',
+  },
+  {
+    prompt: 'A guest asks if pets are allowed. Which answer is professional?',
+    options: ['Let me check our policy for you.', 'Maybe dogs.', 'No idea.'],
+    answer: 'Let me check our policy for you.',
+    skill: 'Policy language',
+  },
+  {
+    prompt: 'Which sentence is best for confirming a table reservation?',
+    options: ['Your table is booked for 7 p.m.', 'Table maybe later.', 'Come and see.'],
+    answer: 'Your table is booked for 7 p.m.',
+    skill: 'Restaurant booking',
+  },
+  {
+    prompt: 'A guest asks for the nearest pharmacy. What should staff say?',
+    options: ['There is a pharmacy five minutes away on King Street.', 'I do not use medicine.', 'Outside.'],
+    answer: 'There is a pharmacy five minutes away on King Street.',
+    skill: 'Local information',
+  },
+  {
+    prompt: 'Which word describes someone staying at a hotel?',
+    options: ['Guest', 'Customered', 'Visitoring'],
+    answer: 'Guest',
+    skill: 'Hospitality vocabulary',
+  },
+  {
+    prompt: 'A guest asks, "Can I pay by card?" Choose the best answer.',
+    options: ['Yes, we accept card payments.', 'Card maybe machine.', 'Cash only maybe.'],
+    answer: 'Yes, we accept card payments.',
+    skill: 'Payment support',
+  },
+  {
+    prompt: 'Which response is best if a room is not ready yet?',
+    options: ['Your room is being prepared. It should be ready shortly.', 'No room.', 'Cleaner slow.'],
+    answer: 'Your room is being prepared. It should be ready shortly.',
+    skill: 'Managing expectations',
+  },
+  {
+    prompt: 'Which sentence shows empathy?',
+    options: ['I understand this is frustrating.', 'You are angry.', 'Stop worrying.'],
+    answer: 'I understand this is frustrating.',
+    skill: 'Empathy',
+  },
+  {
+    prompt: 'A guest asks for extra pillows. What should staff say?',
+    options: ['Certainly. I will arrange that for you.', 'Why pillows?', 'There are enough.'],
+    answer: 'Certainly. I will arrange that for you.',
+    skill: 'Housekeeping requests',
+  },
+  {
+    prompt: 'Which phrase is best when a guest thanks you?',
+    options: ['You are very welcome.', 'Yes.', 'Okay go.'],
+    answer: 'You are very welcome.',
+    skill: 'Positive tone',
+  },
+  {
+    prompt: 'A caller asks to speak to the manager. What should you say?',
+    options: ['May I ask who is calling, please?', 'Why manager?', 'Manager busy always.'],
+    answer: 'May I ask who is calling, please?',
+    skill: 'Telephone etiquette',
+  },
+  {
+    prompt: 'Which sentence is best for explaining hotel facilities?',
+    options: ['The gym is open from 6 a.m. to 10 p.m.', 'Gym open some time.', 'Gym there.'],
+    answer: 'The gym is open from 6 a.m. to 10 p.m.',
+    skill: 'Facilities information',
+  },
+  {
+    prompt: 'A guest wants to cancel a reservation. Which reply is best?',
+    options: ['I can help with that. May I have your booking reference?', 'Cancel it yourself.', 'No booking now.'],
+    answer: 'I can help with that. May I have your booking reference?',
+    skill: 'Reservation changes',
+  },
+  {
+    prompt: 'Which phrase is most suitable for a formal email to a guest?',
+    options: ['Dear Mr Ahmed, thank you for your enquiry.', 'Hi mate.', 'You asked hotel.'],
+    answer: 'Dear Mr Ahmed, thank you for your enquiry.',
+    skill: 'Written communication',
+  },
+  {
+    prompt: 'What does "complimentary" usually mean in hotels?',
+    options: ['Free of charge', 'Very clean', 'Fully booked'],
+    answer: 'Free of charge',
+    skill: 'Hospitality vocabulary',
+  },
+  {
+    prompt: 'A guest says their key card is not working. Choose the best response.',
+    options: ['I can re-activate your key card for you.', 'You broke it.', 'Try again many times.'],
+    answer: 'I can re-activate your key card for you.',
+    skill: 'Reception problem-solving',
+  },
+  {
+    prompt: 'Which sentence is best for a professional handover?',
+    options: ['Room 312 requested extra towels and maintenance has been informed.', 'Room towel problem.', 'Someone wanted things.'],
+    answer: 'Room 312 requested extra towels and maintenance has been informed.',
+    skill: 'Staff handover',
+  },
+  {
+    prompt: 'A guest asks if the restaurant has vegetarian options. What should staff say?',
+    options: ['Yes, we have several vegetarian options on the menu.', 'Maybe no meat.', 'Look yourself.'],
+    answer: 'Yes, we have several vegetarian options on the menu.',
+    skill: 'Menu information',
+  },
+  {
+    prompt: 'Which phrase is best when asking a guest to repeat information?',
+    options: ['Could you repeat that, please?', 'Say again.', 'Speak properly.'],
+    answer: 'Could you repeat that, please?',
+    skill: 'Clarification',
+  },
+  {
+    prompt: 'A guest is angry about a delayed room. What is the best first response?',
+    options: ['I am sorry for the delay. Let me check the status immediately.', 'Everyone waits.', 'It is not serious.'],
+    answer: 'I am sorry for the delay. Let me check the status immediately.',
+    skill: 'Difficult conversations',
+  },
+  {
+    prompt: 'Which sentence is best for offering alternatives?',
+    options: ['We do not have a double room, but I can offer a twin room.', 'No double. Finished.', 'Take other room.'],
+    answer: 'We do not have a double room, but I can offer a twin room.',
+    skill: 'Alternative solutions',
+  },
+  {
+    prompt: 'A guest asks about parking. Choose the clearest answer.',
+    options: ['Parking is available behind the hotel for GBP 10 per night.', 'Cars go back.', 'Parking maybe behind.'],
+    answer: 'Parking is available behind the hotel for GBP 10 per night.',
+    skill: 'Practical information',
+  },
+  {
+    prompt: 'Which phrase is best when confirming a guest request has been completed?',
+    options: ['Your request has been completed.', 'Done thing.', 'It happened maybe.'],
+    answer: 'Your request has been completed.',
+    skill: 'Follow-up communication',
+  },
+  {
+    prompt: 'A guest asks for an accessible room. What should staff say?',
+    options: ['Let me check availability for an accessible room.', 'Any room is fine.', 'We do normal rooms.'],
+    answer: 'Let me check availability for an accessible room.',
+    skill: 'Inclusive service',
+  },
+  {
+    prompt: 'Which sentence is most suitable for a supervisor speaking to a team?',
+    options: ['Please prioritise guest check-ins before restocking the lobby.', 'Do check-ins and stuff.', 'Hurry up everyone.'],
+    answer: 'Please prioritise guest check-ins before restocking the lobby.',
+    skill: 'Supervisor communication',
+  },
+  {
+    prompt: 'A guest asks for a refund policy. Which reply is best?',
+    options: ['I can explain the refund policy and check your booking conditions.', 'No refund maybe.', 'Read website.'],
+    answer: 'I can explain the refund policy and check your booking conditions.',
+    skill: 'Policy explanation',
+  },
+];
+
 const navItems = [
   { label: 'Home', path: '/' },
   { label: 'About', path: '/about' },
@@ -1296,16 +1605,129 @@ function HospitalityDiplomaPage() {
   );
 }
 
+function getRandomHospitalityQuestions() {
+  return [...hospitalityQuickCheckQuestions]
+    .sort(() => Math.random() - 0.5)
+    .slice(0, 5);
+}
+
+function getQuickCheckResult(score) {
+  if (score <= 1) {
+    return {
+      level: 'Needs support',
+      message: 'You may benefit from beginner hospitality English practice before guest-facing tasks.',
+    };
+  }
+
+  if (score <= 3) {
+    return {
+      level: 'Developing',
+      message: 'You understand some service English, but more practice would improve confidence and accuracy.',
+    };
+  }
+
+  if (score === 4) {
+    return {
+      level: 'Confident',
+      message: 'You show good hospitality English awareness. A full assessment can confirm your level.',
+    };
+  }
+
+  return {
+    level: 'Advanced service confidence',
+    message: 'You handled these hospitality scenarios very well. The full assessment can guide your next pathway.',
+  };
+}
+
+function QuickHospitalityCheck() {
+  const [questions, setQuestions] = useState(() => getRandomHospitalityQuestions());
+  const [currentIndex, setCurrentIndex] = useState(0);
+  const [answers, setAnswers] = useState([]);
+  const currentQuestion = questions[currentIndex];
+  const isComplete = answers.length === questions.length;
+  const score = answers.filter((answer) => answer.isCorrect).length;
+  const result = getQuickCheckResult(score);
+  const progress = isComplete ? 100 : Math.round((currentIndex / questions.length) * 100);
+
+  const chooseAnswer = (option) => {
+    const isCorrect = option === currentQuestion.answer;
+    const nextAnswers = [
+      ...answers,
+      {
+        prompt: currentQuestion.prompt,
+        selected: option,
+        correct: currentQuestion.answer,
+        skill: currentQuestion.skill,
+        isCorrect,
+      },
+    ];
+
+    setAnswers(nextAnswers);
+    if (nextAnswers.length < questions.length) {
+      setCurrentIndex((index) => index + 1);
+    }
+  };
+
+  const restart = () => {
+    setQuestions(getRandomHospitalityQuestions());
+    setCurrentIndex(0);
+    setAnswers([]);
+  };
+
+  const openFullAssessment = (event) => {
+    event.preventDefault();
+    navigate('/esol-initial-assessment');
+  };
+
+  return (
+    <aside className="quick-esp-check" aria-label="Quick hospitality English check">
+      <div className="quick-esp-check-header">
+        <span>Quick Hospitality English Check</span>
+        <strong>{isComplete ? `${score}/5` : `${currentIndex + 1}/5`}</strong>
+      </div>
+      <div className="quick-esp-progress" aria-hidden="true">
+        <span style={{ width: `${progress}%` }} />
+      </div>
+
+      {isComplete ? (
+        <div className="quick-esp-result">
+          <p className="quick-esp-kicker">Instant guide</p>
+          <h3>{result.level}</h3>
+          <p>{result.message}</p>
+          <div className="quick-esp-review" aria-label="Skills checked">
+            {answers.map((answer) => (
+              <span key={answer.prompt} className={answer.isCorrect ? 'is-correct' : 'is-incorrect'}>
+                {answer.skill}
+              </span>
+            ))}
+          </div>
+          <div className="quick-esp-actions">
+            <button type="button" onClick={restart}>Try new 5</button>
+            <a href="/esol-initial-assessment" onClick={openFullAssessment}>Full assessment</a>
+          </div>
+        </div>
+      ) : (
+        <div className="quick-esp-question">
+          <p className="quick-esp-kicker">Question {currentIndex + 1} of 5</p>
+          <h3>{currentQuestion.prompt}</h3>
+          <div className="quick-esp-options">
+            {currentQuestion.options.map((option) => (
+              <button type="button" key={option} onClick={() => chooseAnswer(option)}>
+                {option}
+              </button>
+            ))}
+          </div>
+        </div>
+      )}
+    </aside>
+  );
+}
+
 function HomePage() {
   return (
     <>
       <section className="hero">
         <div className="hero-media" aria-hidden="true">
-          <div className="hero-panel panel-a">
-            <Users size={28} />
-            <span>Hospitality cohort</span>
-            <strong>Service English + confidence</strong>
-          </div>
           <div className="hero-panel panel-b">
             <HeartPulse size={28} />
             <span>Healthcare team</span>
@@ -1317,6 +1739,7 @@ function HomePage() {
             <strong>Progress tracked</strong>
           </div>
         </div>
+        <QuickHospitalityCheck />
         <div className="hero-content">
           <p className="eyebrow">ESP English + Soft Skills Training</p>
           <h1>ESP English & Soft Skills Training for Workforce Performance</h1>

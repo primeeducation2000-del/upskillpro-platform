@@ -332,6 +332,180 @@ p {
   bottom: 10%;
 }
 
+.quick-esp-check {
+  position: absolute;
+  right: clamp(22px, 5vw, 90px);
+  top: clamp(150px, 20vw, 215px);
+  z-index: 3;
+  width: min(390px, 34vw);
+  padding: 18px;
+  border: 1px solid rgba(255, 255, 255, 0.28);
+  border-radius: 10px;
+  background:
+    linear-gradient(145deg, rgba(255, 255, 255, 0.2), rgba(8, 43, 51, 0.42)),
+    rgba(10, 40, 49, 0.62);
+  backdrop-filter: blur(18px);
+  box-shadow: 0 30px 70px rgba(0, 0, 0, 0.28);
+  color: #fff;
+}
+
+.quick-esp-check::before {
+  content: "";
+  position: absolute;
+  inset: -1px;
+  border-radius: inherit;
+  background: linear-gradient(135deg, rgba(158, 232, 223, 0.42), rgba(255, 190, 92, 0.28), transparent 58%);
+  opacity: 0.72;
+  pointer-events: none;
+  mask: linear-gradient(#000, #000) content-box, linear-gradient(#000, #000);
+  -webkit-mask: linear-gradient(#000, #000) content-box, linear-gradient(#000, #000);
+  mask-composite: exclude;
+  -webkit-mask-composite: xor;
+  padding: 1px;
+}
+
+.quick-esp-check-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 14px;
+  margin-bottom: 12px;
+}
+
+.quick-esp-check-header span {
+  color: #c9fff8;
+  font-size: 0.76rem;
+  font-weight: 900;
+  text-transform: uppercase;
+}
+
+.quick-esp-check-header strong {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 48px;
+  min-height: 34px;
+  padding: 4px 10px;
+  border-radius: 999px;
+  background: rgba(255, 190, 92, 0.18);
+  color: #ffe3a8;
+  border: 1px solid rgba(255, 190, 92, 0.34);
+  font-size: 0.9rem;
+}
+
+.quick-esp-progress {
+  height: 7px;
+  overflow: hidden;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.18);
+  margin-bottom: 15px;
+}
+
+.quick-esp-progress span {
+  display: block;
+  height: 100%;
+  border-radius: inherit;
+  background: linear-gradient(90deg, #61e4ee, #48e5a5, #ffbe5c);
+  transition: width 220ms ease;
+}
+
+.quick-esp-kicker {
+  margin: 0 0 7px;
+  color: rgba(255, 255, 255, 0.68);
+  font-size: 0.78rem;
+  font-weight: 800;
+  text-transform: uppercase;
+}
+
+.quick-esp-question h3,
+.quick-esp-result h3 {
+  margin: 0 0 14px;
+  color: #fff;
+  font-size: clamp(1rem, 1.25vw, 1.24rem);
+  line-height: 1.25;
+}
+
+.quick-esp-result p {
+  color: rgba(255, 255, 255, 0.78);
+  font-size: 0.92rem;
+}
+
+.quick-esp-options {
+  display: grid;
+  gap: 8px;
+}
+
+.quick-esp-options button,
+.quick-esp-actions button,
+.quick-esp-actions a {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  min-height: 42px;
+  padding: 10px 12px;
+  border-radius: 8px;
+  border: 1px solid rgba(255, 255, 255, 0.18);
+  background: rgba(255, 255, 255, 0.1);
+  color: #fff;
+  font-weight: 800;
+  text-align: left;
+  cursor: pointer;
+  transition: transform 160ms ease, border-color 160ms ease, background 160ms ease;
+}
+
+.quick-esp-options button {
+  justify-content: flex-start;
+}
+
+.quick-esp-options button:hover,
+.quick-esp-actions button:hover,
+.quick-esp-actions a:hover {
+  transform: translateY(-1px);
+  border-color: rgba(158, 232, 223, 0.66);
+  background: rgba(255, 255, 255, 0.18);
+}
+
+.quick-esp-review {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 7px;
+  margin: 14px 0;
+}
+
+.quick-esp-review span {
+  display: inline-flex;
+  align-items: center;
+  border-radius: 999px;
+  padding: 6px 9px;
+  color: #fff;
+  font-size: 0.74rem;
+  font-weight: 800;
+}
+
+.quick-esp-review .is-correct {
+  background: rgba(72, 229, 165, 0.18);
+  border: 1px solid rgba(72, 229, 165, 0.38);
+}
+
+.quick-esp-review .is-incorrect {
+  background: rgba(255, 190, 92, 0.16);
+  border: 1px solid rgba(255, 190, 92, 0.36);
+}
+
+.quick-esp-actions {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px;
+}
+
+.quick-esp-actions a {
+  background: rgba(255, 190, 92, 0.22);
+  border-color: rgba(255, 190, 92, 0.44);
+  color: #fff3d7;
+  text-decoration: none;
+}
+
 .section,
 .page-hero {
   padding: clamp(62px, 7vw, 104px) clamp(20px, 5vw, 78px);
@@ -6016,6 +6190,25 @@ footer p {
 
   .hero-panel {
     display: none;
+  }
+
+  .hero {
+    align-items: flex-start;
+    flex-direction: column;
+    gap: 24px;
+    min-height: 0;
+  }
+
+  .hero-content {
+    order: 1;
+  }
+
+  .quick-esp-check {
+    position: relative;
+    inset: auto;
+    order: 2;
+    width: min(100%, 640px);
+    margin-top: 4px;
   }
 
   .three-grid,
