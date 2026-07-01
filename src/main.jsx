@@ -1842,29 +1842,32 @@ function AboutPage() {
         </div>
         <div className="training-staircase" aria-label="UpSkillPro training progression pathways">
           <div className="staircase-heading">
-            <span>Training pathways</span>
-            <strong>Progress with purpose</strong>
+            <div>
+              <span>Training architecture</span>
+              <strong>Progress with purpose</strong>
+            </div>
+            <small><i /> 4 pathways · CEFR aligned</small>
           </div>
           <div className="staircase-lane hospitality-lane">
-            <strong>Hospitality</strong>
+            <strong><Hotel size={17} /> Hospitality</strong>
             <div className="staircase-steps four-steps">
               {['Foundation', 'Guest Service', 'Front Office', 'Leadership'].map((step) => <span key={step}>{step}</span>)}
             </div>
           </div>
           <div className="staircase-lane esol-lane">
-            <strong>ESOL · CEFR</strong>
+            <strong><BookOpenCheck size={17} /> ESOL · CEFR</strong>
             <div className="staircase-steps seven-steps">
               {['Pre-A1', 'A1', 'A2', 'B1', 'B2', 'C1', 'C2'].map((step) => <span key={step}>{step}</span>)}
             </div>
           </div>
           <div className="staircase-lane healthcare-lane">
-            <strong>Healthcare</strong>
+            <strong><HeartPulse size={17} /> Healthcare</strong>
             <div className="staircase-steps four-steps">
               {['Foundation', 'Patient English', 'Care Communication', 'Leadership'].map((step) => <span key={step}>{step}</span>)}
             </div>
           </div>
           <div className="staircase-lane workforce-lane">
-            <strong>Workforce Skills</strong>
+            <strong><BrainCircuit size={17} /> Workforce Skills</strong>
             <div className="staircase-steps four-steps">
               {['Readiness', 'Soft Skills', 'AI + Human', 'Management'].map((step) => <span key={step}>{step}</span>)}
             </div>
