@@ -1643,19 +1643,21 @@ function QuickHospitalityCheck() {
   const [questions, setQuestions] = useState(() => getRandomHospitalityQuestions());
   const [currentIndex, setCurrentIndex] = useState(0);
   const [answers, setAnswers] = useState([]);
+  const [selectedOption, setSelectedOption] = useState('');
   const currentQuestion = questions[currentIndex];
   const isComplete = answers.length === questions.length;
   const score = answers.filter((answer) => answer.isCorrect).length;
   const result = getQuickCheckResult(score);
   const progress = isComplete ? 100 : Math.round((currentIndex / questions.length) * 100);
 
-  const chooseAnswer = (option) => {
-    const isCorrect = option === currentQuestion.answer;
+  const submitAnswer = () => {
+    if (!selectedOption) return;
+    const isCorrect = selectedOption === currentQuestion.answer;
     const nextAnswers = [
       ...answers,
       {
         prompt: currentQuestion.prompt,
-        selected: option,
+        selected: selectedOption,
         correct: currentQuestion.answer,
         skill: currentQuestion.skill,
         isCorrect,
@@ -1665,6 +1667,7 @@ function QuickHospitalityCheck() {
     setAnswers(nextAnswers);
     if (nextAnswers.length < questions.length) {
       setCurrentIndex((index) => index + 1);
+      setSelectedOption('');
     }
   };
 
@@ -1672,6 +1675,7 @@ function QuickHospitalityCheck() {
     setQuestions(getRandomHospitalityQuestions());
     setCurrentIndex(0);
     setAnswers([]);
+    setSelectedOption('');
   };
 
   const openFullAssessment = (event) => {
@@ -1682,11 +1686,9 @@ function QuickHospitalityCheck() {
   return (
     <aside className="quick-esp-check" aria-label="Quick hospitality English check">
       <div className="quick-esp-check-header">
-        <span>Quick Hospitality English Check</span>
-        <strong>{isComplete ? `${score}/5` : `${currentIndex + 1}/5`}</strong>
-      </div>
-      <div className="quick-esp-progress" aria-hidden="true">
-        <span style={{ width: `${progress}%` }} />
+        <span className="quick-esp-icon"><Hotel size={22} /></span>
+        <span className="quick-esp-title">Quick Hospitality English Check</span>
+        <strong>{isComplete ? `${score}/5` : '5 questions'}</strong>
       </div>
 
       {isComplete ? (
@@ -1708,15 +1710,32 @@ function QuickHospitalityCheck() {
         </div>
       ) : (
         <div className="quick-esp-question">
-          <p className="quick-esp-kicker">Question {currentIndex + 1} of 5</p>
+          <div className="quick-esp-status">
+            <p className="quick-esp-kicker">Question {currentIndex + 1} of 5</p>
+            <div className="quick-esp-progress" aria-hidden="true">
+              <span style={{ width: `${progress}%` }} />
+            </div>
+          </div>
           <h3>{currentQuestion.prompt}</h3>
           <div className="quick-esp-options">
             {currentQuestion.options.map((option) => (
-              <button type="button" key={option} onClick={() => chooseAnswer(option)}>
-                {option}
+              <button
+                type="button"
+                key={option}
+                className={selectedOption === option ? 'is-selected' : ''}
+                aria-pressed={selectedOption === option}
+                onClick={() => setSelectedOption(option)}
+              >
+                <span className="quick-esp-radio" aria-hidden="true" />
+                <span>{option}</span>
               </button>
             ))}
           </div>
+          <button className="quick-esp-submit" type="button" disabled={!selectedOption} onClick={submitAnswer}>
+            <span>{currentIndex === 0 ? 'Start quick check' : currentIndex === 4 ? 'View my result' : 'Next question'}</span>
+            <ArrowRight size={22} />
+          </button>
+          <p className="quick-esp-time"><ShieldCheck size={15} /> Takes less than 1 minute</p>
         </div>
       )}
     </aside>
