@@ -1833,18 +1833,66 @@ function HomePage() {
 
 function AboutPage() {
   return (
-    <PageShell eyebrow="About UpSkillPro" title="A workforce performance company, not a course marketplace." intro={positioning}>
-      <div className="two-column">
-        <div>
-          <h2>Our approach</h2>
-          <p>We combine job-specific English, soft skills, and workforce consultancy so training maps directly to the conversations, service moments, and performance standards employers need.</p>
+    <>
+      <section className="page-hero about-page-hero">
+        <div className="about-hero-copy">
+          <p className="eyebrow">About UpSkillPro</p>
+          <h1>A workforce performance company, not a course marketplace.</h1>
+          <p>{positioning}</p>
         </div>
-        <div className="quote-panel">
-          <ShieldCheck size={30} />
-          <p>Designed for B2B workforce improvement across frontline, operational, and management teams.</p>
+        <div className="training-staircase" aria-label="UpSkillPro training progression pathways">
+          <div className="staircase-heading">
+            <span>Training pathways</span>
+            <strong>Progress with purpose</strong>
+          </div>
+          <div className="staircase-lane hospitality-lane">
+            <strong>Hospitality</strong>
+            <div className="staircase-steps four-steps">
+              {['Foundation', 'Guest Service', 'Front Office', 'Leadership'].map((step) => <span key={step}>{step}</span>)}
+            </div>
+          </div>
+          <div className="staircase-lane esol-lane">
+            <strong>ESOL · CEFR</strong>
+            <div className="staircase-steps seven-steps">
+              {['Pre-A1', 'A1', 'A2', 'B1', 'B2', 'C1', 'C2'].map((step) => <span key={step}>{step}</span>)}
+            </div>
+          </div>
+          <div className="staircase-lane healthcare-lane">
+            <strong>Healthcare</strong>
+            <div className="staircase-steps four-steps">
+              {['Foundation', 'Patient English', 'Care Communication', 'Leadership'].map((step) => <span key={step}>{step}</span>)}
+            </div>
+          </div>
+          <div className="staircase-lane workforce-lane">
+            <strong>Workforce Skills</strong>
+            <div className="staircase-steps four-steps">
+              {['Readiness', 'Soft Skills', 'AI + Human', 'Management'].map((step) => <span key={step}>{step}</span>)}
+            </div>
+          </div>
         </div>
-      </div>
-    </PageShell>
+      </section>
+      <section className="section page-content about-page-content">
+        <div className="about-intro-row">
+          <div>
+            <p className="eyebrow">Our approach</p>
+            <h2>One framework. Multiple routes to stronger performance.</h2>
+            <p>We combine job-specific English, soft skills, and workforce consultancy so training maps directly to the conversations, service moments, and performance standards employers need.</p>
+          </div>
+          <div className="about-standard">
+            <ShieldCheck size={28} />
+            <div>
+              <strong>Designed for measurable progression</strong>
+              <p>Clear entry points, structured development, assessment evidence, and progression from frontline confidence to leadership capability.</p>
+            </div>
+          </div>
+        </div>
+        <div className="about-pathway-grid">
+          <article><Hotel size={25} /><strong>Sector-specific</strong><p>Hospitality and healthcare content reflects real roles, language, service standards, and workplace situations.</p></article>
+          <article><BookOpenCheck size={25} /><strong>CEFR-aligned ESOL</strong><p>English development is mapped from Pre-A1 to C2, giving learners and employers a clear progression route.</p></article>
+          <article><Target size={25} /><strong>Performance-led</strong><p>Soft skills, digital confidence, and communication are connected to observable workplace outcomes.</p></article>
+        </div>
+      </section>
+    </>
   );
 }
 
