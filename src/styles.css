@@ -1340,8 +1340,7 @@ p {
   min-height: 590px;
   overflow: hidden;
   background:
-    radial-gradient(circle at 84% 18%, rgba(28, 169, 157, 0.1), transparent 30%),
-    linear-gradient(135deg, #f2f8f7, #ffffff 64%);
+    linear-gradient(90deg, #f2f8f7 0%, #ffffff 47%, rgba(213, 235, 232, 0.76) 72%, rgba(178, 218, 213, 0.5) 100%);
 }
 
 .about-hero-copy h1 {
@@ -1356,22 +1355,30 @@ p {
   position: relative;
   isolation: isolate;
   padding: 25px 25px 21px;
-  border: 1px solid rgba(165, 224, 219, 0.24);
+  border: 1px solid rgba(211, 250, 245, 0.28);
   border-radius: 8px;
   background:
-    linear-gradient(125deg, rgba(255, 255, 255, 0.09), transparent 34%),
-    linear-gradient(145deg, rgba(10, 46, 54, 0.96), rgba(5, 25, 35, 0.98));
-  box-shadow: 0 32px 80px rgba(3, 28, 36, 0.28), inset 0 1px 0 rgba(255, 255, 255, 0.1);
-  backdrop-filter: blur(24px) saturate(130%);
+    linear-gradient(125deg, rgba(255, 255, 255, 0.16), transparent 38%),
+    linear-gradient(145deg, rgba(8, 47, 55, 0.78), rgba(5, 29, 38, 0.66));
+  box-shadow:
+    0 30px 70px rgba(3, 32, 39, 0.18),
+    0 0 45px rgba(38, 154, 143, 0.09),
+    inset 0 1px 0 rgba(255, 255, 255, 0.16),
+    inset 0 -1px 0 rgba(111, 203, 193, 0.08);
+  backdrop-filter: blur(32px) saturate(145%);
+  -webkit-backdrop-filter: blur(32px) saturate(145%);
 }
 
 .training-staircase::before {
   content: "";
   position: absolute;
-  inset: 0;
-  border-top: 1px solid rgba(109, 243, 226, 0.78);
-  border-radius: inherit;
-  box-shadow: inset 0 26px 38px rgba(49, 204, 188, 0.06);
+  z-index: -1;
+  inset: -14px;
+  border: 1px solid rgba(124, 224, 213, 0.09);
+  border-radius: 12px;
+  background: linear-gradient(135deg, rgba(117, 225, 213, 0.11), transparent 30%, transparent 70%, rgba(36, 125, 138, 0.08));
+  filter: blur(10px);
+  opacity: 0.82;
   pointer-events: none;
 }
 
@@ -1443,12 +1450,15 @@ p {
   align-items: end;
   gap: 14px;
   min-height: 88px;
-  margin-top: 9px;
-  padding: 10px 11px 4px;
-  border: 1px solid rgba(255, 255, 255, 0.07);
-  border-radius: 7px;
-  background: linear-gradient(90deg, var(--lane-soft), rgba(255, 255, 255, 0.018) 48%, rgba(255, 255, 255, 0.035));
-  box-shadow: inset 3px 0 0 var(--lane-color);
+  margin-top: 3px;
+  padding: 12px 10px 5px;
+  border-bottom: 1px solid rgba(218, 241, 240, 0.09);
+  background: linear-gradient(90deg, var(--lane-soft), transparent 58%);
+  box-shadow: inset 2px 0 0 color-mix(in srgb, var(--lane-color) 72%, transparent);
+}
+
+.staircase-lane:last-child {
+  border-bottom: 0;
 }
 
 .staircase-lane > strong {
