@@ -334,7 +334,7 @@ p {
 
 .quick-esp-check {
   position: absolute;
-  left: 48%;
+  left: 41%;
   top: clamp(112px, 12vw, 150px);
   z-index: 3;
   width: min(500px, 40vw);
