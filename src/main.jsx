@@ -1895,6 +1895,33 @@ function AboutPage() {
           <article><Target size={25} /><strong>Performance-led</strong><p>Soft skills, digital confidence, and communication are connected to observable workplace outcomes.</p></article>
         </div>
       </section>
+      <section className="about-help-showcase" aria-labelledby="about-help-title">
+        <div className="about-help-brand">
+          <span className="brand-mark">UP</span>
+          <div>
+            <p className="eyebrow">UpSkillPro solutions framework</p>
+            <h2 id="about-help-title">Training built around the capability your people need next.</h2>
+          </div>
+          <span className="about-help-signature">Empower. Learn. Grow.</span>
+        </div>
+        <figure className="about-help-visual">
+          <img
+            src="/assets/upskillpro-how-we-help.png"
+            alt="UpSkillPro solutions wheel showing English communication, soft skills, customer service, teamwork, business writing, leadership, partnerships and training impact."
+            width="1254"
+            height="1254"
+            loading="lazy"
+          />
+          <figcaption>Choose a development area or combine several into a tailored workforce programme.</figcaption>
+        </figure>
+        <div className="about-help-actions">
+          <p>Not sure where to begin? We can assess the need and recommend the right pathway.</p>
+          <div className="button-row">
+            <ActionLink path="/contact" label="Book Consultation" icon={CalendarCheck} primary />
+            <ActionLink path="/workforce-training-request" label="Request Training Plan" icon={ClipboardList} />
+          </div>
+        </div>
+      </section>
     </>
   );
 }
