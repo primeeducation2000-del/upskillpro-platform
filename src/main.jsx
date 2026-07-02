@@ -1912,6 +1912,7 @@ function AboutPage() {
             height="1254"
             loading="lazy"
           />
+          <img className="about-help-logo" src="/assets/upskillpro-mark.svg" alt="" aria-hidden="true" />
           <figcaption>Choose a development area or combine several into a tailored workforce programme.</figcaption>
         </figure>
         <div className="about-help-actions">
